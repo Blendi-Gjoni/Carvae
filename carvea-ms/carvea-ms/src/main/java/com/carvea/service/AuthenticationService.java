@@ -3,7 +3,10 @@ package com.carvea.service;
 import com.carvea.dto.LoginUserDto;
 import com.carvea.dto.RegisterUserDto;
 import com.carvea.dto.VerifyUserDto;
+import com.carvea.model.Role;
+import com.carvea.model.RoleEnum;
 import com.carvea.model.User;
+import com.carvea.repository.RoleRepository;
 import com.carvea.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,27 +24,41 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
+    private final RoleRepository roleRepository;
 
     public AuthenticationService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager,
-            EmailService emailService
+            EmailService emailService,
+            RoleRepository roleRepository
     ){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.emailService = emailService;
+        this.roleRepository = roleRepository;
     }
 
-    public User signup(RegisterUserDto input){
+    public User signup(RegisterUserDto input) {
+        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
+
+        if (optionalRole.isEmpty()) {
+            return null;
+        }
+
         User user = new User(input.getUsername(), input.getEmail(), passwordEncoder.encode(input.getPassword()));
+
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
         user.setEnabled(true);
+        user.setRole(optionalRole.get());
+
         sendVerificationEmail(user);
+
         return userRepository.save(user);
     }
+
 
     public User authenticate(LoginUserDto input) {
         User user = userRepository.findByEmail(input.getEmail())
