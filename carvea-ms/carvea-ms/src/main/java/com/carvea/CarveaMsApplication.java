@@ -7,8 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class CarveaMsApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(CarveaMsApplication.class, args);
-		System.out.println("Carvea Ms Application Started!!!");
+		System.out.println("Elsa queen <3");
 	}
 
 }

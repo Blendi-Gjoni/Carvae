@@ -17,9 +17,4 @@ public class CategoryService {
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
-
-    public Category addCategory(Category input) {
-        Category category = new Category(input.getName(), input.getDescription());
-        return categoryRepository.save(category);
-    }
 }

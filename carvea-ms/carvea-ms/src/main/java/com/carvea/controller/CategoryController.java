@@ -2,9 +2,10 @@ package com.carvea.controller;
 
 import com.carvea.model.Category;
 import com.carvea.service.CategoryService;
-import jakarta.annotation.PostConstruct;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -16,27 +17,9 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PostConstruct
-    public void init() {
-        System.out.println("CategoryController initialized");
-    }
-
-    @GetMapping("/test")
-    public ResponseEntity<String> testEndpoint() {
-        return ResponseEntity.ok("Test endpoint works!");
-    }
-
     @GetMapping("/")
     public ResponseEntity<List<Category>> getAllCategories() {
         List<Category> categories = categoryService.getAllCategories();
         return ResponseEntity.ok(categories);
     }
-
-    @PostMapping("/add")
-    public ResponseEntity<Category> addCategory(@RequestBody Category category) {
-        System.out.println("Received request to add category: " + category);
-        categoryService.addCategory(category);
-        return ResponseEntity.ok(category);
-    }
-
 }
