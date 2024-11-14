@@ -9,5 +9,4 @@ import java.util.List;
 @Repository
 public interface BrandRepository extends CrudRepository<Brand, Long> {
     List<Brand> findByName(String name);
-    List<Brand> findByCountry(String country);
 }

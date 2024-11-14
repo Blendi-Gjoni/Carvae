@@ -20,4 +20,8 @@ public class BrandService {
         brandRepository.findAll().forEach(brands::add);
         return brands;
     }
+
+    public Brand addBrand(Brand brand) {
+        return brandRepository.save(brand);
+    }
 }

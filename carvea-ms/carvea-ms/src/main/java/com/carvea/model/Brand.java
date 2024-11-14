@@ -18,23 +18,10 @@ public class Brand {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "country", nullable = false)
-    private String country;
+//    @Column(name = "imgUrl")
+//    private String imgUrl;
 
-    @Column(name = "city", nullable = false)
-    private String city;
-
-    @Column(name = "year", nullable = false)
-    private int year;
-
-    @Column(name = "description", nullable = false)
-    private String description;
-
-    public Brand(String name, String country, String city, int year, String description) {
+    public Brand(String name) {
         this.name = name;
-        this.country = country;
-        this.city = city;
-        this.year = year;
-        this.description = description;
     }
 }
