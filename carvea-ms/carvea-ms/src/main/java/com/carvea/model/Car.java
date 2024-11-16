@@ -21,8 +21,9 @@ public class Car {
     @JoinColumn(name = "brandId", nullable = false)
     private Brand brand;
 
-    @Column(name = "model", nullable = false)
-    private String model;
+    @ManyToOne
+    @JoinColumn(name = "modelId", nullable = false)
+    private Model model;
 
     @Column(name = "year", nullable = false)
     private int year;
@@ -69,7 +70,7 @@ public class Car {
     )
     private List<Features> features;
 
-    public Car(Brand brand, String model, int year, double price, double rentPrice,
+    public Car(Brand brand, Model model, int year, double price, double rentPrice,
                int horsepower, double kilometers, String description,
                String exterior, String interior, String fuelType, String transmission,
                String engine, Category category, List<Features> features) {
