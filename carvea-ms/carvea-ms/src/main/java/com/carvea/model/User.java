@@ -90,4 +90,10 @@ public class User implements UserDetails {
                 ", role=" + role.getName() +
                 '}';
     }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
 }
