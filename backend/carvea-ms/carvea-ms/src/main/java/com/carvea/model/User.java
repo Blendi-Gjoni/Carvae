@@ -96,4 +96,8 @@ public class User implements UserDetails {
         return this.email;
     }
 
+    public String getEmail(){
+        return this.username;
+    }
+
 }
