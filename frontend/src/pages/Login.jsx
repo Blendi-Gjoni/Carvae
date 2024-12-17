@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import LoginForm from "../components/LoginForm";
 import RegisterForm from "../components/RegisterForm";
 import Layout from "../components/layouts/Layout";
-import LoginBackground from "../assets/login-bg.png";
 
 const Login = () => {
     const [activeTab, setActiveTab] = useState('login');
