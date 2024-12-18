@@ -1,0 +1,90 @@
+/* Sidebar specific styles */
+#nav-bar {
+  width: 68px;
+  position: fixed;
+  top: 0;
+  left: -100%; /* Initially hidden */
+  height: 100vh;
+  background-color: #F5F3F4;
+  transition: all 0.3s ease;
+}
+
+/* Show sidebar when toggled */
+#nav-bar.show {
+  left: 0; /* Show the sidebar when toggled */
+  width: 250px;
+}
+
+/* Logo section */
+#nav-bar .nav-logo {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+}
+
+#nav-bar .nav-logo-icon {
+  color: white;
+  font-size: 1.5rem;
+}
+
+#nav-bar .nav-logo-name {
+  color: white;
+  font-weight: 700;
+  margin-left: 10px;
+}
+
+/* Navigation links */
+#nav-bar .nav-list {
+  margin-top: 2rem;
+}
+
+#nav-bar .nav-link {
+  display: flex;
+  align-items: center;
+  color: #660708;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+}
+
+#nav-bar .nav-link:hover {
+  color: #B1A7A6;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#nav-bar .nav-icon {
+  font-size: 1.25rem;
+}
+
+#nav-bar .nav-name {
+  margin-left: 10px;
+}
+
+#nav-bar .nav-link.active {
+  color: #161A1D;
+  font-weight: 600;
+}
+
+#nav-bar .nav-link:last-child {
+  position: absolute;
+  bottom: 1rem;
+  width: 100%;
+}
+
+/* Sidebar when open */
+#nav-bar.show .nav-link {
+  padding-left: 1.5rem;
+}
+
+/* Body padding when sidebar is open */
+#body-pd {
+  padding-left: 250px; /* Content shifts right when sidebar is open */
+}
+
+/* Content adjustment */
+.admin-main-content {
+  transition: all 0.3s ease;
+}
+
+.admin-main-content.show-content {
+  margin-left: 250px; /* Content shifts with the sidebar */
+}

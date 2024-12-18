@@ -7,6 +7,8 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import store from './redux/store';
+import AdminLayout from './components/layouts/AdminLayout';
+import AdminPage from './pages/admin/AdminPage';
 
 function App() {
   return (
@@ -14,6 +16,11 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<div className="login-page"><Login /></div>} />
+        
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="page" element={<AdminPage />} /> {/* Admin Home (Dashboard) */}
+        </Route>
       </Routes>
     </Provider>
   );
