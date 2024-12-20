@@ -1,0 +1,18 @@
+#admin-layout {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+  
+  .admin-main-content {
+    margin-top: 3rem; /* Height of the header */
+    padding: 1rem;
+    background-color: #f7f6fb;
+    flex: 1;
+    transition: padding-left 0.5s;
+  }
+  
+  .body-pd .admin-main-content {
+    padding-left: 236px; /* Adjust for the expanded sidebar */
+  }
+  
