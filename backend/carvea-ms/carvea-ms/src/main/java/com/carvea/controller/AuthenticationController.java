@@ -7,6 +7,8 @@ import com.carvea.model.User;
 import com.carvea.responses.LoginResponse;
 import com.carvea.service.AuthenticationService;
 import com.carvea.service.JwtService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,11 +33,23 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
+    public ResponseEntity<?> authenticate(@RequestBody LoginUserDto loginUserDto) {
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
+
+        // Generate JWT token
         String jwtToken = jwtService.generateToken(authenticatedUser);
-        LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
-        return ResponseEntity.ok(loginResponse);
+
+        // Set token in HttpOnly cookie
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwtToken)
+                .httpOnly(true)
+                .secure(false) // Set to true in production
+                .path("/")
+                .maxAge(24 * 60 * 60) // 1 day
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .body("Login successful");
     }
 
     @PostMapping("/verify")
@@ -56,5 +70,20 @@ public class AuthenticationController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        // Clear JWT cookie
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(false) // Set to true in production
+                .path("/")
+                .maxAge(0) // Expire immediately
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .body("Logged out successfully");
     }
 }
