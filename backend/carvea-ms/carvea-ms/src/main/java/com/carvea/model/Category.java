@@ -27,4 +27,9 @@ public class Category {
         this.description = description;
     }
 
+    public String getSummary() {
+        return name + ": " + description;
+    }
+
+
 }

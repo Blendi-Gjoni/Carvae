@@ -31,4 +31,16 @@ public class Features {
         this.name = name;
         this.description = description;
     }
+
+    public String getAssociatedCars() {
+        if (cars == null || cars.isEmpty()) {
+            return "No cars associated with this feature.";
+        }
+        StringBuilder result = new StringBuilder("Cars associated with this feature: ");
+        for (Car car : cars) {
+            result.append(car.getModel()).append(", ");
+        }
+        return result.substring(0, result.length() - 2); // Remove the trailing comma and space
+    }
+
 }

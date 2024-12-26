@@ -86,4 +86,20 @@ public class Car {
         this.features = features;
     }
 
+    public double calculateDepreciation(double depreciationRate) {
+        int currentYear = java.time.Year.now().getValue();
+        int age = currentYear - year;
+        return price - (price * depreciationRate * age);
+    }
+
+    public static int compareByPrice(Car car1, Car car2) {
+        return Double.compare(car1.getPrice(), car2.getPrice());
+    }
+
+    public boolean isAvailableForRent() {
+        return kilometers < 100000; // Example condition: cars with mileage under 100,000 are rentable
+    }
+
+
+
 }

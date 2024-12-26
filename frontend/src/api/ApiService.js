@@ -1,35 +1,60 @@
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+import Cookies from "js-cookie"
 
-const API_BASE_URL = 'http://localhost:8080'; // Adjust based on your backend setup
+const API_BASE_URL = 'http://localhost:3000'; // Adjust based on your backend setup
+
+const getToken = () => {
+    return Cookies.get('token') || localStorage.getItem('token');
+};
+
+const axiosInstance = axios.create({
+    baseURL: API_BASE_URL,
+    headers: { 'Content-Type': 'application/json' },
+});
+
+axiosInstance.interceptors.request.use(
+    (config) => {
+        const token = getToken();
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 const ApiService = {
     // Fetch all models by brand ID
     getModelsByBrandId: async (brandId) => {
-        let token = localStorage.getItem('token');
-            try {
-                return axios.get(`${API_BASE_URL}/brands/${brandId}/models`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-            } catch (error) {
-                console.error('Error fetching models:', error);
-                throw error;
-            }
+        try {
+            const response = await axiosInstance.get(`/brands/${brandId}/models`);
+            return response.data; // Return the actual data
+        } catch (error) {
+            console.error('Error fetching models:', error.response?.data || error.message);
+            throw error;
+        }
     },
 
     // Fetch a specific brand by ID
     getBrandById: async (brandId) => {
-        let token = localStorage.getItem('token');
         try {
-            return axios.get(`${API_BASE_URL}/brands/${brandId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            const response = await axiosInstance.get(`/brands/${brandId}`);
+            return response.data;
         } catch (error) {
-            console.error('Error fetching brand:', error);
+            console.error('Error fetching brand:', error.response?.data || error.message);
+            throw error;
+        }
+    },
+
+    // Fetch all categories
+    getAllCategories: async () => {
+        try {
+            const response = await axiosInstance.get(`/category/all`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching categories:', error.response?.data || error.message);
             throw error;
         }
     },
@@ -37,10 +62,10 @@ const ApiService = {
     // Fetch all brands
     getAllBrands: async () => {
         try {
-            const response = await axios.get(`${API_BASE_URL}/brands/`);
-            return response.data; // List of brands
+            const response = await axiosInstance.get(`/brands/all`);
+            return response.data;
         } catch (error) {
-            console.error('Error fetching brands:', error);
+            console.error('Error fetching brands:', error.response?.data || error.message);
             throw error;
         }
     },
