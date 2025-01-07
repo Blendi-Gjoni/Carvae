@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import Cookies from 'js-cookie';
-
-const API_URL = '/auth';
+import api from '../utils/api';
 
 const initialState = {
   user: null,
@@ -13,7 +11,7 @@ const initialState = {
 
 export const signup = createAsyncThunk('auth/signup', async (userData, { rejectWithValue }) => {
   try {
-    const response = await axios.post(`${API_URL}/signup`, userData);
+    const response = await api.post(`/auth/signup`, userData);
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response.data);
@@ -22,7 +20,7 @@ export const signup = createAsyncThunk('auth/signup', async (userData, { rejectW
 
 export const login = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
   try {
-    const response = await axios.post(`${API_URL}/login`, credentials);
+    const response = await api.post(`/auth/login`, credentials);
     Cookies.set('token', response.data.token, { expires: 7, path: '' });
     return response.data;
   } catch (error) {
@@ -32,10 +30,20 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
 
 export const verify = createAsyncThunk('auth/verify', async ({ email, verificationCode }, { rejectWithValue }) => {
   try {
-    const response = await axios.post(`${API_URL}/verify`, { email, verificationCode });
+    const response = await api.post(`/auth/verify`, { email, verificationCode });
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response.data);
+  }
+});
+
+export const logoutAsync = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
+  try {
+    await api.post(`/auth/logout`);
+    Cookies.remove('token');
+    return true;
+  } catch (error) {
+    return rejectWithValue('Logout failed.');
   }
 });
 
@@ -84,6 +92,14 @@ const authSlice = createSlice({
       })
       .addCase(verify.rejected, (state, action) => {
         state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(logoutAsync.fulfilled, (state) => {
+        state.user = null;
+        state.token = null;
+        state.error = null;
+      })
+      .addCase(logoutAsync.rejected, (state, action) => {
         state.error = action.payload;
       });
   },
