@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RequestMapping("/auth")
 @RestController
 public class AuthenticationController {
@@ -42,14 +44,16 @@ public class AuthenticationController {
         // Set token in HttpOnly cookie
         ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwtToken)
                 .httpOnly(true)
-                .secure(false) // Set to true in production
+                .secure(true) // Set to true in production
                 .path("/")
+                .sameSite("None")
                 .maxAge(24 * 60 * 60) // 1 day
                 .build();
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .body("Login successful");
+                //.body("Login successful");
+                .body(Map.of("token", jwtToken, "message", "Login successful"));
     }
 
     @PostMapping("/verify")

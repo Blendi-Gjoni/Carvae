@@ -1,20 +1,18 @@
 import axios from 'axios';
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 
-const API_BASE_URL = 'http://localhost:3000'; // Adjust based on your backend setup
-
-const getToken = () => {
-    return Cookies.get('token') || localStorage.getItem('token');
-};
+const API_BASE_URL = 'http://localhost:8080'; // Adjust based on your backend setup
 
 const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
     headers: { 'Content-Type': 'application/json' },
+    withCredentials: true, // Enable sending cookies with requests
 });
+
 
 axiosInstance.interceptors.request.use(
     (config) => {
-        const token = getToken();
+        const token = Cookies.get('token') || null;
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
         }
@@ -69,6 +67,18 @@ const ApiService = {
             throw error;
         }
     },
+
+    // Fetch all features
+    getAllFeatures: async () => {
+        try {
+            const response = await axiosInstance.get('/features');
+            return response.data;  // Adjust the endpoint based on your backend
+        } catch (error) {
+            console.error('Error fetching features:', error.response?.data || error.message);
+            throw error;
+        }
+    },
+
 };
 
 export default ApiService;

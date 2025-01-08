@@ -74,7 +74,20 @@ const AddCarForm = () => {
         setCarData({ ...carData, [name]: value });
     };
 
-    // Handle feature selection changes
+    // Fetch features on component mount
+    useEffect(() => {
+        const fetchFeatures = async () => {
+            try {
+                const featuresData = await ApiService.getAllFeatures();  // Assuming you have an API to get features
+                setFeatures(featuresData);
+            } catch (error) {
+                console.error('Error fetching features:', error);
+            }
+        };
+        fetchFeatures();
+    }, []);
+
+// Handle feature selection changes
     const handleFeatureChange = (e) => {
         const value = parseInt(e.target.value, 10);
         setSelectedFeatures((prev) =>
@@ -362,7 +375,7 @@ const AddCarForm = () => {
                                     className="form-select"
                                     id="features"
                                     name="features"
-                                    value={carData.features}
+                                    value={selectedFeatures}  // Make sure you're using `selectedFeatures`
                                     onChange={handleFeatureChange}
                                     required
                                 >
@@ -374,6 +387,7 @@ const AddCarForm = () => {
                                 </select>
                                 <small className="text-muted">Hold Ctrl/Cmd to select multiple features</small>
                             </div>
+
                         </div>
                     </div>
                 </div>
