@@ -21,7 +21,13 @@ export const signup = createAsyncThunk('auth/signup', async (userData, { rejectW
 export const login = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
   try {
     const response = await api.post(`/auth/login`, credentials);
-    Cookies.set('token', response.data.token, { expires: 7, path: '' });
+    Cookies.set('token', response.data.token, {
+      expires: 7,
+      path: '/',
+      sameSite: 'None',
+      secure: true,
+    });
+    console.log('Login response token:', response.data.token);
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response.data);

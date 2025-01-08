@@ -18,7 +18,12 @@ public class Model {
     @Column(name = "name", nullable = false)
     private String name;
 
-    public Model(String name) {
+    @ManyToOne
+    @JoinColumn(name = "brandId", nullable = false)
+    private Brand brand;
+
+    public Model(String name, Brand brand) {
         this.name = name;
+        this.brand = brand;
     }
 }

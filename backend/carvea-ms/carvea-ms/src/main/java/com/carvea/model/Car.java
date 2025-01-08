@@ -18,10 +18,6 @@ public class Car {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "brandId", nullable = false)
-    private Brand brand;
-
-    @ManyToOne
     @JoinColumn(name = "modelId", nullable = false)
     private Model model;
 
@@ -70,11 +66,10 @@ public class Car {
     )
     private List<Features> features;
 
-    public Car(Brand brand, Model model, int year, double price, double rentPrice,
+    public Car(Model model, int year, double price, double rentPrice,
                int horsepower, double kilometers, String description,
                String exterior, String interior, String fuelType, String transmission,
                String engine, Category category, List<Features> features) {
-        this.brand = brand;
         this.model = model;
         this.year = year;
         this.price = price;
@@ -90,5 +85,21 @@ public class Car {
         this.category = category;
         this.features = features;
     }
+
+    public double calculateDepreciation(double depreciationRate) {
+        int currentYear = java.time.Year.now().getValue();
+        int age = currentYear - year;
+        return price - (price * depreciationRate * age);
+    }
+
+    public static int compareByPrice(Car car1, Car car2) {
+        return Double.compare(car1.getPrice(), car2.getPrice());
+    }
+
+    public boolean isAvailableForRent() {
+        return kilometers < 100000; // Example condition: cars with mileage under 100,000 are rentable
+    }
+
+
 
 }

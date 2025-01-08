@@ -24,4 +24,14 @@ public class Brand {
     public Brand(String name) {
         this.name = name;
     }
+
+    public String displayBrandInfo() {
+        return "Brand Name: " + name +
+                (id != null ? ", ID: " + id : "");
+    }
+
+    public boolean isValid() {
+        return name != null && !name.trim().isEmpty();
+    }
+
 }

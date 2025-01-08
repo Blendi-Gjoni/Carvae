@@ -18,7 +18,7 @@ public class FeaturesController {
         this.featuresService = featuresService;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<Features>> getAllFeatures() {
         List<Features> features = featuresService.getAllFeatures();
         return ResponseEntity.ok(features);
