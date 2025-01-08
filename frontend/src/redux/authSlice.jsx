@@ -27,7 +27,6 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
       sameSite: 'None',
       secure: true,
     });
-    console.log('Login response token:', response.data.token);
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response.data);
