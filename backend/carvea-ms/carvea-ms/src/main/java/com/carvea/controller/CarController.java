@@ -25,6 +25,9 @@ public class CarController {
 
     @PostMapping("/add")
     public ResponseEntity<CarDto> addCar(@RequestBody CarDto carDto) {
+        if (carDto.getModelId() == null || carDto.getCategoryId() == null || carDto.getFeatures() == null) {
+            return ResponseEntity.badRequest().body(carDto); // Return 400 Bad Request
+        }
         carService.addCar(carDto);
         return ResponseEntity.ok(carDto);
     }

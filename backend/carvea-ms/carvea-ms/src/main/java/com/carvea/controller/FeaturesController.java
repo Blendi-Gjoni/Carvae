@@ -1,5 +1,6 @@
 package com.carvea.controller;
 
+import com.carvea.dto.FeaturesDto;
 import com.carvea.model.Features;
 import com.carvea.service.FeaturesService;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,8 @@ public class FeaturesController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Features>> getAllFeatures() {
-        List<Features> features = featuresService.getAllFeatures();
+    public ResponseEntity<List<FeaturesDto>> getAllFeatures() {
+        List<FeaturesDto> features = featuresService.getAllFeatures();
         return ResponseEntity.ok(features);
     }
 }

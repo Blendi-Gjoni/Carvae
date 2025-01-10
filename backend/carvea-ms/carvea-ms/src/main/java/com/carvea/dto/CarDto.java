@@ -19,7 +19,6 @@ public class CarDto {
     private String interior;
     private String fuelType;
     private String transmission;
-    private String engine;
     private Long categoryId;    // Maps to "categoryId" in JSON
-    private List<Long> featuresId; // Maps to "featuresId" in JSON
+    private List<Long> features; // Maps to "features" in JSON
 }

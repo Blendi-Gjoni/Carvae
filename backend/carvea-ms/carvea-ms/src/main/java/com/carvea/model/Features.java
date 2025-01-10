@@ -1,6 +1,7 @@
 package com.carvea.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class Features {
     @Column(name = "description", nullable = false)
     private String description;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "features")
     private List<Car> cars;
 
