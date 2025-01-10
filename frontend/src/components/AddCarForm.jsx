@@ -5,6 +5,7 @@ const AddCarForm = () => {
     const [brands, setBrands] = useState([]);
     const [models, setModels] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [selectedCategoryId, setselectedCategoryId] = useState([]);
     const [features, setFeatures] = useState([]);
     const [selectedBrandId, setSelectedBrandId] = useState('');
     const [selectedFeatures, setSelectedFeatures] = useState([]);
@@ -20,9 +21,8 @@ const AddCarForm = () => {
         interior: '',
         fuelType: '',
         transmission: '',
-        engine: '',
         categoryId: '',
-        featuresId: [],
+        features: [],
     });
 
     // Fetch brands on component mount
@@ -79,6 +79,7 @@ const AddCarForm = () => {
         const fetchFeatures = async () => {
             try {
                 const featuresData = await ApiService.getAllFeatures();  // Assuming you have an API to get features
+                console.log(featuresData);
                 setFeatures(featuresData);
             } catch (error) {
                 console.error('Error fetching features:', error);
@@ -106,37 +107,42 @@ const AddCarForm = () => {
             alert("Please select a brand.");
             return;
         }
+        if(!selectedCategoryId){
+            alert("Please select a category");
+            return;
+        }
+
         if (!carData.modelId) {
             alert("Please select a model.");
             return;
         }
 
+        const carDataWithNumbers = {
+            ...carData,
+            modelId: +carData.modelId,  // Converts to number
+            categoryId: +carData.categoryId, // Converts to number
+            features: selectedFeatures,
+            // Add other fields as needed
+        };
+
         try {
-            const car = {
-                ...carData,
-                features: selectedFeatures,
-            };
+            // Call the addCar method from ApiService
+            const response = await ApiService.addCar(carDataWithNumbers);
 
-            const response = await fetch('/api/cars', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(car),
-            });
-
-            if (response.ok) {
-                alert("Car successfully added!");
-                // Reset form or handle post-success logic
-            } else {
-                const errorData = await response.json();
-                alert(`Failed to add car: ${errorData.message}`);
-            }
+            alert("Car successfully added!");
+            // Optionally reset the form or perform other post-success actions
         } catch (error) {
             console.error("Error submitting form:", error);
-            alert("An error occurred while adding the car.");
+            alert(`An error occurred while adding the car: ${error.response?.data?.message || error.message}`);
         }
     };
+
+    useEffect(() => {
+        setCarData((prevData) => ({
+            ...prevData,
+            categoryId: selectedCategoryId,
+        }));
+    }, [selectedCategoryId]);
 
 
 
@@ -188,6 +194,25 @@ const AddCarForm = () => {
                                     ))}
                                 </select>
                                 <label htmlFor="modelId">Model</label>
+                            </div>
+
+                            {/* Category*/}
+                            <div className="form-floating mb-3">
+                                <select
+                                    className="form-select"
+                                    id="categoryId"
+                                    value={selectedCategoryId}
+                                    onChange={(e) => setselectedCategoryId(e.target.value)}
+                                    required
+                                >
+                                    <option value="">Select a category</option>
+                                    {categories.map((category) => (
+                                        <option key={category.id} value={category.id}>
+                                            {category.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <label htmlFor="categoryId">Category</label>
                             </div>
 
                             {/* Year */}
@@ -289,6 +314,22 @@ const AddCarForm = () => {
                                 />
                                 <label htmlFor="fuelType">Fuel Type</label>
                             </div>
+
+                            {/* Transmission */}
+                            <div className="form-floating mb-3">
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="transmission"
+                                name="transmission"
+                                value={carData.transmission}
+                                onChange={handleChange}
+                                required
+                                placeholder="Transmission"
+                                style={{ height: "100px" }}
+                            />
+                                <label htmlFor="transmission">Transmission</label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -304,9 +345,9 @@ const AddCarForm = () => {
                             <div className="form-floating mb-3">
                                 <select
                                     className="form-select"
-                                    id="exteriorColor"
-                                    name="exteriorColor"
-                                    value={carData.exteriorColor}
+                                    id="exterior"
+                                    name="exterior"
+                                    value={carData.exterior}
                                     onChange={handleChange}
                                     required
                                 >
@@ -324,9 +365,9 @@ const AddCarForm = () => {
                             <div className="form-floating mb-3">
                                 <select
                                     className="form-select"
-                                    id="interiorColor"
-                                    name="interiorColor"
-                                    value={carData.interiorColor}
+                                    id="interior"
+                                    name="interior"
+                                    value={carData.interior}
                                     onChange={handleChange}
                                     required
                                 >
@@ -367,40 +408,43 @@ const AddCarForm = () => {
 
                             {/* Features */}
                             <div className="mb-3">
-                                <label htmlFor="features" className="form-label">
-                                    Features
-                                </label>
-                                <select
-                                    multiple
-                                    className="form-select"
-                                    id="features"
-                                    name="features"
-                                    value={selectedFeatures}  // Make sure you're using `selectedFeatures`
-                                    onChange={handleFeatureChange}
-                                    required
-                                >
+                                <label htmlFor="features" className="form-label">Select Features:</label>
+                                <div className="form-check">
                                     {features.map((feature) => (
-                                        <option key={feature.id} value={feature.id}>
-                                            {feature.name}
-                                        </option>
+                                        <div key={feature.id}>
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                id={`feature-${feature.id}`}
+                                                value={feature.id}
+                                                checked={selectedFeatures.includes(feature.id)}
+                                                onChange={handleFeatureChange}
+                                            />
+                                            <label
+                                                htmlFor={`feature-${feature.id}`}
+                                                className="form-check-label"
+                                            >
+                                                {feature.name}
+                                            </label>
+                                        </div>
                                     ))}
-                                </select>
-                                <small className="text-muted">Hold Ctrl/Cmd to select multiple features</small>
+                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="text-center mt-4">
-                <button type="submit" className="btn btn-primary" style={{ backgroundColor: '#cf0209', color: 'white' }}>
-                    Submit
-                </button>
+            {/* Submit Button */}
+            <div className="row">
+                <div className="col-12 text-center mt-4">
+                    <button type="submit" className="btn btn-primary px-5 py-2">
+                        Add Car
+                    </button>
+                </div>
             </div>
         </form>
     );
-
 
 
 };

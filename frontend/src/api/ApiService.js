@@ -46,6 +46,16 @@ const ApiService = {
         }
     },
 
+    addCar: async (car) => {
+        try {
+            const response = await axiosInstance.post('/car/add', car); // Use axiosInstance for the request
+            return response.data; // Return the actual response data
+        } catch (error) {
+            console.error('Error adding car:', error.response?.data || error.message);
+            throw error; // Rethrow the error to handle it in the calling function
+        }
+    },
+
     // Fetch all categories
     getAllCategories: async () => {
         try {

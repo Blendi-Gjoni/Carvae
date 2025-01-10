@@ -51,8 +51,6 @@ public class Car {
     @Column(name = "transmission", nullable = false)
     private String transmission;
 
-    @Column(name = "engine", nullable = false)
-    private String engine;
 
     @ManyToOne
     @JoinColumn(name = "categoryId", nullable = false)
@@ -69,7 +67,7 @@ public class Car {
     public Car(Model model, int year, double price, double rentPrice,
                int horsepower, double kilometers, String description,
                String exterior, String interior, String fuelType, String transmission,
-               String engine, Category category, List<Features> features) {
+               Category category, List<Features> features) {
         this.model = model;
         this.year = year;
         this.price = price;
@@ -81,7 +79,6 @@ public class Car {
         this.interior = interior;
         this.fuelType = fuelType;
         this.transmission = transmission;
-        this.engine = engine;
         this.category = category;
         this.features = features;
     }

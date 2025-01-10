@@ -31,11 +31,18 @@ public class CarService {
 
     public Car addCar(CarDto carDTO) {
         // Fetch related entities by their IDs
+        if(carDTO.getModelId() == null){
+            throw new IllegalArgumentException("The Model ID must not be null");
+        }
         Model model = modelRepository.findById(carDTO.getModelId())
                 .orElseThrow(() -> new RuntimeException("Model not found with ID: " + carDTO.getModelId()));
+
+        if(carDTO.getCategoryId() == null){
+            throw new IllegalArgumentException("The Category ID must not be null");
+        }
         Category category = categoryRepository.findById(carDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + carDTO.getCategoryId()));
-        List<Features> features = featuresRepository.findAllById(carDTO.getFeaturesId());
+        List<Features> features = featuresRepository.findAllById(carDTO.getFeatures());
 
         // Create the Car entity
         Car car = new Car(
@@ -50,7 +57,6 @@ public class CarService {
                 carDTO.getInterior(),
                 carDTO.getFuelType(),
                 carDTO.getTransmission(),
-                carDTO.getEngine(),
                 category,
                 features
         );
