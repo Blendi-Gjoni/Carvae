@@ -25,9 +25,10 @@ public class Features {
     @Column(name = "description", nullable = false)
     private String description;
 
+    @ManyToMany(mappedBy = "features", fetch = FetchType.EAGER)
     @JsonIgnore
-    @ManyToMany(mappedBy = "features")
     private List<Car> cars;
+
 
     public Features(String name, String description) {
         this.name = name;

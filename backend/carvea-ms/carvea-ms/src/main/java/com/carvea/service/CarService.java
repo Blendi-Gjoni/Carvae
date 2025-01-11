@@ -1,10 +1,7 @@
 package com.carvea.service;
 
 import com.carvea.dto.CarDto;
-import com.carvea.model.Car;
-import com.carvea.model.Category;
-import com.carvea.model.Features;
-import com.carvea.model.Model;
+import com.carvea.model.*;
 import com.carvea.repository.CarRepository;
 import com.carvea.repository.CategoryRepository;
 import com.carvea.repository.FeaturesRepository;
@@ -29,39 +26,50 @@ public class CarService {
     @Autowired
     private FeaturesRepository featuresRepository;
 
-    public Car addCar(CarDto carDTO) {
-        // Fetch related entities by their IDs
-        if(carDTO.getModelId() == null){
-            throw new IllegalArgumentException("The Model ID must not be null");
+    public Car addCar(CarDto carDto) {
+        Model model = modelRepository.findById(carDto.getModelId())
+                .orElseThrow(() -> new RuntimeException("Model not found"));
+
+        Category category = categoryRepository.findById(carDto.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        List<Features> features = featuresRepository.findAllById(carDto.getFeatures());
+
+        Car car;
+
+        // Validation for RentalCar
+        if ("RENTAL".equalsIgnoreCase(carDto.getCarType())) {
+            if (carDto.getPrice() == null) {
+                throw new IllegalArgumentException("Monthly payment is required for RentalCar");
+            }
+            RentalCar rentalCar = new RentalCar();
+            rentalCar.setMonthlyPayment(carDto.getPrice());  // Set BigDecimal price
+            car = rentalCar;
         }
-        Model model = modelRepository.findById(carDTO.getModelId())
-                .orElseThrow(() -> new RuntimeException("Model not found with ID: " + carDTO.getModelId()));
-
-        if(carDTO.getCategoryId() == null){
-            throw new IllegalArgumentException("The Category ID must not be null");
+        // Validation for DealershipCar
+        else if ("DEALERSHIP".equalsIgnoreCase(carDto.getCarType())) {
+            if (carDto.getPrice() == null) {
+                throw new IllegalArgumentException("Full price is required for DealershipCar");
+            }
+            DealershipCar dealershipCar = new DealershipCar();
+            dealershipCar.setFullPrice(carDto.getPrice());  // Set BigDecimal price
+            car = dealershipCar;
+        } else {
+            throw new IllegalArgumentException("Invalid car type: " + carDto.getCarType());
         }
-        Category category = categoryRepository.findById(carDTO.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + carDTO.getCategoryId()));
-        List<Features> features = featuresRepository.findAllById(carDTO.getFeatures());
 
-        // Create the Car entity
-        Car car = new Car(
-                model,
-                carDTO.getYear(),
-                carDTO.getPrice(),
-                carDTO.getRentPrice(),
-                carDTO.getHorsepower(),
-                carDTO.getKilometers(),
-                carDTO.getDescription(),
-                carDTO.getExterior(),
-                carDTO.getInterior(),
-                carDTO.getFuelType(),
-                carDTO.getTransmission(),
-                category,
-                features
-        );
+        car.setModel(model);
+        car.setYear(carDto.getYear());
+        car.setHorsepower(carDto.getHorsepower());
+        car.setKilometers(carDto.getKilometers());
+        car.setDescription(carDto.getDescription());
+        car.setExterior(carDto.getExterior());
+        car.setInterior(carDto.getInterior());
+        car.setFuelType(carDto.getFuelType());
+        car.setTransmission(carDto.getTransmission());
+        car.setCategory(category);
+        car.setFeatures(features);
 
-        // Save to the database
         return carRepository.save(car);
     }
 }
