@@ -56,7 +56,7 @@ public class Car {
     @JoinColumn(name = "categoryId", nullable = false)
     private Category category;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "car_feature",
             joinColumns = @JoinColumn(name = "car_id"),

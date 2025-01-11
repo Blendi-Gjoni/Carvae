@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ApiService from '../api/ApiService';
+import AddCarApiService from '../api/AddCarApiService';
 
 const AddCarForm = () => {
     const [brands, setBrands] = useState([]);
@@ -29,7 +29,7 @@ const AddCarForm = () => {
     useEffect(() => {
         const fetchBrands = async () => {
             try {
-                const brandData = await ApiService.getAllBrands();
+                const brandData = await AddCarApiService.getAllBrands();
                 setBrands(brandData);
             } catch (error) {
                 console.error('Error fetching brands:', error);
@@ -42,7 +42,7 @@ const AddCarForm = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const categoriesData = await ApiService.getAllCategories();
+                const categoriesData = await AddCarApiService.getAllCategories();
                 setCategories(categoriesData);
             } catch (error) {
                 console.error('Error fetching categories:', error);
@@ -56,7 +56,7 @@ const AddCarForm = () => {
         const fetchModels = async () => {
             if (selectedBrandId) {
                 try {
-                    const modelData = await ApiService.getModelsByBrandId(selectedBrandId);
+                    const modelData = await AddCarApiService.getModelsByBrandId(selectedBrandId);
                     setModels(modelData);
                 } catch (error) {
                     console.error('Error fetching models:', error);
@@ -78,7 +78,7 @@ const AddCarForm = () => {
     useEffect(() => {
         const fetchFeatures = async () => {
             try {
-                const featuresData = await ApiService.getAllFeatures();  // Assuming you have an API to get features
+                const featuresData = await AddCarApiService.getAllFeatures();  // Assuming you have an API to get features
                 console.log(featuresData);
                 setFeatures(featuresData);
             } catch (error) {
@@ -126,8 +126,8 @@ const AddCarForm = () => {
         };
 
         try {
-            // Call the addCar method from ApiService
-            const response = await ApiService.addCar(carDataWithNumbers);
+            // Call the addCar method from AddCarApiService
+            const response = await AddCarApiService.addCar(carDataWithNumbers);
 
             alert("Car successfully added!");
             // Optionally reset the form or perform other post-success actions
