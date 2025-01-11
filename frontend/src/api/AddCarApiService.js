@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Cookies from "js-cookie";
 
-const API_BASE_URL = 'http://localhost:8080'; // Adjust based on your backend setup
+const API_BASE_URL = 'http://localhost:8080';
 
 const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
@@ -23,7 +23,7 @@ axiosInstance.interceptors.request.use(
     }
 );
 
-const ApiService = {
+const AddCarApiService = {
     // Fetch all models by brand ID
     getModelsByBrandId: async (brandId) => {
         try {
@@ -91,4 +91,4 @@ const ApiService = {
 
 };
 
-export default ApiService;
+export default AddCarApiService;
