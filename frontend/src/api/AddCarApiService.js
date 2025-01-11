@@ -35,6 +35,16 @@ const AddCarApiService = {
         }
     },
 
+    getCarsByType: async(carType) => {
+        try{
+            const response = await axiosInstance.get(`/car/type?carType=${carType}`);
+            return response;
+        }catch(error){
+            console.error('Error fetching cars: ', error.response?.data || error.message);
+            throw error;
+        }
+    },
+
     // Fetch a specific brand by ID
     getBrandById: async (brandId) => {
         try {

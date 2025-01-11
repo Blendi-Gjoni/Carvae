@@ -28,4 +28,10 @@ public class CarController {
         Car car = carService.addCar(carDto);
         return ResponseEntity.ok(car);
     }
+
+    @GetMapping("/type")
+    public ResponseEntity<List<Car>> getCarsByType(@RequestParam String carType){
+        List<Car> cars = carService.getCarsByType(carType);
+        return ResponseEntity.ok(cars);
+    }
 }
