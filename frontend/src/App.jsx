@@ -9,8 +9,7 @@ import Login from './pages/Login';
 import store from './redux/store';
 import AdminLayout from './components/layouts/AdminLayout';
 import AdminPage from './pages/admin/AdminPage';
-import AddCarForm from "./components/AddCarForm";
-import React from "react";
+import UsersDashboard from './pages/admin/UsersDashboard';
 
 function App() {
   return (
@@ -22,6 +21,7 @@ function App() {
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="page" element={<AdminPage />} /> {/* Admin Home (Dashboard) */}
+          <Route path="users" element={<UsersDashboard />} />
         </Route>
       </Routes>
     </Provider>

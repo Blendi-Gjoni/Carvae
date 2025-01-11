@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import Sidebar from '../sidebar/Sidebar';
 import DashboardHeader from '../dashboardheader/DashboardHeader';
 import '../../style/AdminLayout.css';
@@ -11,11 +12,11 @@ const AdminLayout = ({ children }) => {
   };
 
   return (
-    <div className={`admin-layout ${isSidebarVisible ? 'body-pd' : ''}`}>
+    <div className="admin-layout">
       <DashboardHeader toggleSidebar={toggleSidebar} />
       <Sidebar isSidebarVisible={isSidebarVisible} />
       <main className={`admin-main-content ${isSidebarVisible ? 'show-content' : ''}`}>
-        {children}
+        <Outlet />
       </main>
     </div>
   );
