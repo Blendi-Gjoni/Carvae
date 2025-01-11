@@ -5,13 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "car_type")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Car {
+public abstract class Car {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,12 +26,6 @@ public class Car {
 
     @Column(name = "year", nullable = false)
     private int year;
-
-    @Column(name = "price", nullable = false)
-    private double price;
-
-    @Column(name = "rentPrice", nullable = false)
-    private double rentPrice;
 
     @Column(name = "horsepower", nullable = false)
     private int horsepower;
@@ -51,7 +48,6 @@ public class Car {
     @Column(name = "transmission", nullable = false)
     private String transmission;
 
-
     @ManyToOne
     @JoinColumn(name = "categoryId", nullable = false)
     private Category category;
@@ -64,39 +60,17 @@ public class Car {
     )
     private List<Features> features;
 
-    public Car(Model model, int year, double price, double rentPrice,
-               int horsepower, double kilometers, String description,
-               String exterior, String interior, String fuelType, String transmission,
-               Category category, List<Features> features) {
-        this.model = model;
-        this.year = year;
-        this.price = price;
-        this.rentPrice = rentPrice;
-        this.horsepower = horsepower;
-        this.kilometers = kilometers;
-        this.description = description;
-        this.exterior = exterior;
-        this.interior = interior;
-        this.fuelType = fuelType;
-        this.transmission = transmission;
-        this.category = category;
-        this.features = features;
+    @Transient
+    private PricingStrategy pricingStrategy;
+
+    public abstract BigDecimal getPrice();
+
+    public void setPricingStrategy(PricingStrategy pricingStrategy) {
+        this.pricingStrategy = pricingStrategy;
     }
 
-    public double calculateDepreciation(double depreciationRate) {
-        int currentYear = java.time.Year.now().getValue();
-        int age = currentYear - year;
-        return price - (price * depreciationRate * age);
+    public BigDecimal calculatePrice() {
+        return pricingStrategy.calculatePrice(this);
     }
-
-    public static int compareByPrice(Car car1, Car car2) {
-        return Double.compare(car1.getPrice(), car2.getPrice());
-    }
-
-    public boolean isAvailableForRent() {
-        return kilometers < 100000; // Example condition: cars with mileage under 100,000 are rentable
-    }
-
-
 
 }
