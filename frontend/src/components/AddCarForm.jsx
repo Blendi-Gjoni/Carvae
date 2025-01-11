@@ -12,8 +12,7 @@ const AddCarForm = () => {
     const [carData, setCarData] = useState({
         modelId: '',
         year: '',
-        price: '',
-        rentPrice: '',
+        price: '', // Unified price field for both car types
         horsepower: '',
         kilometers: '',
         description: '',
@@ -23,6 +22,7 @@ const AddCarForm = () => {
         transmission: '',
         categoryId: '',
         features: [],
+        carType: '', // New field for car type
     });
 
     // Fetch brands on component mount
@@ -114,6 +114,14 @@ const AddCarForm = () => {
 
         if (!carData.modelId) {
             alert("Please select a model.");
+            return;
+        }
+        if (!carData.carType) {
+            alert("Please select a car type.");
+            return;
+        }
+        if (!carData.price) {
+            alert("Price is required.");
             return;
         }
 
@@ -255,21 +263,6 @@ const AddCarForm = () => {
                             <h5>Specifications</h5>
                         </div>
                         <div className="card-body">
-                            {/* Rent Price */}
-                            <div className="form-floating mb-3">
-                                <input
-                                    type="number"
-                                    className="form-control"
-                                    id="rentPrice"
-                                    name="rentPrice"
-                                    value={carData.rentPrice}
-                                    onChange={handleChange}
-                                    required
-                                    placeholder="Rent Price"
-                                />
-                                <label htmlFor="rentPrice">Rent Price</label>
-                            </div>
-
                             {/* Horsepower */}
                             <div className="form-floating mb-3">
                                 <input
@@ -302,33 +295,25 @@ const AddCarForm = () => {
 
                             {/* Fuel Type */}
                             <div className="form-floating mb-3">
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="fuelType"
-                                    name="fuelType"
-                                    value={carData.fuelType}
-                                    onChange={handleChange}
-                                    required
-                                    placeholder="Fuel Type"
-                                />
-                                <label htmlFor="fuelType">Fuel Type</label>
+                                <select className="form-select" id="fuelType" name="fuelType" value={carData.fuelType}
+                                        onChange={handleChange} required>
+                                    <option value="">Select Fuel Type</option>
+                                    <option value="Petrol">Petrol</option>
+                                    <option value="Diesel">Diesel</option>
+                                    <option value="Electric">Electric</option>
+                                    <option value="Hybrid">Hybrid</option>
+                                </select>
+
                             </div>
 
                             {/* Transmission */}
                             <div className="form-floating mb-3">
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="transmission"
-                                name="transmission"
-                                value={carData.transmission}
-                                onChange={handleChange}
-                                required
-                                placeholder="Transmission"
-                                style={{ height: "100px" }}
-                            />
-                                <label htmlFor="transmission">Transmission</label>
+                                <select className="form-select" id="transmission" name="transmission" value={carData.transmission}
+                                        onChange={handleChange} required>
+                                    <option value="">Select Transmission</option>
+                                    <option value="Petrol">Manual</option>
+                                    <option value="Diesel">Automatic</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -337,7 +322,7 @@ const AddCarForm = () => {
                 {/* Exterior and Interior Colors */}
                 <div className="col-md-6">
                     <div className="card shadow-sm h-100">
-                        <div className="card-header" style={{ backgroundColor: '#cf0209', color: 'white' }}>
+                        <div className="card-header" style={{backgroundColor: '#cf0209', color: 'white'}}>
                             <h5>Colors</h5>
                         </div>
                         <div className="card-body">
@@ -387,7 +372,7 @@ const AddCarForm = () => {
                 {/* Description and Features */}
                 <div className="col-md-6">
                     <div className="card shadow-sm h-100">
-                        <div className="card-header" style={{ backgroundColor: '#cf0209', color: 'white' }}>
+                        <div className="card-header" style={{backgroundColor: '#cf0209', color: 'white'}}>
                             <h5>Description & Features</h5>
                         </div>
                         <div className="card-body">
@@ -401,7 +386,7 @@ const AddCarForm = () => {
                                 onChange={handleChange}
                                 required
                                 placeholder="Description"
-                                style={{ height: "100px" }}
+                                style={{height: "100px"}}
                             ></textarea>
                                 <label htmlFor="description">Description</label>
                             </div>
@@ -409,7 +394,7 @@ const AddCarForm = () => {
                             {/* Features */}
                             <div className="mb-3">
                                 <label htmlFor="features" className="form-label">Select Features:</label>
-                                <div className="form-check">
+                                <div className="form-check" style={{maxHeight: '170px', overflowY: 'auto'}}>
                                     {features.map((feature) => (
                                         <div key={feature.id}>
                                             <input
@@ -420,16 +405,30 @@ const AddCarForm = () => {
                                                 checked={selectedFeatures.includes(feature.id)}
                                                 onChange={handleFeatureChange}
                                             />
-                                            <label
-                                                htmlFor={`feature-${feature.id}`}
-                                                className="form-check-label"
-                                            >
+                                            <label htmlFor={`feature-${feature.id}`} className="form-check-label">
                                                 {feature.name}
                                             </label>
                                         </div>
                                     ))}
                                 </div>
                             </div>
+                        </div>
+                        {/* Car Type */}
+                        <div className="form-floating mb-3">
+                            <select
+                                className="form-select"
+                                id="carType"
+                                name="carType"
+                                value={carData.carType}
+                                onChange={handleChange}
+                                required
+                            >
+                            <option value=""></option>
+                                <option value="DEALERSHIP">Dealership</option>
+                                <option value="RENTAL">Rental</option>
+
+                            </select>
+                            <label htmlFor="interiorColor">Car Type</label>
                         </div>
                     </div>
                 </div>
