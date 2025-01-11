@@ -26,11 +26,11 @@ const Sidebar = ({ isSidebarVisible }) => {
           <button className="nav-logo" aria-label="Dashboard Logo">
           </button>
           <div className="nav-list">
-            <button className="nav-link active" onClick={() => navigate('/dashboard')}>
+            <button className="nav-link" onClick={() => navigate('/admin/page')}>
               <FaTachometerAlt className="nav-icon" />
               <span className="nav-name">Dashboard</span>
             </button>
-            <button className="nav-link" onClick={() => navigate('/users')}>
+            <button className="nav-link" onClick={() => navigate('/admin/users')}>
               <FaUsers className="nav-icon" />
               <span className="nav-name">Users</span>
             </button>
