@@ -2,7 +2,7 @@ import api from '../utils/api';
 
 const OrderApiService = {
 
-    getOrder: async () => {
+    getAllOrders: async () => {
         try {
             const response = await api.get('orders');
             return response.data;
@@ -50,6 +50,26 @@ const OrderApiService = {
             console.error('Error adding order: ', error.response?.data || error.message); throw error;
         }
     },
+
+    updateOrder: async (id, order) => {
+        try {
+            const response = await api.put(`/orders/${id}`, order);
+            return response.data;
+        } catch (error) {
+            console.error(`Error updating order with ID: ${id}`, error);
+            throw error;
+        }
+    },
+
+    deleteOrder: async (id) => {
+        try {
+            const response = await api.delete(`/orders/${id}`);
+            return response.data;
+        } catch (error) {
+            console.error(`Error deleting order with ID: ${id}`, error);
+            throw error;
+        }
+    }
 
 };
 export default OrderApiService;

@@ -1,6 +1,7 @@
 package com.carvea.service;
 
 import com.carvea.dto.CarDto;
+import com.carvea.mapper.CarMapper;
 import com.carvea.model.*;
 import com.carvea.repository.CarRepository;
 import com.carvea.repository.CategoryRepository;
@@ -25,6 +26,9 @@ public class CarService {
 
     @Autowired
     private FeaturesRepository featuresRepository;
+
+    @Autowired
+    private CarMapper carMapper;
 
     public Car addCar(CarDto carDto) {
         Model model = modelRepository.findById(carDto.getModelId())
@@ -83,8 +87,25 @@ public class CarService {
         }
     }
 
+    public Car updateCar(Long id, CarDto carDto) {
+        Car existingCar = carRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Car not found"));
+        carMapper.updateCarFromDto(carDto, existingCar);
+        existingCar.setModel(modelRepository.findById(carDto.getModelId())
+                .orElseThrow(() -> new RuntimeException("Model not found")));
+        existingCar.setCategory(categoryRepository.findById(carDto.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found")));
+        existingCar.setFeatures(featuresRepository.findAllById(carDto.getFeatures()));
+        return carRepository.save(existingCar);
+    }
+
     public Car getCarById(Long carId){
         return carRepository.findById(carId).orElseThrow(() -> new RuntimeException("Car not found"));
+    }
+
+    public void deleteCar(Long id){
+        Car car = carRepository.findById(id).orElseThrow(() -> new RuntimeException("Car not found"));
+        carRepository.delete(car);
     }
 
 }

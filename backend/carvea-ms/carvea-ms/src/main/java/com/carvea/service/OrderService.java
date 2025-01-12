@@ -48,6 +48,23 @@ public class OrderService{
         return orderRepository.save(order);
     }
 
+//    public Order update(Long orderId, OrderDto request) {
+//        Order order = orderRepository.findById(orderId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderId));
+//        if (request.getDeliveryDate() != null) {
+//            order.setDeliveryDate(request.getDeliveryDate());
+//        }
+//        if (request.getStatus() != null) {
+//            order.setStatus(request.getStatus());
+//        }
+//        return orderRepository.save(order);
+//    }
+
+    public void delete(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderId));
+        orderRepository.delete(order);
+    }
 
     public List<Order> getAllOrders() {
         return orderRepository.findAll();

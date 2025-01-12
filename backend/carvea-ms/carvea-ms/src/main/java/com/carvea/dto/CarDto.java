@@ -1,5 +1,6 @@
 package com.carvea.dto;
 
+import com.carvea.model.Features;
 import lombok.Getter;
 import lombok.Setter;
 
