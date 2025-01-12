@@ -10,4 +10,5 @@ import java.time.LocalDateTime;
 public class OrderDto {
     private Long carId;
     private Long userId;
+    private Long dealershipId;
 }

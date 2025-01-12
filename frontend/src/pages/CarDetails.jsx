@@ -1,15 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Button, Container, Row, Col } from 'react-bootstrap';
+import { Button, Container, Row, Col, Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../style/CarDetails.css'; // Import the CSS file for custom styles
 import OrderApiService from '../api/OrderApiService'; // Import the OrderApiService
 import UserApiService from '../api/UserApiService';
-
+import DealershipApiService from '../api/DealershipApiService'; // Import the DealershipApiService
 
 const CarDetails = () => {
     const location = useLocation();
     const { car } = location.state;
+
+    const [dealerships, setDealerships] = useState([]);
+    const [selectedDealership, setSelectedDealership] = useState(null);
+
+    useEffect(() => {
+        fetchDealerships();
+    }, []);
+
+    const fetchDealerships = async () => {
+        try {
+            const data = await DealershipApiService.getAllDealerships();
+            setDealerships(data);
+        } catch (error) {
+            console.error('Error fetching dealerships:', error);
+        }
+    };
 
     const handleOrder = async () => {
         try {
@@ -19,9 +35,9 @@ const CarDetails = () => {
                 throw new Error('User ID not found');
             }
             const order = {
-                carId:
-                car.id,
+                carId: car.id,
                 userId: userId,
+                dealershipId: selectedDealership,
             };
             const response = await OrderApiService.addOrder(order);
             console.log('Order successfully placed:', response);
@@ -42,7 +58,31 @@ const CarDetails = () => {
                         <h5 className="text-light">{car.year} {car.category.name}</h5>
                         <p className="lead">{car.description}</p>
                         {car.carType === 'DEALERSHIP' ? (
-                            <Button variant="light" className="me-2" onClick={handleOrder}>Order</Button>
+                            <>
+                                <Form.Group controlId="dealershipSelect" className="mb-3">
+                                    <Form.Label>Select Dealership</Form.Label>
+                                    <Form.Control
+                                        as="select"
+                                        value={selectedDealership}
+                                        onChange={(e) => setSelectedDealership(e.target.value)}
+                                    >
+                                        <option value="">Choose...</option>
+                                        {dealerships.map((dealership) => (
+                                            <option key={dealership.id} value={dealership.id}>
+                                                {dealership.name}
+                                            </option>
+                                        ))}
+                                    </Form.Control>
+                                </Form.Group>
+                                <Button
+                                    variant="light"
+                                    className="me-2"
+                                    onClick={handleOrder}
+                                    disabled={!selectedDealership}
+                                >
+                                    Order
+                                </Button>
+                            </>
                         ) : (
                             <Button variant="warning" className="me-2">Reserve</Button>
                         )}

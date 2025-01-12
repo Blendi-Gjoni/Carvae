@@ -13,7 +13,10 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-    public OrderController(OrderService orderService) {this.orderService = orderService;}
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Order>> getOrders() {
@@ -44,12 +47,6 @@ public class OrderController {
         Order order = orderService.save(orderRequest);
         return ResponseEntity.ok(order);
     }
-
-//    @PutMapping("/{orderId}")
-//    public ResponseEntity<Order> updateOrder(@PathVariable Long orderId, @RequestBody OrderDto orderRequest) {
-//        Order updatedOrder = orderService.update(orderId, orderRequest);
-//        return ResponseEntity.ok(updatedOrder);
-//    }
 
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Void> deleteOrder(@PathVariable("orderId") Long orderId) {
