@@ -14,6 +14,7 @@ import UsersDashboard from './pages/admin/UsersDashboard';
 import RentalsDashboard from './pages/admin/RentalsDashboard';
 import CarsDashboard from "./pages/admin/CarsDashboard";
 import OrdersDashboard from "./pages/admin/OrdersDashboard";
+import DealershipsDashboard from "./pages/admin/DealershipsDashboard";
 
 function App() {
   return (
@@ -25,11 +26,12 @@ function App() {
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLayout />}>
-            <Route path="page" element={<AdminPage />} /> {/* Admin Home (Dashboard) */}
-            <Route path="users" element={<UsersDashboard />} />
-            <Route path="rentals" element={<RentalsDashboard />} />
-            <Route path="cars" element={<CarsDashboard />} />
-              <Route path="orders" element={<OrdersDashboard />} />
+                <Route path="page" element={<AdminPage />} /> {/* Admin Home (Dashboard) */}
+                <Route path="users" element={<UsersDashboard />} />
+                <Route path="rentals" element={<RentalsDashboard />} />
+                <Route path="cars" element={<CarsDashboard />} />
+                <Route path="orders" element={<OrdersDashboard />} />
+                <Route path="dealerships" element={<DealershipsDashboard />} />
           </Route>
         </Routes>
       </Provider>

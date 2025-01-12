@@ -11,6 +11,7 @@ const OrdersDashboard = () => {
         orderId: '',
         deliveryDate: '',
         status: '',
+        dealership: ''
     });
 
     useEffect(() => {
@@ -77,6 +78,7 @@ const OrdersDashboard = () => {
                 <tr>
                     <th scope="col">Order ID</th>
                     <th scope="col">Car</th>
+                    <th scope="col">Dealership</th>
                     <th scope="col">User</th>
                     <th scope="col">Order Date</th>
                     <th scope="col">Delivery Date</th>
@@ -90,6 +92,7 @@ const OrdersDashboard = () => {
                     <tr key={order.orderId}>
                         <th scope="row">{order.orderId}</th>
                         <td>{order.car.model.name}</td>
+                        <td>{order.dealership.name}</td>
                         <td>{order.user.name}</td>
                         <td>{order.orderDate}</td>
                         <td>{order.deliveryDate}</td>
