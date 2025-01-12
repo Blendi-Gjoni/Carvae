@@ -83,4 +83,8 @@ public class CarService {
         }
     }
 
+    public Car getCarById(Long carId){
+        return carRepository.findById(carId).orElseThrow(() -> new RuntimeException("Car not found"));
+    }
+
 }

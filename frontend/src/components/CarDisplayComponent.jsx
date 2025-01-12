@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, Button, Row, Col } from "react-bootstrap";
+import { useNavigate } from 'react-router-dom';
 import AddCarApiService from "../api/AddCarApiService";
 
 const CarDisplayComponent = () => {
@@ -7,16 +8,22 @@ const CarDisplayComponent = () => {
     const [cars, setCars] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const navigate = useNavigate();
 
     const fetchCars = async (selectedCarType) => {
         try {
             setLoading(true);
             setError("");
-            console.log("Fetching cars for type:", selectedCarType);
 
             const response = await AddCarApiService.getCarsByType(selectedCarType.toUpperCase());
-            console.log("API Response:", response.data);
-            setCars(response.data || []);
+
+            // Ensure carType is included in each car object
+            const carsWithCarType = (response.data || []).map(car => ({
+                ...car,
+                carType: selectedCarType.toUpperCase()
+            }));
+
+            setCars(carsWithCarType);
         } catch (err) {
             console.error("Fetch Cars Error:", err.message || err.response);
             setError("Failed to fetch cars. Please try again.");
@@ -26,10 +33,15 @@ const CarDisplayComponent = () => {
         }
     };
 
+
     const handleCarTypeChange = (event) => {
         const selectedType = event.target.value;
         setCarType(selectedType);
         fetchCars(selectedType);
+    };
+
+    const handleViewDetails = (car) => {
+        navigate('/car-details', { state: { car } });
     };
 
     useEffect(() => {
@@ -81,7 +93,7 @@ const CarDisplayComponent = () => {
                                         <strong>Transmission:</strong> {car.transmission}<br />
                                         <strong>Price:</strong> {carType.toUpperCase() === "RENTAL" ? `${car.price} / month` : `${car.price}`}
                                     </Card.Text>
-                                    <Button variant="primary">View Details</Button>
+                                    <Button variant="primary" onClick={() => handleViewDetails(car)}>View Details</Button>
                                 </Card.Body>
                             </Card>
                         </Col>
@@ -99,4 +111,3 @@ const CarDisplayComponent = () => {
 };
 
 export default CarDisplayComponent;
-

@@ -4,6 +4,7 @@ package com.carvea.controller;
 import com.carvea.dto.CarDto;
 import com.carvea.model.Car;
 import com.carvea.service.CarService;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,12 @@ public class CarController {
     @PostMapping("/add")
     public ResponseEntity<Car> addCar(@RequestBody CarDto carDto) {
         Car car = carService.addCar(carDto);
+        return ResponseEntity.ok(car);
+    }
+
+    @GetMapping("/{carId}")
+    public ResponseEntity<Car> getCarById(@PathVariable Long carId){
+        Car car = carService.getCarById(carId);
         return ResponseEntity.ok(car);
     }
 
