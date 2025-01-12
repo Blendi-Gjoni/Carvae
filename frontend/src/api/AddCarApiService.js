@@ -1,33 +1,10 @@
-import axios from 'axios';
-import Cookies from "js-cookie";
-
-const API_BASE_URL = 'http://localhost:8080';
-
-const axiosInstance = axios.create({
-    baseURL: API_BASE_URL,
-    headers: { 'Content-Type': 'application/json' },
-    withCredentials: true, // Enable sending cookies with requests
-});
-
-
-axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = Cookies.get('token') || null;
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
+import api from '../utils/api';
 
 const AddCarApiService = {
     // Fetch all models by brand ID
     getModelsByBrandId: async (brandId) => {
         try {
-            const response = await axiosInstance.get(`/brands/${brandId}/models`);
+            const response = await api.get(`/brands/${brandId}/models`);
             return response.data; // Return the actual data
         } catch (error) {
             console.error('Error fetching models:', error.response?.data || error.message);
@@ -37,7 +14,7 @@ const AddCarApiService = {
 
     getCarsByType: async(carType) => {
         try{
-            const response = await axiosInstance.get(`/car/type?carType=${carType}`);
+            const response = await api.get(`/car/type?carType=${carType}`);
             return response;
         }catch(error){
             console.error('Error fetching cars: ', error.response?.data || error.message);
@@ -48,7 +25,7 @@ const AddCarApiService = {
     // Fetch a specific brand by ID
     getBrandById: async (brandId) => {
         try {
-            const response = await axiosInstance.get(`/brands/${brandId}`);
+            const response = await api.get(`/brands/${brandId}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching brand:', error.response?.data || error.message);
@@ -58,7 +35,7 @@ const AddCarApiService = {
 
     addCar: async (car) => {
         try {
-            const response = await axiosInstance.post('/car/add', car); // Use axiosInstance for the request
+            const response = await api.post('/car/add', car);
             return response.data; // Return the actual response data
         } catch (error) {
             console.error('Error adding car:', error.response?.data || error.message);
@@ -66,10 +43,20 @@ const AddCarApiService = {
         }
     },
 
+    getCarById: async (carId) => {
+        try{
+            const response = await api.get(`car/${carId}`)
+            return response.data;
+        }catch(error){
+            console.error('Error fetching car: ', error.response?.data || error.message);
+            throw error;
+        }
+    },
+
     // Fetch all categories
     getAllCategories: async () => {
         try {
-            const response = await axiosInstance.get(`/category/all`);
+            const response = await api.get(`/category/all`);
             return response.data;
         } catch (error) {
             console.error('Error fetching categories:', error.response?.data || error.message);
@@ -80,7 +67,7 @@ const AddCarApiService = {
     // Fetch all brands
     getAllBrands: async () => {
         try {
-            const response = await axiosInstance.get(`/brands/all`);
+            const response = await api.get(`/brands/all`);
             return response.data;
         } catch (error) {
             console.error('Error fetching brands:', error.response?.data || error.message);
@@ -91,8 +78,8 @@ const AddCarApiService = {
     // Fetch all features
     getAllFeatures: async () => {
         try {
-            const response = await axiosInstance.get('/features');
-            return response.data;  // Adjust the endpoint based on your backend
+            const response = await api.get('/features');
+            return response.data;
         } catch (error) {
             console.error('Error fetching features:', error.response?.data || error.message);
             throw error;

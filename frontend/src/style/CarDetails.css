@@ -1,0 +1,27 @@
+.hero-section {
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.2)), url('https://www.reviewtrackers.com/wp-content/uploads/blog-hero_car-dealership-review-monitoring-banner-1536x461.jpg'); /* Replace with actual image URL */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    padding: 60px 20px;
+    border-radius: 15px;
+    position: relative;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3));
+    border-radius: 15px;
+    z-index: 1;
+}
+
+.hero-section .align-items-center {
+    position: relative;
+    z-index: 2;
+}

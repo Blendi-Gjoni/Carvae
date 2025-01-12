@@ -4,12 +4,12 @@ import HomeCarousel from "../components/HomeCarousel";
 import CarDisplayComponent from "../components/CarDisplayComponent";
 
 const Home = () => {
-  return (
-    <Layout>
-      <HomeCarousel />
-        <CarDisplayComponent />
-    </Layout>
-  );
+    return (
+        <Layout>
+            <HomeCarousel />
+            <CarDisplayComponent />
+        </Layout>
+    );
 };
 
 export default Home;
