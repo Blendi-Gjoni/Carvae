@@ -32,6 +32,10 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime orderDate;
 
+//    @ManyToOne
+//    @JoinColumn(name = "dealership_id", nullable = false)
+//    private Dealership dealership;
+
     private LocalDateTime deliveryDate;
 
     private String status;
