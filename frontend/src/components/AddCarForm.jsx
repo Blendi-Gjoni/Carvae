@@ -78,8 +78,7 @@ const AddCarForm = () => {
     useEffect(() => {
         const fetchFeatures = async () => {
             try {
-                const featuresData = await AddCarApiService.getAllFeatures();  // Assuming you have an API to get features
-                console.log(featuresData);
+                const featuresData = await AddCarApiService.getAllFeatures();
                 setFeatures(featuresData);
             } catch (error) {
                 console.error('Error fetching features:', error);

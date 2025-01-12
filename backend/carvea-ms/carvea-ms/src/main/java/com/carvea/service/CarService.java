@@ -72,4 +72,15 @@ public class CarService {
 
         return carRepository.save(car);
     }
+
+    public List<Car> getCarsByType(String carType) {
+        if ("RENTAL".equalsIgnoreCase(carType)) {
+            return carRepository.findCarsByType(RentalCar.class);
+        } else if ("DEALERSHIP".equalsIgnoreCase(carType)) {
+            return carRepository.findCarsByType(DealershipCar.class);
+        } else {
+            throw new IllegalArgumentException("Invalid car type: " + carType);
+        }
+    }
+
 }
