@@ -10,6 +10,7 @@ import store from './redux/store';
 import AdminLayout from './components/layouts/AdminLayout';
 import AdminPage from './pages/admin/AdminPage';
 import UsersDashboard from './pages/admin/UsersDashboard';
+import RentalsDashboard from './pages/admin/RentalsDashboard';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="page" element={<AdminPage />} /> {/* Admin Home (Dashboard) */}
           <Route path="users" element={<UsersDashboard />} />
+          <Route path="rentals" element={<RentalsDashboard />} />
         </Route>
       </Routes>
     </Provider>

@@ -34,9 +34,9 @@ const Sidebar = ({ isSidebarVisible }) => {
               <FaUsers className="nav-icon" />
               <span className="nav-name">Users</span>
             </button>
-            <button className="nav-link" onClick={() => navigate('/messages')}>
+            <button className="nav-link" onClick={() => navigate('/admin/rentals')}>
               <FaEnvelope className="nav-icon" />
-              <span className="nav-name">Messages</span>
+              <span className="nav-name">Rentals</span>
             </button>
             <button className="nav-link" onClick={() => navigate('/bookmarks')}>
               <FaBookmark className="nav-icon" />
