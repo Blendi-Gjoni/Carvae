@@ -86,6 +86,26 @@ const AddCarApiService = {
         }
     },
 
+    // updateCar: async (id, car) => {
+    //     try {
+    //         console.log('Update Car ID:', id);
+    //         console.log('Car Data:', car);
+    //         const response = await api.put(`/car/${id}`, car);
+    //         return response.data;
+    //     } catch (error) {
+    //         console.error(`Error updating car with ID: ${id}`, error);
+    //         throw error;
+    //     }
+    // },
+    deleteCar: async (id) => {
+        try{
+            await api.delete('/car/${id}');
+        }catch (error) {
+            console.error(`Error deleting car with ID: ${id}`, error);
+            throw error;
+        }
+    }
+
 };
 
 export default AddCarApiService;

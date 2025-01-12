@@ -12,6 +12,8 @@ import AdminLayout from './components/layouts/AdminLayout';
 import AdminPage from './pages/admin/AdminPage';
 import UsersDashboard from './pages/admin/UsersDashboard';
 import RentalsDashboard from './pages/admin/RentalsDashboard';
+import CarsDashboard from "./pages/admin/CarsDashboard";
+import OrdersDashboard from "./pages/admin/OrdersDashboard";
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
             <Route path="page" element={<AdminPage />} /> {/* Admin Home (Dashboard) */}
             <Route path="users" element={<UsersDashboard />} />
             <Route path="rentals" element={<RentalsDashboard />} />
+            <Route path="cars" element={<CarsDashboard />} />
+              <Route path="orders" element={<OrdersDashboard />} />
           </Route>
         </Routes>
       </Provider>
