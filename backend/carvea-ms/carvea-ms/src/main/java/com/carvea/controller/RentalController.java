@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/rental")
+@RequestMapping("/rentals")
 @AllArgsConstructor
 public class RentalController {
     private final RentalService rentalService;
