@@ -16,6 +16,7 @@ import CarsDashboard from "./pages/admin/CarsDashboard";
 import OrdersDashboard from "./pages/admin/OrdersDashboard";
 import DealershipsDashboard from "./pages/admin/DealershipsDashboard";
 import ReservationsDashboard from './pages/admin/ReservationsDashboard';
+import AddCarForm from "./components/AddCarForm";
 
 function App() {
   return (
@@ -23,7 +24,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<div className="login-page"><Login /></div>} />
-          <Route path="/car-details" element={<CarDetails />} /> {/* Add this route */}
+          <Route path="/car-details" element={<CarDetails />} />
+
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLayout />}>
@@ -31,6 +33,7 @@ function App() {
                 <Route path="users" element={<UsersDashboard />} />
                 <Route path="rentals" element={<RentalsDashboard />} />
                 <Route path="cars" element={<CarsDashboard />} />
+                <Route path="add-car" element={<AddCarForm />} />
                 <Route path="orders" element={<OrdersDashboard />} />
                 <Route path="dealerships" element={<DealershipsDashboard />} />
                 <Route path="reservations" element={<ReservationsDashboard />} />

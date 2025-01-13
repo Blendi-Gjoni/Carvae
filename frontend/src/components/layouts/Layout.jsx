@@ -8,7 +8,6 @@ const Layout = ({ children }) => {
         <div>
             <Navbar />
             <main>{children}</main>
-            <AddCarForm />
             <Footer />
         </div>
     );

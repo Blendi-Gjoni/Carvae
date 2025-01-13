@@ -18,16 +18,18 @@ public class CarController {
         this.carService = carService;
     }
 
-//    @GetMapping("/")
-//    public ResponseEntity<List<Car>> getAllCars() {
-//        List<Car> cars = carService.getAllCars();
-//        return ResponseEntity.ok(cars);
-//    }
+
 
     @PostMapping("/add")
     public ResponseEntity<Car> addCar(@RequestBody CarDto carDto) {
         Car car = carService.addCar(carDto);
         return ResponseEntity.ok(car);
+    }
+
+    @GetMapping("/allCars")
+    public ResponseEntity<List<Car>> getAllCars() {
+        List<Car> cars = carService.getAllCars();
+        return ResponseEntity.ok(cars);
     }
 
     @GetMapping("/{carId}")

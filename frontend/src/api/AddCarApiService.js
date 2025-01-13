@@ -33,6 +33,16 @@ const AddCarApiService = {
         }
     },
 
+    getAllCars: async() => {
+      try{
+          const response = await api.get('/car/allCars');
+          return response.data;
+      }catch(error){
+          console.error('Error fetching cars: ', error.response?.data || error.message);
+          throw error;
+      }
+    },
+
     addCar: async (car) => {
         try {
             const response = await api.post('/car/add', car);

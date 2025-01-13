@@ -103,6 +103,11 @@ public class CarService {
         return carRepository.findById(carId).orElseThrow(() -> new RuntimeException("Car not found"));
     }
 
+    public List<Car> getAllCars(){
+        List<Car> cars = carRepository.findAll();
+        return cars;
+    }
+
     public void deleteCar(Long id){
         Car car = carRepository.findById(id).orElseThrow(() -> new RuntimeException("Car not found"));
         carRepository.delete(car);

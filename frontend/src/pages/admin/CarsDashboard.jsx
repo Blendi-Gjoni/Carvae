@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import AddCarApiService from '../../api/AddCarApiService';
 import DefaultModal from '../../components/modals/DefaultModal';
 import { Button, Form } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+
 
 const CarsDashboard = () => {
     const [cars, setCars] = useState([]);
     const [error, setError] = useState(null);
     const [modalShow, setModalShow] = useState(false);
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         id: '',
         modelId: '',
@@ -29,13 +32,8 @@ const CarsDashboard = () => {
 
     const fetchCars = async () => {
         try {
-            const response = await AddCarApiService.getCarsByType('DEALERSHIP'); // Change 'DEALERSHIP' to 'RENTAL' if needed
-            if (Array.isArray(response.data)) {
-                setCars(response.data);
-            } else {
-                setCars([]);
-                setError('Expected an array but got something else');
-            }
+            const response = await AddCarApiService.getAllCars();
+                setCars(response);
         } catch (err) {
             console.error('Error fetching cars:', err);
             setError(err.message);
@@ -88,23 +86,7 @@ const CarsDashboard = () => {
 
 
     const handleAddNew = () => {
-        setFormData({
-            id: '',
-            modelId: '',
-            year: '',
-            horsepower: '',
-            kilometers: '',
-            description: '',
-            exterior: '',
-            interior: '',
-            fuelType: '',
-            transmission: '',
-            categoryId: '',
-            features: [],
-            carType: '',
-            price: '',
-        });
-        setModalShow(true);
+        navigate('/admin/add-car');
     };
 
     return (
