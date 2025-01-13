@@ -38,24 +38,28 @@ const Sidebar = ({ isSidebarVisible }) => {
               <FaEnvelope className="nav-icon" />
               <span className="nav-name">Rentals</span>
             </button>
-            <button className="nav-link" onClick={() => navigate('/bookmarks')}>
+            <button className="nav-link" onClick={() => navigate('/admin/dealerships')}>
               <FaBookmark className="nav-icon" />
-              <span className="nav-name">Bookmark</span>
+              <span className="nav-name">Dealerships</span>
             </button>
-            <button className="nav-link" onClick={() => navigate('/files')}>
+            <button className="nav-link" onClick={() => navigate('/admin/cars')}>
               <FaFolder className="nav-icon" />
-              <span className="nav-name">Files</span>
+              <span className="nav-name">Cars</span>
             </button>
-            <button className="nav-link" onClick={() => navigate('/stats')}>
+            <button className="nav-link" onClick={() => navigate('/admin/orders')}>
+              <FaFolder className="nav-icon" />
+              <span className="nav-name">Car Orders</span>
+            </button>
+            <button className="nav-link" onClick={() => navigate('/admin/reservations')}>
               <FaChartBar className="nav-icon" />
-              <span className="nav-name">Stats</span>
+              <span className="nav-name">Car Reservations</span>
+            </button>
+            <button className="nav-link" onClick={handleSignOut}>
+              <FaSignOutAlt className="nav-icon" />
+              <span className="nav-name">Sign Out</span>
             </button>
           </div>
         </div>
-        <button className="nav-link" onClick={handleSignOut}>
-          <FaSignOutAlt className="nav-icon" />
-          <span className="nav-name">Sign Out</span>
-        </button>
       </div>
     </nav>
   );

@@ -32,7 +32,7 @@ public class Reservation implements Subject {
     @JoinColumn(name = "rental_id", nullable = false)
     private Rental rental;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "reservation_id")
     private List<Car> cars;
 

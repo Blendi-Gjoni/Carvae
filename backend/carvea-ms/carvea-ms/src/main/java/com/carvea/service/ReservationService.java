@@ -18,12 +18,21 @@ import java.util.stream.Collectors;
 
 @Service
 public class ReservationService {
-    @Autowired
     private ReservationRepository reservationRepository;
-
     private UserRepository userRepository;
     private RentalRepository rentalRepository;
     private CarRepository carRepository;
+
+    @Autowired
+    public ReservationService(ReservationRepository reservationRepository,
+                              UserRepository userRepository,
+                              RentalRepository rentalRepository,
+                              CarRepository carRepository) {
+        this.reservationRepository = reservationRepository;
+        this.userRepository = userRepository;
+        this.rentalRepository = rentalRepository;
+        this.carRepository = carRepository;
+    }
 
     public ReservationDto createReservation(ReservationDto reservationDto) {
         User user = userRepository.findById(reservationDto.getUserId())

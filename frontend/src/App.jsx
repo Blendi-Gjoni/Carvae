@@ -15,6 +15,7 @@ import RentalsDashboard from './pages/admin/RentalsDashboard';
 import CarsDashboard from "./pages/admin/CarsDashboard";
 import OrdersDashboard from "./pages/admin/OrdersDashboard";
 import DealershipsDashboard from "./pages/admin/DealershipsDashboard";
+import ReservationsDashboard from './pages/admin/ReservationsDashboard';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
                 <Route path="cars" element={<CarsDashboard />} />
                 <Route path="orders" element={<OrdersDashboard />} />
                 <Route path="dealerships" element={<DealershipsDashboard />} />
+                <Route path="reservations" element={<ReservationsDashboard />} />
           </Route>
         </Routes>
       </Provider>
