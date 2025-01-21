@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import RentalApiService from '../../api/RentalApiService';
+import React, { useState } from 'react';
 import DefaultModal from '../../components/modals/DefaultModal';
 import { Button, Form } from 'react-bootstrap';
+import {
+  useGetRentalsQuery,
+  useAddRentalMutation,
+  useUpdateRentalMutation,
+  useDeleteRentalMutation,
+} from '../../api/RenalsApi';
 
 const RentalsDashboard = () => {
-  const [rentals, setRentals] = useState([]);
-  const [error, setError] = useState(null);
   const [modalShow, setModalShow] = useState(false);
   const [formData, setFormData] = useState({
     id: '',
@@ -19,19 +22,11 @@ const RentalsDashboard = () => {
     openingHours: '',
   });
 
-  useEffect(() => {
-    fetchRentals();
-  }, []);
+  const { data: rentals = [], error, isLoading, refetch  } = useGetRentalsQuery();
 
-  const fetchRentals = async () => {
-    try {
-      const data = await RentalApiService.getAllRentals();
-      setRentals(data);
-    } catch (err) {
-      console.error('Error fetching rentals:', err);
-      setError(err.message);
-    }
-  };
+  const [addRental, { isLoading: isAdding }] = useAddRentalMutation();
+  const [updateRental, { isLoading: isUpdating }] = useUpdateRentalMutation();
+  const [deleteRental, { isLoading: isDeleting }] = useDeleteRentalMutation();
 
   const handleFormChange = (e) => {
     setFormData({
@@ -46,26 +41,29 @@ const RentalsDashboard = () => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await RentalApiService.deleteRental(id);
-      fetchRentals();
-    } catch (err) {
-      console.error('Error deleting rental:', err);
+    if (id) {
+      try {
+        await deleteRental({ id });
+        refetch();
+      } catch (err) {
+        console.error('Error deleting rental:', err);
+      }
+    } else {
+      console.error('Rental ID is missing');
     }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (formData.id) {
-        // Update existing rental
-        await RentalApiService.updateRental(formData.id, formData);
+        await updateRental({ id: formData.id, ...formData });
       } else {
-        // Add new rental
-        await RentalApiService.addRental(formData);
+        await addRental(formData);
       }
       setModalShow(false);
-      fetchRentals();
+      refetch();
     } catch (err) {
       console.error('Error saving rental:', err);
     }
@@ -86,64 +84,73 @@ const RentalsDashboard = () => {
     setModalShow(true);
   };
 
+  const renderError = error && <p style={{ color: 'red' }}>Error: {error.message}</p>;
+
   return (
     <div>
       <h1>Rentals Dashboard</h1>
 
-      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+      {renderError}
 
-      <Button className="mb-3" onClick={handleAddNew}>
-        Add New Rental
-      </Button>
+      {isLoading ? (
+        <p>Loading rentals...</p>
+      ) : (
+        <>
+          <Button className="mb-3" onClick={handleAddNew}>
+            Add New Rental
+          </Button>
 
-      <table className="table table-hover">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Address</th>
-            <th scope="col">City</th>
-            <th scope="col">State</th>
-            <th scope="col">Phone</th>
-            <th scope="col">Email</th>
-            <th scope="col">Website</th>
-            <th scope="col">Opening Hours</th>
-            <th scope="col">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rentals.map((rental) => (
-            <tr key={rental.id}>
-              <th scope="row">{rental.id}</th>
-              <td>{rental.name}</td>
-              <td>{rental.address}</td>
-              <td>{rental.city}</td>
-              <td>{rental.state}</td>
-              <td>{rental.phoneNumber}</td>
-              <td>{rental.email}</td>
-              <td>{rental.website}</td>
-              <td>{rental.openingHours}</td>
-              <td>
-                <Button
-                  variant="primary"
-                  onClick={() => handleEdit(rental)}
-                  className="me-2"
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => handleDelete(rental.id)}
-                >
-                  Delete
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          <table className="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col"><b>ID</b></th>
+                <th scope="col"><b>Name</b></th>
+                <th scope="col"><b>Address</b></th>
+                <th scope="col"><b>City</b></th>
+                <th scope="col"><b>State</b></th>
+                <th scope="col"><b>Phone</b></th>
+                <th scope="col"><b>Email</b></th>
+                <th scope="col"><b>Website</b></th>
+                <th scope="col"><b>Oppening Hours</b></th>
+                <th scope="col"><b>Actions</b></th>
+              </tr>
+            </thead>
+            <tbody>
+              {rentals.map((rental) => (
+                <tr key={rental.id}>
+                  <th scope="row">{rental.id}</th>
+                  <td>{rental.name}</td>
+                  <td>{rental.address}</td>
+                  <td>{rental.city}</td>
+                  <td>{rental.state}</td>
+                  <td>{rental.phoneNumber}</td>
+                  <td>{rental.email}</td>
+                  <td>{rental.website}</td>
+                  <td>{rental.openingHours}</td>
+                  <td className='align-items-center'>
+                    <Button
+                      variant="primary"
+                      onClick={() => handleEdit(rental)}
+                      className="me-2"
+                      disabled={isUpdating}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={() => handleDelete(rental.id)}
+                      disabled={isDeleting}
+                    >
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
 
-      {/* Modal for Add/Edit */}
       <DefaultModal
         show={modalShow}
         onHide={() => setModalShow(false)}
@@ -236,8 +243,8 @@ const RentalsDashboard = () => {
             />
           </Form.Group>
 
-          <Button variant="primary" type="submit">
-            Save
+          <Button variant="primary" type="submit" disabled={isAdding || isUpdating}>
+            {isAdding || isUpdating ? 'Saving...' : 'Save'}
           </Button>
         </Form>
       </DefaultModal>

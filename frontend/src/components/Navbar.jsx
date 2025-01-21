@@ -6,9 +6,10 @@ const Navbar = () => {
     return (
         <nav className="navbar navbar-expand-md bg-light">
             <div className="container-fluid">
-                <a className="navbar-brand" href="#">
+                
+                <Link to="/" className="nav-brand">
                     <img src="..." alt="Brand Logo" />
-                </a>
+                </Link>
                 <button
                     className="navbar-toggler"
                     type="button"
