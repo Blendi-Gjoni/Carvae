@@ -6,7 +6,7 @@ import {
   useAddRentalMutation,
   useUpdateRentalMutation,
   useDeleteRentalMutation,
-} from '../../api/RenalsApi';
+} from '../../api/RentalsApi';
 
 const RentalsDashboard = () => {
   const [modalShow, setModalShow] = useState(false);
@@ -87,7 +87,7 @@ const RentalsDashboard = () => {
   const renderError = error && <p style={{ color: 'red' }}>Error: {error.message}</p>;
 
   return (
-    <div>
+    <>
       <h1>Rentals Dashboard</h1>
 
       {renderError}
@@ -248,7 +248,7 @@ const RentalsDashboard = () => {
           </Button>
         </Form>
       </DefaultModal>
-    </div>
+    </>
   );
 };
 
