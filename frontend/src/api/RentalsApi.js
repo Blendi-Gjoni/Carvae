@@ -15,6 +15,12 @@ export const rentalsApi = createApi ({
         getRentalById: builder.query ({
             query: ({ id }) => `/rentals/${id}`,
         }),
+        getRentalsByName: builder.query ({
+            query: (name) => ({
+                url: `/rentals/by-name`,
+                params: {name},
+            })
+        }),
         addRental: builder.mutation ({
             query: (rental) => ({
                 url: `/rentals`,
@@ -41,6 +47,7 @@ export const rentalsApi = createApi ({
 export const {
     useGetRentalsQuery,
     useGetRentalByIdQuery,
+    useGetRentalsByNameQuery,
     useAddRentalMutation,
     useUpdateRentalMutation,
     useDeleteRentalMutation,

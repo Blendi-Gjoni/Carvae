@@ -44,4 +44,11 @@ public class RentalController {
         rentalService.deleteRental(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/by-name")
+    public ResponseEntity<List<RentalDto>> getRentalByName(
+            @RequestParam(required = false) String name
+    ){
+        return ResponseEntity.ok(rentalService.searchRentalsByName(name));
+    }
 }

@@ -4,10 +4,13 @@ import com.carvea.dto.RentalDto;
 import com.carvea.mapper.RentalMapper;
 import com.carvea.model.Rental;
 import com.carvea.repository.RentalRepository;
+import com.carvea.specification.RentalSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,4 +51,13 @@ public class RentalService {
                 .orElseThrow(() -> new RuntimeException("Rental not found"));
         rentalRepository.delete(rental);
     }
+
+    public List<RentalDto> searchRentalsByName(String name) {
+        final Specification<Rental> specification = RentalSpecification.filterRental(name);
+        final List<Rental> rentals = rentalRepository.findAll(specification);
+        return rentals.stream()
+                .map(RentalMapper::toRentalDto)
+                .collect(Collectors.toList());
+    }
+
 }

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Carvae.iml" filepath="$PROJECT_DIR$/.idea/Carvae.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/carvea-ms.main.iml" filepath="$PROJECT_DIR$/.idea/modules/carvea-ms.main.iml" />
     </modules>
   </component>
 </project>

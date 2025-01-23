@@ -1,12 +1,25 @@
 import React, { useState } from 'react';
 import DefaultModal from '../../components/modals/DefaultModal';
 import { Button, Form } from 'react-bootstrap';
+import { 
+  createColumnHelper, 
+  flexRender,
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  getGroupedRowModel,
+  getExpandedRowModel,
+  getPaginationRowModel } from '@tanstack/react-table';
 import {
   useGetRentalsQuery,
+  useGetRentalsByNameQuery,
   useAddRentalMutation,
   useUpdateRentalMutation,
   useDeleteRentalMutation,
 } from '../../api/RentalsApi';
+import { HiOutlineSwitchVertical } from "react-icons/hi";
+import { HiSearch } from "react-icons/hi";
 
 const RentalsDashboard = () => {
   const [modalShow, setModalShow] = useState(false);
@@ -21,8 +34,17 @@ const RentalsDashboard = () => {
     website: '',
     openingHours: '',
   });
+  const [ rentalName, setRentalName ] = useState('');
 
   const { data: rentals = [], error, isLoading, refetch  } = useGetRentalsQuery();
+  const { data: rentalsByName = [], refetch: refetchRentalByName } = useGetRentalsByNameQuery(rentalName, {
+    skip: !rentalName,
+  });
+
+  const tableData = rentalName && rentalsByName.length > 0 ? rentalsByName : rentals;
+
+  const [ sorting, setSorting ] = useState([]);
+  const [ globalFilter, setGlobalFilter ] = useState("");
 
   const [addRental, { isLoading: isAdding }] = useAddRentalMutation();
   const [updateRental, { isLoading: isUpdating }] = useUpdateRentalMutation();
@@ -84,7 +106,145 @@ const RentalsDashboard = () => {
     setModalShow(true);
   };
 
+  const handleSearchChange = (e) => {
+    setRentalName(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const trimmedName = rentalName.trim();
+  
+    if (trimmedName) {
+      setRentalName(trimmedName);
+      refetchRentalByName(trimmedName);
+    } else {
+      console.error("Rental name is empty!");
+    }
+  };
+
   const renderError = error && <p style={{ color: 'red' }}>Error: {error.message}</p>;
+
+  const columnHelper = createColumnHelper();
+
+  const columns = [
+    columnHelper.accessor("id", {
+      enableSorting:false,
+      cell: (info) => info.getValue(),
+      header: () => (
+        <span className='d-flex align-items-center'>
+          <b>ID</b>
+        </span>
+      ),
+    }),
+    columnHelper.accessor("name", {
+      cell: (info) => info.getValue(),
+      header: () => (
+        <span className='d-flex align-items-center'>
+          <b>Name</b>
+        </span>
+      ),
+    }),
+    columnHelper.accessor("address", {
+      enableSorting:false,
+      cell: (info) => info.getValue(),
+      header: () => (
+        <span className='d-flex align-items-center'>
+          <b>Address</b>
+        </span>
+      ),
+    }),
+    columnHelper.accessor("city", {
+      enableSorting:false,
+      cell: (info) => info.getValue(),
+      header: () => (
+        <span className='d-flex align-items-center'>
+          <b>City</b>
+        </span>
+      ),
+    }),
+    columnHelper.accessor("state", {
+      enableSorting:false,
+      cell: (info) => info.getValue(),
+      header: () => (
+        <span className='d-flex align-items-center'>
+          <b>State</b>
+        </span>
+      ),
+    }),
+    columnHelper.accessor("phoneNumber", {
+      enableSorting:false,
+      cell: (info) => info.getValue(),
+      header: () => (
+        <span className='d-flex align-items-center'>
+          <b>Phone</b>
+        </span>
+      ),
+    }),
+    columnHelper.accessor("website", {
+      enableSorting:false,
+      cell: (info) => info.getValue(),
+      header: () => (
+        <span className='d-flex align-items-center'>
+          <b>Website</b>
+        </span>
+      ),
+    }),
+    columnHelper.accessor("openingHours", {
+      enableSorting:false,
+      cell: (info) => info.getValue(),
+      header: () => (
+        <span className='d-flex align-items-center'>
+          <b>Opening Hours</b>
+        </span>
+      ),
+    }),
+    columnHelper.accessor("actions", {
+      enableSorting:false,
+      cell: (info) => (
+        <>
+          <Button
+            variant="primary"
+            onClick={() => handleEdit(info.row.original)}
+            className="me-2"
+            disabled={isUpdating}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => handleDelete(info.row.original.id)}
+            disabled={isDeleting}
+          >
+            Delete
+          </Button>
+        </>
+      ),
+      header: () => (
+        <span className='d-fles align-items-center'>
+          <b>Actions</b>
+        </span>
+      ),
+    }),
+  ];
+
+  const table = useReactTable({
+    data: tableData,
+    columns,
+    state: {
+      sorting,
+      globalFilter,
+    },
+    getCoreRowModel: getCoreRowModel(),
+
+    onGlobalFilterChange: setGlobalFilter,
+    getFilteredRowModel: getFilteredRowModel(),
+
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
 
   return (
     <>
@@ -100,50 +260,68 @@ const RentalsDashboard = () => {
             Add New Rental
           </Button>
 
+          <div className='input-group my-3'>
+            <input 
+              value={globalFilter ?? ""}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              type='text' 
+              className='form-control' 
+              placeholder='Search...' 
+            />
+            <button className='btn btn-outline-secondary'><HiSearch className='text-dark'></HiSearch></button>
+          </div>
+
+          <form onSubmit={handleSearchSubmit} className=''>
+            <div className='input-group my-3'>
+              <input 
+                value={rentalName}
+                onChange={handleSearchChange}
+                type="text"
+                className='form-control'
+                placeholder='Search Rentals by name...'
+            />
+            </div>  
+          </form>
+
+          <select className='form-select form-select-sm my-3'>
+            <option selected>Select Rentals by City</option>
+            {rentals.map((rentals) => (
+              <option key={rentals.id} value={rentals.id}>
+                {rentals.city}
+              </option>
+            ))}
+          </select>
+
           <table className="table table-hover">
             <thead>
-              <tr>
-                <th scope="col"><b>ID</b></th>
-                <th scope="col"><b>Name</b></th>
-                <th scope="col"><b>Address</b></th>
-                <th scope="col"><b>City</b></th>
-                <th scope="col"><b>State</b></th>
-                <th scope="col"><b>Phone</b></th>
-                <th scope="col"><b>Email</b></th>
-                <th scope="col"><b>Website</b></th>
-                <th scope="col"><b>Oppening Hours</b></th>
-                <th scope="col"><b>Actions</b></th>
-              </tr>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th key={header.id}>
+                      <div 
+                        {...{
+                          className: header.column.getCanSort()
+                          ? "d-flex align-items-center cursor-pointer select-none text-dark hover:text-primary"
+                          : "",
+                          onClick: header.column.getToggleSortingHandler(),
+                        }}
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.id === 'name' && <HiOutlineSwitchVertical style={{cursor:'pointer'}} />}
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              ))}
             </thead>
             <tbody>
-              {rentals.map((rental) => (
-                <tr key={rental.id}>
-                  <th scope="row">{rental.id}</th>
-                  <td>{rental.name}</td>
-                  <td>{rental.address}</td>
-                  <td>{rental.city}</td>
-                  <td>{rental.state}</td>
-                  <td>{rental.phoneNumber}</td>
-                  <td>{rental.email}</td>
-                  <td>{rental.website}</td>
-                  <td>{rental.openingHours}</td>
-                  <td className='align-items-center'>
-                    <Button
-                      variant="primary"
-                      onClick={() => handleEdit(rental)}
-                      className="me-2"
-                      disabled={isUpdating}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="danger"
-                      onClick={() => handleDelete(rental.id)}
-                      disabled={isDeleting}
-                    >
-                      Delete
-                    </Button>
-                  </td>
+              {table.getRowModel().rows.map((row) => (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>
