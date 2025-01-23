@@ -13,7 +13,6 @@ import {
   getPaginationRowModel } from '@tanstack/react-table';
 import {
   useGetRentalsQuery,
-  useGetRentalsByNameQuery,
   useAddRentalMutation,
   useUpdateRentalMutation,
   useDeleteRentalMutation,
@@ -34,14 +33,8 @@ const RentalsDashboard = () => {
     website: '',
     openingHours: '',
   });
-  const [ rentalName, setRentalName ] = useState('');
 
   const { data: rentals = [], error, isLoading, refetch  } = useGetRentalsQuery();
-  const { data: rentalsByName = [], refetch: refetchRentalByName } = useGetRentalsByNameQuery(rentalName, {
-    skip: !rentalName,
-  });
-
-  const tableData = rentalName && rentalsByName.length > 0 ? rentalsByName : rentals;
 
   const [ sorting, setSorting ] = useState([]);
   const [ globalFilter, setGlobalFilter ] = useState("");
@@ -106,21 +99,21 @@ const RentalsDashboard = () => {
     setModalShow(true);
   };
 
-  const handleSearchChange = (e) => {
-    setRentalName(e.target.value);
-  };
+  // const handleSearchChange = (e) => {
+  //   setRentalName(e.target.value);
+  // };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    const trimmedName = rentalName.trim();
+  // const handleSearchSubmit = (e) => {
+  //   e.preventDefault();
+  //   const trimmedName = rentalName.trim();
   
-    if (trimmedName) {
-      setRentalName(trimmedName);
-      refetchRentalByName(trimmedName);
-    } else {
-      console.error("Rental name is empty!");
-    }
-  };
+  //   if (trimmedName) {
+  //     setRentalName(trimmedName);
+  //     refetchRentalByName(trimmedName);
+  //   } else {
+  //     console.error("Rental name is empty!");
+  //   }
+  // };
 
   const renderError = error && <p style={{ color: 'red' }}>Error: {error.message}</p>;
 
@@ -228,7 +221,7 @@ const RentalsDashboard = () => {
   ];
 
   const table = useReactTable({
-    data: tableData,
+    data: rentals,
     columns,
     state: {
       sorting,
@@ -256,76 +249,91 @@ const RentalsDashboard = () => {
         <p>Loading rentals...</p>
       ) : (
         <>
-          <Button className="mb-3" onClick={handleAddNew}>
-            Add New Rental
-          </Button>
-
-          <div className='input-group my-3'>
-            <input 
-              value={globalFilter ?? ""}
-              onChange={(e) => setGlobalFilter(e.target.value)}
-              type='text' 
-              className='form-control' 
-              placeholder='Search...' 
-            />
-            <button className='btn btn-outline-secondary'><HiSearch className='text-dark'></HiSearch></button>
+          <div className='container text-center m-3'>
+            <div className='row justify-content-between'>
+              <div className='col-12 col-sm-12 col-md-4 d-flex justify-content-center'>
+                <Button className="" onClick={handleAddNew}>
+                  Add New Rental
+                </Button>
+              </div>
+              <div className='col-12 col-sm-12 col-md-4 d-flex justify-content-center'>
+                <div className='input-group'>
+                  <input 
+                    value={globalFilter ?? ""}
+                    onChange={(e) => setGlobalFilter(e.target.value)}
+                    type='text' 
+                    className='form-control' 
+                    placeholder='Search...' 
+                  />
+                  <button className='btn btn-outline-secondary'><HiSearch className='text-dark'></HiSearch></button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <form onSubmit={handleSearchSubmit} className=''>
+          {/* <Form onSubmit={handleSearchSubmit}>
             <div className='input-group my-3'>
-              <input 
-                value={rentalName}
-                onChange={handleSearchChange}
-                type="text"
-                className='form-control'
-                placeholder='Search Rentals by name...'
-            />
-            </div>  
-          </form>
+                <input 
+                  value={rentalName}
+                  onChange={handleSearchChange}
+                  type="text"
+                  className='form-control'
+                  placeholder='Search Rentals by name...'
+              />
+              </div>  
+          </Form> */}
 
-          <select className='form-select form-select-sm my-3'>
-            <option selected>Select Rentals by City</option>
-            {rentals.map((rentals) => (
-              <option key={rentals.id} value={rentals.id}>
-                {rentals.city}
-              </option>
-            ))}
-          </select>
+          <div className='container'>
+            <div className='row'>
+              <div className='col-2 ms-auto align-self-end'>
+                <select className='form-select form-select-sm my-3'>
+                  <option selected>Select Rentals by City</option>
+                  {rentals.map((rentals) => (
+                    <option key={rentals.id} value={rentals.id}>
+                      {rentals.city}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
 
-          <table className="table table-hover">
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id}>
-                      <div 
-                        {...{
-                          className: header.column.getCanSort()
-                          ? "d-flex align-items-center cursor-pointer select-none text-dark hover:text-primary"
-                          : "",
-                          onClick: header.column.getToggleSortingHandler(),
-                        }}
-                      >
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                        {header.id === 'name' && <HiOutlineSwitchVertical style={{cursor:'pointer'}} />}
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div style={{overflowX: 'auto', maxWidth: '100%'}}>
+            <table className="table table-hover mt-2">
+              <thead>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th key={header.id}>
+                        <div 
+                          {...{
+                            className: header.column.getCanSort()
+                            ? "d-flex align-items-center cursor-pointer select-none text-dark hover:text-primary"
+                            : "",
+                            onClick: header.column.getToggleSortingHandler(),
+                          }}
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {header.id === 'name' && <HiOutlineSwitchVertical style={{cursor:'pointer'}} />}
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody>
+                {table.getRowModel().rows.map((row) => (
+                  <tr key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
 
