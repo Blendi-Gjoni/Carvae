@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import DefaultModal from '../../components/modals/DefaultModal';
 import { Button, Form } from 'react-bootstrap';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { 
   createColumnHelper, 
   flexRender,
@@ -22,17 +25,7 @@ import { HiSearch } from "react-icons/hi";
 
 const RentalsDashboard = () => {
   const [modalShow, setModalShow] = useState(false);
-  const [formData, setFormData] = useState({
-    id: '',
-    name: '',
-    address: '',
-    city: '',
-    state: '',
-    phoneNumber: '',
-    email: '',
-    website: '',
-    openingHours: '',
-  });
+  const [formData, setFormData] = useState({});
 
   const { data: rentals = [], error, isLoading, refetch  } = useGetRentalsQuery();
 
@@ -43,17 +36,28 @@ const RentalsDashboard = () => {
   const [updateRental, { isLoading: isUpdating }] = useUpdateRentalMutation();
   const [deleteRental, { isLoading: isDeleting }] = useDeleteRentalMutation();
 
-  const handleFormChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const schema = yup.object().shape({
+    name: yup.string().required("Rental name is required!"),
+    address: yup.string().required("Rental address is required!"),
+    city: yup.string().required("Rental city is required!"),
+    state: yup.string().required("Rental state is required!"),
+    phoneNumber: yup
+      .string()
+      .matches(/^[0-9]+$/, "Rental phone number is required, and must contain only digits!")
+      .required("Rental phone number is required!"),
+    email: yup.string().email("Invalid email!").required("Rental email is required, and must be a valid email!"),
+    website: yup.string().required("Rental website is required!"),
+    openingHours: yup.string().required("Rental opening hours are required!"),
+  });
+  
+  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   const handleEdit = (rental) => {
-    setFormData(rental);
     setModalShow(true);
-  };
+    Object.keys(rental).forEach((key) => setValue(key, rental[key]));
+  };  
 
   const handleDelete = async (id) => {
     if (id) {
@@ -69,13 +73,12 @@ const RentalsDashboard = () => {
   };
   
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     try {
       if (formData.id) {
-        await updateRental({ id: formData.id, ...formData });
+        await updateRental({ id: formData.id, ...data });
       } else {
-        await addRental(formData);
+        await addRental(data);
       }
       setModalShow(false);
       refetch();
@@ -99,21 +102,10 @@ const RentalsDashboard = () => {
     setModalShow(true);
   };
 
-  // const handleSearchChange = (e) => {
-  //   setRentalName(e.target.value);
-  // };
-
-  // const handleSearchSubmit = (e) => {
-  //   e.preventDefault();
-  //   const trimmedName = rentalName.trim();
-  
-  //   if (trimmedName) {
-  //     setRentalName(trimmedName);
-  //     refetchRentalByName(trimmedName);
-  //   } else {
-  //     console.error("Rental name is empty!");
-  //   }
-  // };
+  const handleModalClose = () => {
+    reset();
+    setModalShow(false);
+  };
 
   const renderError = error && <p style={{ color: 'red' }}>Error: {error.message}</p>;
 
@@ -132,34 +124,31 @@ const RentalsDashboard = () => {
     columnHelper.accessor("name", {
       cell: (info) => info.getValue(),
       header: () => (
-        <span className='d-flex align-items-center'>
+        <span className='d-flex align-items-center' style={{cursor:'pointer'}}>
           <b>Name</b>
         </span>
       ),
     }),
     columnHelper.accessor("address", {
-      enableSorting:false,
       cell: (info) => info.getValue(),
       header: () => (
-        <span className='d-flex align-items-center'>
+        <span className='d-flex align-items-center' style={{cursor:'pointer'}}>
           <b>Address</b>
         </span>
       ),
     }),
     columnHelper.accessor("city", {
-      enableSorting:false,
       cell: (info) => info.getValue(),
       header: () => (
-        <span className='d-flex align-items-center'>
+        <span className='d-flex align-items-center' style={{cursor:'pointer'}}>
           <b>City</b>
         </span>
       ),
     }),
     columnHelper.accessor("state", {
-      enableSorting:false,
       cell: (info) => info.getValue(),
       header: () => (
-        <span className='d-flex align-items-center'>
+        <span className='d-flex align-items-center' style={{cursor:'pointer'}}>
           <b>State</b>
         </span>
       ),
@@ -173,11 +162,18 @@ const RentalsDashboard = () => {
         </span>
       ),
     }),
-    columnHelper.accessor("website", {
-      enableSorting:false,
+    columnHelper.accessor("email", {
       cell: (info) => info.getValue(),
       header: () => (
-        <span className='d-flex align-items-center'>
+        <span className='d-flex align-items-center' style={{cursor:'pointer'}}>
+          <b>Email</b>
+        </span>
+      ),
+    }),
+    columnHelper.accessor("website", {
+      cell: (info) => info.getValue(),
+      header: () => (
+        <span className='d-flex align-items-center' style={{cursor:'pointer'}}>
           <b>Website</b>
         </span>
       ),
@@ -271,18 +267,6 @@ const RentalsDashboard = () => {
             </div>
           </div>
 
-          {/* <Form onSubmit={handleSearchSubmit}>
-            <div className='input-group my-3'>
-                <input 
-                  value={rentalName}
-                  onChange={handleSearchChange}
-                  type="text"
-                  className='form-control'
-                  placeholder='Search Rentals by name...'
-              />
-              </div>  
-          </Form> */}
-
           <div className='container'>
             <div className='row'>
               <div className='col-2 ms-auto align-self-end'>
@@ -314,7 +298,9 @@ const RentalsDashboard = () => {
                           }}
                         >
                           {flexRender(header.column.columnDef.header, header.getContext())}
-                          {header.id === 'name' && <HiOutlineSwitchVertical style={{cursor:'pointer'}} />}
+                          {header.column.getCanSort() && (
+                            <HiOutlineSwitchVertical style={{ cursor: 'pointer' }} />
+                          )}
                         </div>
                       </th>
                     ))}
@@ -339,97 +325,99 @@ const RentalsDashboard = () => {
 
       <DefaultModal
         show={modalShow}
-        onHide={() => setModalShow(false)}
+        onHide={handleModalClose}
         title={formData.id ? 'Edit Rental' : 'Add New Rental'}
       >
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit(onSubmit)}>
           <Form.Group className="mb-3">
-            <Form.Label>Name</Form.Label>
+            <Form.Label></Form.Label>
             <Form.Control
               type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleFormChange}
-              required
+              {...register("name")}
+              isInvalid={!!errors.name}
+              placeholder='Name'
             />
+            <Form.Control.Feedback type="invalid">{errors.name?.message}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Address</Form.Label>
+            <Form.Label></Form.Label>
             <Form.Control
               type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleFormChange}
-              required
+              {...register("address")}
+              isInvalid={!!errors.address}
+              placeholder='Address'
             />
+            <Form.Control.Feedback type="invalid">{errors.address?.message}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>City</Form.Label>
+            <Form.Label></Form.Label>
             <Form.Control
               type="text"
-              name="city"
-              value={formData.city}
-              onChange={handleFormChange}
-              required
+              {...register("city")}
+              isInvalid={!!errors.city}
+              placeholder='City'
             />
+            <Form.Control.Feedback type='invalid'>{errors.city?.message}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>State</Form.Label>
+            <Form.Label></Form.Label>
             <Form.Control
               type="text"
-              name="state"
-              value={formData.state}
-              onChange={handleFormChange}
-              required
+              {...register("state")}
+              isInvalid={!!errors.state}
+              placeholder='State'
             />
+            <Form.Control.Feedback type='invalid'>{errors.state?.message}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Phone Number</Form.Label>
+            <Form.Label></Form.Label>
             <Form.Control
               type="text"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleFormChange}
-              required
+              {...register("phoneNumber")}
+              isInvalid={!!errors.phoneNumber}
+              placeholder='Phone Number'
             />
+            <Form.Control.Feedback type='invalid'>{errors.phoneNumber?.message}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleFormChange}
-              required
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Website</Form.Label>
+            <Form.Label></Form.Label>
             <Form.Control
               type="text"
-              name="website"
-              value={formData.website}
-              onChange={handleFormChange}
+              {...register("email")}
+              isInvalid={!!errors.email}
+              placeholder='Email'
             />
+            <Form.Control.Feedback type='invalid'>{errors.email?.message}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Opening Hours</Form.Label>
+            <Form.Label></Form.Label>
             <Form.Control
               type="text"
-              name="openingHours"
-              value={formData.openingHours}
-              onChange={handleFormChange}
+              {...register("website")}
+              isInvalid={!!errors.website}
+              placeholder='Website'
             />
+            <Form.Control.Feedback type='invalid'>{errors.website?.message}</Form.Control.Feedback>
           </Form.Group>
 
-          <Button variant="primary" type="submit" disabled={isAdding || isUpdating}>
+          <Form.Group className="mb-3">
+            <Form.Label></Form.Label>
+            <Form.Control
+              type="text"
+              {...register("openingHours")}
+              isInvalid={!!errors.openingHours}
+              placeholder='Opening Hours'
+            />
+            <Form.Control.Feedback type='invalid'>{errors.openingHours?.message}</Form.Control.Feedback>
+          </Form.Group>
+
+          <Button className='mt-3' variant="primary" type="submit" disabled={isAdding || isUpdating}>
             {isAdding || isUpdating ? 'Saving...' : 'Save'}
           </Button>
         </Form>
