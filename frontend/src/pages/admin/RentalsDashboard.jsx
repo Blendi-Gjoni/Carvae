@@ -210,11 +210,10 @@ const RentalsDashboard = () => {
     columnHelper.accessor("actions", {
       enableSorting:false,
       cell: (info) => (
-        <>
+        <div className='d-flex justify-content-around align-items-center'>
           <Button
             variant="primary"
             onClick={() => handleEdit(info.row.original)}
-            className="me-2"
             disabled={isUpdating}
           >
             Edit
@@ -226,10 +225,10 @@ const RentalsDashboard = () => {
           >
             Delete
           </Button>
-        </>
+        </div>
       ),
       header: () => (
-        <span className='d-fles align-items-center'>
+        <span className='d-flex justify-content-center align-items-center'>
           <b>Actions</b>
         </span>
       ),
