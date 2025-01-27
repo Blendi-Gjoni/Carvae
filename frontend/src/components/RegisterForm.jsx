@@ -7,51 +7,54 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 const RegisterForm = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [repeatPassword, setRepeatPassword] = useState('');
-  const [termsAccepted, setTermsAccepted] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
   const [verificationMessage, setVerificationMessage] = useState('');
 
   const dispatch = useDispatch();
-  const { isLoading, isAuthenticated } = useSelector((state) => state.auth);
+  const { isLoading } = useSelector((state) => state.auth);
 
   const schema = z.object({
-    username: z.string().min(8),
+    username: z.string().min(8, "Username must be at least 8 characters!"),
     email: z.string().email("Invalid email!"),
-    password: z.string().min(6),
-    repeatPassword: z.string().min(6),
-    verificationCode: z.number().min(6),
+    password: z.string().min(6, "Password must be at least 6 characters long!"),
+    repeatPassword: z.string().min(6, "Password must be at least 6 characters long!"),
+    verificationCode: z.number().min(100000).max(999999),
+    termsAccepted: z.boolean().refine((val) => val, {
+      message: "You must accept the terms and conditions!",
+    }),    
+  })
+  .superRefine((data, ctx) => {
+    if(data.password !== data.repeatPassword){
+      ctx.addIssue({
+        path: ["repeatPassword"],
+        message: "Passwords must match!",
+      })
+    }
   });
 
-  const { register, handleSubmit, formState: {errors} } = useForm({
+  const { register, handleSubmit, reset, formState: {errors} } = useForm({
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (e) => {
+  const onSubmit = (data) => {
+    const { username, email, password } = data;
     dispatch(signup({ username, email, password }))
       .then(() => {
         setShowModal(true);
         setVerificationMessage('');
-        setUsername('');
-        setEmail('');
-        setPassword('');
-        setRepeatPassword('');
+        reset();
       })
       .catch((error) => {
         console.error('Registration failed:', error);
       });
   };
 
-  const handleVerify = (e) => {
-    dispatch(verify({ email, verificationCode }))
+  const handleVerify = (data) => {
+    dispatch(verify({ email: data.email, verificationCode: data.verificationCode }))
       .then(() => {
         setVerificationMessage('Verification successful!');
         setShowModal(false);
-        setVerificationCode('');
+        reset();
         alert('Registration successful!');
       })
       .catch((error) => {
@@ -87,7 +90,6 @@ const RegisterForm = () => {
               id="registerUsername"
               className="form-control"
               {...register("username")}
-              onChange={(e) => setUsername(e.target.value)}
             />
             <label className="form-label" htmlFor="registerUsername">Username</label>
             <span className='mx-3 fs-8' style={{color: 'red'}}>{errors.username?.message}</span>
@@ -99,7 +101,6 @@ const RegisterForm = () => {
               id="registerEmail"
               className="form-control"
               {...register("email")}
-              onChange={(e) => setEmail(e.target.value)}
             />
             <label className="form-label" htmlFor="registerEmail">Email</label>
             <span className='mx-3 fs-8' style={{color: 'red'}}>{errors.email?.message}</span>
@@ -111,7 +112,6 @@ const RegisterForm = () => {
               id="registerPassword"
               className="form-control"
               {...register("password")}
-              onChange={(e) => setPassword(e.target.value)}
             />
             <label className="form-label" htmlFor="registerPassword">Password</label>
             <span className='mx-3 fs-8' style={{color: 'red'}}>{errors.password?.message}</span>
@@ -123,7 +123,6 @@ const RegisterForm = () => {
               id="registerRepeatPassword"
               className="form-control"
               {...register("repeatPassword")}
-              onChange={(e) => setRepeatPassword(e.target.value)}
             />
             <label className="form-label" htmlFor="registerRepeatPassword">Repeat password</label>
             <span className='mx-3 fs-8' style={{color: 'red'}}>{errors.repeatPassword?.message}</span>
@@ -135,8 +134,7 @@ const RegisterForm = () => {
               type="checkbox"
               value=""
               id="registerCheck"
-              checked={termsAccepted}
-              onChange={() => setTermsAccepted(!termsAccepted)}
+              {...register("termsAccepted", { required: true })}
             />
             <label className="form-check-label" htmlFor="registerCheck">
               I have read and agree to the terms
@@ -154,19 +152,18 @@ const RegisterForm = () => {
         onHide={() => setShowModal(false)}
         title="Verify Your Email"
       >
-        <form onSubmit={handleVerify}>
+        <form onSubmit={handleSubmit(handleVerify)}>
           <div className="form-outline mb-3">
             <input
               type="text"
               id="verificationCode"
               className="form-control"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
+              {...register("verificationCode")}
               placeholder="Enter Verification Code"
             />
             <label className="form-label" htmlFor="verificationCode">Verification Code</label>
           </div>
-          <button type="submit" className="btn btn-primary btn-block" disabled={isLoading || !verificationCode}>
+          <button type="submit" className="btn btn-primary btn-block" disabled={isLoading}>
             Submit
           </button>
         </form>

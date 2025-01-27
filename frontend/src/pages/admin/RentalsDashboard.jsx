@@ -265,8 +265,8 @@ const RentalsDashboard = () => {
         <p>Loading rentals...</p>
       ) : (
         <>
-          <div className='container text-center m-3'>
-            <div className='row justify-content-between'>
+          <div className='container text-center'>
+            <div className='row d-flex justify-content-between align-items-center gap-3'>
               <div className='col-12 col-sm-12 col-md-4 d-flex justify-content-center'>
                 <Button className="" onClick={handleAddNew}>
                   Add New Rental
@@ -289,9 +289,9 @@ const RentalsDashboard = () => {
 
           <div className="container">
             <div className="row">
-              <div className="col-2 ms-auto align-self-end">
+              <div className="col-12 col-lg-4 col-sm-12 col-md-12 ms-auto align-self-end">
                 <select
-                  className="form-select form-select-sm my-3"
+                  className="form-select form-select-md my-3"
                   onChange={handleCityChange}
                   value={selectedCity}
                 >
