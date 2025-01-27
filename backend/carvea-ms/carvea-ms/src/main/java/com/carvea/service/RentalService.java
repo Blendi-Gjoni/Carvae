@@ -53,7 +53,19 @@ public class RentalService {
     }
 
     public List<RentalDto> searchRentalsByName(String name) {
-        final Specification<Rental> specification = RentalSpecification.filterRental(name);
+        final Specification<Rental> specification = RentalSpecification.filterRentalByName(name);
+        final List<Rental> rentals = rentalRepository.findAll(specification);
+        return rentals.stream()
+                .map(RentalMapper::toRentalDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<String> getRentalCities(){
+        return rentalRepository.findRentalCities();
+    }
+
+    public List<RentalDto> searchRentalsByCity(String city) {
+        final Specification<Rental> specification = RentalSpecification.filterRentalByCity(city);
         final List<Rental> rentals = rentalRepository.findAll(specification);
         return rentals.stream()
                 .map(RentalMapper::toRentalDto)

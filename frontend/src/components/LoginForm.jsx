@@ -2,24 +2,34 @@ import React, { useState } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../redux/authSlice'; // Import Redux action
+import { login } from '../redux/authSlice';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod"
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  const { isLoading } = useSelector((state) => state.auth); // Get loading state from Redux
+  const { isLoading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = (event) => {
-    event.preventDefault();
-    setError(null); // Reset error on new login attempt
+  const schema = z.object({
+    email: z.string().email("Invalid email!"),
+    password: z.string().min(6),
+  })
 
-    // Dispatch the login action to Redux
+  const { register, handleSubmit, formState: {errors} } = useForm({
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit = (e) => {
+    setError(null);
+
     dispatch(login({ email, password }))
       .then(() => {
-        navigate('/'); // Navigate to the home page on successful login
+        navigate('/');
       })
       .catch((err) => {
         setError('Login failed. Please check your credentials and try again.');
@@ -29,7 +39,7 @@ const LoginForm = () => {
   return (
     <section className='my-5'>
       <div className="container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: 'auto' }}>
-        <form style={{ maxWidth: '400px', width: '100%' }} onSubmit={handleLogin}>
+        <form style={{ maxWidth: '400px', width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
           <div className="text-center mb-3">
             <p>Sign in with:</p>
             <button type="button" className="btn btn-link btn-floating mx-1">
@@ -50,14 +60,14 @@ const LoginForm = () => {
 
           <div className="form-outline mb-3">
             <input
-              type="email"
+              type="text"
               id="loginEmail"
               className="form-control"
-              value={email}
+              {...register("email")}
               onChange={(e) => setEmail(e.target.value)}
-              required
             />
             <label className="form-label" htmlFor="loginEmail">Email</label>
+            <span className='mx-3 fs-8' style={{color: 'red'}}>{errors.email?.message}</span>
           </div>
 
           <div className="form-outline mb-3">
@@ -65,12 +75,11 @@ const LoginForm = () => {
               type="password"
               id="loginPassword"
               className="form-control"
-              value={password}
+              {...register("password")}
               onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
             />
             <label className="form-label" htmlFor="loginPassword">Password</label>
+            <span className='mx-3 fs-8' style={{color: 'red'}}>{errors.password?.message}</span>
           </div>
 
           <div className="row mb-3">

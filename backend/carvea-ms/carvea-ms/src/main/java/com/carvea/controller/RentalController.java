@@ -51,4 +51,17 @@ public class RentalController {
     ){
         return ResponseEntity.ok(rentalService.searchRentalsByName(name));
     }
+
+    @GetMapping("/rental-cities")
+    public ResponseEntity<List<String>> getRentalCities(){
+        List<String> cities = rentalService.getRentalCities();
+        return ResponseEntity.ok(cities);
+    }
+
+    @GetMapping("/by-city")
+    public ResponseEntity<List<RentalDto>> getRentalByCity(
+            @RequestParam(required = false) String city
+    ){
+        return ResponseEntity.ok(rentalService.searchRentalsByCity(city));
+    }
 }

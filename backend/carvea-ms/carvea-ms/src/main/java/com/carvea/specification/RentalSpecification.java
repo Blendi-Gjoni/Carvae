@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 public class RentalSpecification {
-    public static Specification<Rental> filterRental(String name) {
+    public static Specification<Rental> filterRentalByName(String name) {
         return (root, query, criteriaBuilder) -> {
             Predicate namePredicate = criteriaBuilder.like(
                     root.get("name"),
@@ -14,6 +14,16 @@ public class RentalSpecification {
             );
 
             return namePredicate;
+        };
+    }
+
+    public static Specification<Rental> filterRentalByCity(String city) {
+        return (root, query, criteriaBuilder) -> {
+            Predicate cityPredicate = criteriaBuilder.like(
+                    root.get("city"),
+                    StringUtils.isBlank(city) ? likePattern("") : likePattern(city)
+            );
+            return cityPredicate;
         };
     }
 

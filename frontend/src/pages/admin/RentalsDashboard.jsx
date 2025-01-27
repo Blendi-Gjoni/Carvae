@@ -16,6 +16,7 @@ import {
   getPaginationRowModel } from '@tanstack/react-table';
 import {
   useGetRentalsQuery,
+  useGetRentalsByCityQuery,
   useAddRentalMutation,
   useUpdateRentalMutation,
   useDeleteRentalMutation,
@@ -24,13 +25,18 @@ import { HiOutlineSwitchVertical } from "react-icons/hi";
 import { HiSearch } from "react-icons/hi";
 
 const RentalsDashboard = () => {
-  const [modalShow, setModalShow] = useState(false);
-  const [formData, setFormData] = useState({});
-
-  const { data: rentals = [], error, isLoading, refetch  } = useGetRentalsQuery();
-
+  const [ modalShow, setModalShow ] = useState(false);
+  const [ formData, setFormData ] = useState({});
+  const [ selectedCity, setSelectedCity ] = useState("");
   const [ sorting, setSorting ] = useState([]);
   const [ globalFilter, setGlobalFilter ] = useState("");
+
+  const { data: rentals = [], error, isLoading, refetch  } = useGetRentalsQuery();
+  const { data: rentalCities = [] } = useGetRentalsByCityQuery();
+  const { data: rentalsByCity = [], isLoading: isLoadingRentalsByCity, error: cityError } =
+    useGetRentalsByCityQuery(selectedCity, {
+      skip: selectedCity === "",
+  });
 
   const [addRental, { isLoading: isAdding }] = useAddRentalMutation();
   const [updateRental, { isLoading: isUpdating }] = useUpdateRentalMutation();
@@ -107,7 +113,21 @@ const RentalsDashboard = () => {
     setModalShow(false);
   };
 
-  const renderError = error && <p style={{ color: 'red' }}>Error: {error.message}</p>;
+  const handleCityChange = (e) => {
+    const city = e.target.value;
+    setSelectedCity(city);
+    
+    if(!city){
+      refetch();
+    }
+  };
+
+  const renderError = 
+    (error || cityError) && (
+      <p style={{color:'red'}}>
+        Error: {error?.message || cityError?.message}
+      </p>
+    )
 
   const columnHelper = createColumnHelper();
 
@@ -217,7 +237,7 @@ const RentalsDashboard = () => {
   ];
 
   const table = useReactTable({
-    data: rentals,
+    data: selectedCity && rentalsByCity.length ? rentalsByCity : rentals,
     columns,
     state: {
       sorting,
@@ -267,14 +287,18 @@ const RentalsDashboard = () => {
             </div>
           </div>
 
-          <div className='container'>
-            <div className='row'>
-              <div className='col-2 ms-auto align-self-end'>
-                <select className='form-select form-select-sm my-3'>
-                  <option selected>Select Rentals by City</option>
-                  {rentals.map((rentals) => (
-                    <option key={rentals.id} value={rentals.id}>
-                      {rentals.city}
+          <div className="container">
+            <div className="row">
+              <div className="col-2 ms-auto align-self-end">
+                <select
+                  className="form-select form-select-sm my-3"
+                  onChange={handleCityChange}
+                  value={selectedCity}
+                >
+                  <option value="">All Rentals</option>
+                  {rentalCities.map((cityObj, index) => (
+                    <option key={index} value={cityObj.city}>
+                      {cityObj.city}
                     </option>
                   ))}
                 </select>
@@ -282,44 +306,51 @@ const RentalsDashboard = () => {
             </div>
           </div>
 
-          <div style={{overflowX: 'auto', maxWidth: '100%'}}>
-            <table className="table table-hover mt-2">
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th key={header.id}>
-                        <div 
-                          {...{
-                            className: header.column.getCanSort()
-                            ? "d-flex align-items-center cursor-pointer select-none text-dark hover:text-primary"
-                            : "",
-                            onClick: header.column.getToggleSortingHandler(),
-                          }}
-                        >
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                          {header.column.getCanSort() && (
-                            <HiOutlineSwitchVertical style={{ cursor: 'pointer' }} />
-                          )}
-                        </div>
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody>
-                {table.getRowModel().rows.map((row) => (
-                  <tr key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {isLoadingRentalsByCity ? (
+            <p>Loading rentals by city...</p>
+          ) : cityError ? (
+            <p style={{ color: 'red' }}>Error: {cityError.message}</p>
+          ) : (
+            <div style={{ overflowX: 'auto', maxWidth: '100%' }}>
+              <table className="table table-hover mt-2">
+                <thead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <th key={header.id}>
+                          <div
+                            {...{
+                              className: header.column.getCanSort()
+                                ? "d-flex align-items-center cursor-pointer select-none text-dark hover:text-primary"
+                                : "",
+                              onClick: header.column.getToggleSortingHandler(),
+                            }}
+                          >
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            {header.column.getCanSort() && (
+                              <HiOutlineSwitchVertical style={{ cursor: "pointer" }} />
+                            )}
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
+                  ))}
+                </thead>
+                <tbody>
+                  {table.getRowModel().rows.map((row) => (
+                    <tr key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <td key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
         </>
       )}
 
