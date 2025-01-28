@@ -32,7 +32,7 @@ const RentalsDashboard = () => {
   const [ globalFilter, setGlobalFilter ] = useState("");
 
   const { data: rentals = [], error, isLoading, refetch  } = useGetRentalsQuery();
-  const { data: rentalCities = [] } = useGetRentalsByCityQuery();
+  const { data: rentalCities = [], refetch: refetchRentalCities } = useGetRentalsByCityQuery();
   const { data: rentalsByCity = [], isLoading: isLoadingRentalsByCity, error: cityError } =
     useGetRentalsByCityQuery(selectedCity, {
       skip: selectedCity === "",
@@ -70,6 +70,7 @@ const RentalsDashboard = () => {
       try {
         await deleteRental({ id });
         refetch();
+        refetchRentalCities();
       } catch (err) {
         console.error('Error deleting rental:', err);
       }
@@ -88,6 +89,7 @@ const RentalsDashboard = () => {
       }
       setModalShow(false);
       refetch();
+      refetchRentalCities();
     } catch (err) {
       console.error('Error saving rental:', err);
     }
@@ -256,7 +258,7 @@ const RentalsDashboard = () => {
 
   return (
     <>
-      <h1>Rentals Dashboard</h1>
+      <h1><b>Rentals Dashboard</b></h1>
 
       {renderError}
 
