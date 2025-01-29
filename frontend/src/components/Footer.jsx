@@ -1,5 +1,6 @@
 import React from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import finallogo from '../assets/finallogo.png';
 
 const Footer = () => {
     return (
@@ -11,10 +12,9 @@ const Footer = () => {
                             <div className="footer-logo-wrapper text-center text-sm-start">
                                 <a href="#!">
                                     <img
-                                        src="./assets/img/bsb-logo.svg"
+                                        src={finallogo}
                                         alt="Carvae Logo"
-                                        width="175"
-                                        height="57"
+                                        width="100"
                                     />
                                 </a>
                             </div>
@@ -39,19 +39,20 @@ const Footer = () => {
 
                         <div className="col-xs-12 col-sm-6 col-xl-3 order-1 order-xl-2">
                             <div className="social-media-wrapper">
-                                <ul className="list-unstyled m-0 p-0 d-flex justify-content-center justify-content-sm-end">
-                                    {[
-                                        {icon: "bi-facebook", href: "#!"},
-                                        {icon: "bi-youtube", href: "#!"},
-                                        {icon: "bi-twitter", href: "#!"},
-                                        {icon: "bi-instagram", href: "#!"},
-                                    ].map(({icon, href}) => (
-                                        <li className="me-3" key={icon}>
-                                            <a href={href}
-                                               className={`bi ${icon} fs-4 link-dark link-opacity-75-hover`}/>
-                                        </li>
-                                    ))}
-                                </ul>
+                            <ul className="list-unstyled m-0 p-0 d-flex justify-content-center justify-content-sm-end">
+                                {[
+                                    {icon: "bi-facebook", href: "#!"},
+                                    {icon: "bi-youtube", href: "#!"},
+                                    {icon: "bi-twitter", href: "#!"},
+                                    {icon: "bi-instagram", href: "#!"},
+                                ].map(({icon, href}) => (
+                                    <li className="me-3" key={icon}>
+                                        <a href={href} className={`bi ${icon} fs-4 link-dark link-opacity-75-hover`}>
+                                            <span className="visually-hidden">{icon} link</span>
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
                             </div>
                         </div>
                     </div>
@@ -66,10 +67,7 @@ const Footer = () => {
                             </div>
                             <div className="credits text-secondary text-center mt-2 fs-8">
                                 Built by{" "}
-                                <a
-                                    href="#"
-                                    className="link-secondary text-decoration-none"
-                                >
+                                <a href="https://carvae.com" className="link-secondary text-decoration-none">
                                     carvae.com
                                 </a>
                             </div>

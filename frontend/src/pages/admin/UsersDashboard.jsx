@@ -44,8 +44,8 @@ const UsersDashboard = () => {
               <td>{user.email}</td>
               <td>{user.role?.name}</td>
               <td>
-                <button className="btn btn-primary">Edit</button>
-                <button className="btn btn-danger">Delete</button>
+                <button className="btn btn-primary" disabled>Edit</button>
+                <button className="btn btn-danger" disabled>Delete</button>
               </td>
             </tr>
           ))}

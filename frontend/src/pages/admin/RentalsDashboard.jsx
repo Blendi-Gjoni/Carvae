@@ -4,16 +4,6 @@ import { Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { 
-  createColumnHelper, 
-  flexRender,
-  useReactTable,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  getGroupedRowModel,
-  getExpandedRowModel,
-  getPaginationRowModel } from '@tanstack/react-table';
 import {
   useGetRentalsQuery,
   useGetRentalsByCityQuery,
@@ -21,14 +11,14 @@ import {
   useUpdateRentalMutation,
   useDeleteRentalMutation,
 } from '../../api/RentalsApi';
-import { HiOutlineSwitchVertical } from "react-icons/hi";
-import { HiSearch } from "react-icons/hi";
+import { HiFilter } from "react-icons/hi";
+import { HiOutlinePlus } from "react-icons/hi";
+import DashboardTable from '../../components/DashboardTable';
 
 const RentalsDashboard = () => {
   const [ modalShow, setModalShow ] = useState(false);
   const [ formData, setFormData ] = useState({});
   const [ selectedCity, setSelectedCity ] = useState("");
-  const [ sorting, setSorting ] = useState([]);
   const [ globalFilter, setGlobalFilter ] = useState("");
 
   const { data: rentals = [], error, isLoading, refetch  } = useGetRentalsQuery();
@@ -131,86 +121,65 @@ const RentalsDashboard = () => {
       </p>
     )
 
-  const columnHelper = createColumnHelper();
-
   const columns = [
-    columnHelper.accessor("id", {
-      enableSorting:false,
+    {
+      accessorKey: "id",
+      header: "ID",
+      enableSorting: false,
       cell: (info) => info.getValue(),
-      header: () => (
-        <span className='d-flex align-items-center'>
-          <b>ID</b>
-        </span>
-      ),
-    }),
-    columnHelper.accessor("name", {
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
+      enableSorting: true,
       cell: (info) => info.getValue(),
-      header: () => (
-        <span className='d-flex align-items-center' style={{cursor:'pointer'}}>
-          <b>Name</b>
-        </span>
-      ),
-    }),
-    columnHelper.accessor("address", {
+    },
+    {
+      accessorKey: "address",
+      header: "Address",
+      enableSorting: true,
       cell: (info) => info.getValue(),
-      header: () => (
-        <span className='d-flex align-items-center' style={{cursor:'pointer'}}>
-          <b>Address</b>
-        </span>
-      ),
-    }),
-    columnHelper.accessor("city", {
+    },
+    {
+      accessorKey: "city",
+      header: "City",
+      enableSorting: true,
       cell: (info) => info.getValue(),
-      header: () => (
-        <span className='d-flex align-items-center' style={{cursor:'pointer'}}>
-          <b>City</b>
-        </span>
-      ),
-    }),
-    columnHelper.accessor("state", {
+    },
+    {
+      accessorKey: "state",
+      header: "State",
+      enableSorting: true,
       cell: (info) => info.getValue(),
-      header: () => (
-        <span className='d-flex align-items-center' style={{cursor:'pointer'}}>
-          <b>State</b>
-        </span>
-      ),
-    }),
-    columnHelper.accessor("phoneNumber", {
-      enableSorting:false,
+    },
+    {
+      accessorKey: "phoneNumber",
+      header: "Phone",
+      enableSorting: false,
       cell: (info) => info.getValue(),
-      header: () => (
-        <span className='d-flex align-items-center'>
-          <b>Phone</b>
-        </span>
-      ),
-    }),
-    columnHelper.accessor("email", {
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+      enableSorting: true,
       cell: (info) => info.getValue(),
-      header: () => (
-        <span className='d-flex align-items-center' style={{cursor:'pointer'}}>
-          <b>Email</b>
-        </span>
-      ),
-    }),
-    columnHelper.accessor("website", {
+    },
+    {
+      accessorKey: "website",
+      header: "Website",
+      enableSorting: true,
       cell: (info) => info.getValue(),
-      header: () => (
-        <span className='d-flex align-items-center' style={{cursor:'pointer'}}>
-          <b>Website</b>
-        </span>
-      ),
-    }),
-    columnHelper.accessor("openingHours", {
-      enableSorting:false,
+    },
+    {
+      accessorKey: "openingHours",
+      header: "Opening Hours",
+      enableSorting: false,
       cell: (info) => info.getValue(),
-      header: () => (
-        <span className='d-flex align-items-center'>
-          <b>Opening Hours</b>
-        </span>
-      ),
-    }),
-    columnHelper.accessor("actions", {
-      enableSorting:false,
+    },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      enableSorting: false,
       cell: (info) => (
         <div className='d-flex justify-content-around align-items-center'>
           <Button
@@ -229,36 +198,19 @@ const RentalsDashboard = () => {
           </Button>
         </div>
       ),
-      header: () => (
-        <span className='d-flex justify-content-center align-items-center'>
-          <b>Actions</b>
-        </span>
-      ),
-    }),
+    },
   ];
 
-  const table = useReactTable({
-    data: selectedCity && rentalsByCity.length ? rentalsByCity : rentals,
-    columns,
-    state: {
-      sorting,
-      globalFilter,
-    },
-    getCoreRowModel: getCoreRowModel(),
-
-    onGlobalFilterChange: setGlobalFilter,
-    getFilteredRowModel: getFilteredRowModel(),
-
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    getGroupedRowModel: getGroupedRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  });
+  const filteredRentals = rentals.filter((rental) =>
+    Object.values(rental)
+      .join(" ")
+      .toLowerCase()
+      .includes(globalFilter.toLowerCase())
+  );
 
   return (
     <>
-      <h1><b>Rentals Dashboard</b></h1>
+      <h1 className='mb-4'><b>Rentals Dashboard</b></h1>
 
       {renderError}
 
@@ -269,8 +221,8 @@ const RentalsDashboard = () => {
           <div className='container text-center'>
             <div className='row d-flex justify-content-between align-items-center gap-3'>
               <div className='col-12 col-sm-12 col-md-4 d-flex justify-content-center'>
-                <Button className="" onClick={handleAddNew}>
-                  Add New Rental
+                <Button className="d-flex align-items-center" variant='success' onClick={handleAddNew}>
+                  <HiOutlinePlus />Add New Rental
                 </Button>
               </div>
               <div className='col-12 col-sm-12 col-md-4 d-flex justify-content-center'>
@@ -282,7 +234,7 @@ const RentalsDashboard = () => {
                     className='form-control' 
                     placeholder='Search...' 
                   />
-                  <button className='btn btn-outline-secondary'><HiSearch className='text-dark'></HiSearch></button>
+                  <button className='btn btn-outline-dark' disabled><HiFilter className='text-dark'></HiFilter></button>
                 </div>
               </div>
             </div>
@@ -312,46 +264,12 @@ const RentalsDashboard = () => {
           ) : cityError ? (
             <p style={{ color: 'red' }}>Error: {cityError.message}</p>
           ) : (
-            <div style={{ overflowX: 'auto', maxWidth: '100%' }}>
-              <table className="table table-hover mt-2">
-                <thead>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <tr key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => (
-                        <th key={header.id}>
-                          <div
-                            {...{
-                              className: header.column.getCanSort()
-                                ? "d-flex align-items-center cursor-pointer select-none text-dark hover:text-primary"
-                                : "",
-                              onClick: header.column.getToggleSortingHandler(),
-                            }}
-                          >
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                            {header.column.getCanSort() && (
-                              <HiOutlineSwitchVertical style={{ cursor: "pointer" }} />
-                            )}
-                          </div>
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody>
-                  {table.getRowModel().rows.map((row) => (
-                    <tr key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <DashboardTable
+              tableData={selectedCity && rentalsByCity.length ? rentalsByCity : filteredRentals}
+              allColumns={columns}
+              enableSort
+            />
           )}
-
         </>
       )}
 
@@ -449,7 +367,7 @@ const RentalsDashboard = () => {
             <Form.Control.Feedback type='invalid'>{errors.openingHours?.message}</Form.Control.Feedback>
           </Form.Group>
 
-          <Button className='mt-3' variant="primary" type="submit" disabled={isAdding || isUpdating}>
+          <Button className='mt-3' variant="success" type="submit" disabled={isAdding || isUpdating}>
             {isAdding || isUpdating ? 'Saving...' : 'Save'}
           </Button>
         </Form>

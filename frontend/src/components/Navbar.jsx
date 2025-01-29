@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from 'react-router-dom';
 import '../style/navbar.css'
+import finallogo from '../assets/finallogo.png';
 
 const Navbar = () => {
     return (
@@ -8,7 +9,7 @@ const Navbar = () => {
             <div className="container-fluid">
                 
                 <Link to="/" className="nav-brand">
-                    <img src="..." alt="Brand Logo" />
+                    <img style={{width:'100px'}} src={finallogo} alt="Brand Logo"/>
                 </Link>
                 <button
                     className="navbar-toggler"
@@ -27,9 +28,7 @@ const Navbar = () => {
                             <Link to="/" className="nav-link" aria-current="page">Home</Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#">
-                                Link
-                            </a>
+                            <Link className="nav-link" to="/">Link</Link>
                         </li>
                         <li className="nav-item dropdown">
                             <a
