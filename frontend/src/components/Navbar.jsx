@@ -8,7 +8,7 @@ const Navbar = () => {
         <nav className="navbar navbar-expand-md bg-light">
             <div className="container-fluid">
                 
-                <Link to="/" className="nav-brand">
+                <Link to="/" className="nav-brand ms-5">
                     <img style={{width:'100px'}} src={finallogo} alt="Brand Logo"/>
                 </Link>
                 <button

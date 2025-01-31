@@ -13,6 +13,7 @@ import com.carvea.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +42,12 @@ public class ReservationService {
         Rental rental = rentalRepository.findById(reservationDto.getRentalId())
                 .orElseThrow(() -> new RuntimeException("Rental Not Found"));
 
-        List<Car> cars = carRepository.findAllById(reservationDto.getCarIds());
+        List<Long> carIds = reservationDto.getCarIds();
+        if (carIds.size() == 1) {
+            carIds = Arrays.asList(carIds.get(0));
+        }
+
+        List<Car> cars = carRepository.findAllById(carIds);
 
         Reservation reservation = ReservationMapper.toReservationEntity(reservationDto, user, rental, cars);
         Reservation savedReservation = reservationRepository.save(reservation);

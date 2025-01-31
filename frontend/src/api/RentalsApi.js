@@ -21,6 +21,9 @@ export const rentalsApi = createApi ({
                 params: {name},
             })
         }),
+        getRentalCities: builder.query ({
+            query: () => `/rentals/rental-cities`,
+        }),
         getRentalsByCity: builder.query ({
             query: (city) => ({
                 url: `/rentals/by-city`,
@@ -54,6 +57,7 @@ export const {
     useGetRentalsQuery,
     useGetRentalByIdQuery,
     useGetRentalsByNameQuery,
+    useGetRentalCitiesQuery,
     useGetRentalsByCityQuery,
     useAddRentalMutation,
     useUpdateRentalMutation,

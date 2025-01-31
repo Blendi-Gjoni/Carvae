@@ -6,13 +6,13 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   useGetRentalsQuery,
+  useGetRentalCitiesQuery,
   useGetRentalsByCityQuery,
   useAddRentalMutation,
   useUpdateRentalMutation,
   useDeleteRentalMutation,
 } from '../../api/RentalsApi';
-import { HiFilter } from "react-icons/hi";
-import { HiOutlinePlus } from "react-icons/hi";
+import { HiFilter, HiOutlinePlus } from 'react-icons/hi';
 import DashboardTable from '../../components/DashboardTable';
 
 const RentalsDashboard = () => {
@@ -22,7 +22,7 @@ const RentalsDashboard = () => {
   const [ globalFilter, setGlobalFilter ] = useState("");
 
   const { data: rentals = [], error, isLoading, refetch  } = useGetRentalsQuery();
-  const { data: rentalCities = [], refetch: refetchRentalCities } = useGetRentalsByCityQuery();
+  const { data: rentalCities = [], refetch: refetchRentalCities } = useGetRentalCitiesQuery();
   const { data: rentalsByCity = [], isLoading: isLoadingRentalsByCity, error: cityError } =
     useGetRentalsByCityQuery(selectedCity, {
       skip: selectedCity === "",
@@ -249,9 +249,9 @@ const RentalsDashboard = () => {
                   value={selectedCity}
                 >
                   <option value="">All Rentals</option>
-                  {rentalCities.map((cityObj, index) => (
-                    <option key={index} value={cityObj.city}>
-                      {cityObj.city}
+                  {rentalCities.map((city, index) => (
+                    <option key={index} value={city}>
+                      {city}
                     </option>
                   ))}
                 </select>

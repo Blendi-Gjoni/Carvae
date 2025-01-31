@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { FaTachometerAlt, FaUsers, FaEnvelope, FaBookmark, FaFolder, FaChartBar, FaSignOutAlt } from 'react-icons/fa';
+import { PiSpeedometerBold, PiUsersBold, PiTruckTrailerBold, PiGarageBold, PiCarSimpleBold, PiCardholderBold, PiClockCounterClockwiseBold, PiSignOutBold } from "react-icons/pi";
 import { logoutAsync } from '../../redux/authSlice';
 import './Sidebar.css';
 
@@ -27,36 +27,36 @@ const Sidebar = ({ isSidebarVisible }) => {
           </button>
           <div className="nav-list">
             <button className="nav-link" onClick={() => navigate('/admin/page')}>
-              <FaTachometerAlt className="nav-icon" />
-              <span className="nav-name">Dashboard</span>
+              <PiSpeedometerBold className="nav-icon" />
+              <span className="nav-name"><b>Dashboard</b></span>
             </button>
             <button className="nav-link" onClick={() => navigate('/admin/users')}>
-              <FaUsers className="nav-icon" />
-              <span className="nav-name">Users</span>
+              <PiUsersBold className="nav-icon" />
+              <span className="nav-name"><b>Users</b></span>
             </button>
             <button className="nav-link" onClick={() => navigate('/admin/rentals')}>
-              <FaEnvelope className="nav-icon" />
-              <span className="nav-name">Rentals</span>
+              <PiTruckTrailerBold className="nav-icon" />
+              <span className="nav-name"><b>Rentals</b></span>
             </button>
             <button className="nav-link" onClick={() => navigate('/admin/dealerships')}>
-              <FaBookmark className="nav-icon" />
-              <span className="nav-name">Dealerships</span>
+              <PiGarageBold className="nav-icon" />
+              <span className="nav-name"><b>Dealerships</b></span>
             </button>
             <button className="nav-link" onClick={() => navigate('/admin/cars')}>
-              <FaFolder className="nav-icon" />
-              <span className="nav-name">Cars</span>
+              <PiCarSimpleBold className="nav-icon" />
+              <span className="nav-name"><b>Cars</b></span>
             </button>
             <button className="nav-link" onClick={() => navigate('/admin/orders')}>
-              <FaFolder className="nav-icon" />
-              <span className="nav-name">Car Orders</span>
+              <PiCardholderBold className="nav-icon" />
+              <span className="nav-name"><b>Car Orders</b></span>
             </button>
             <button className="nav-link" onClick={() => navigate('/admin/reservations')}>
-              <FaChartBar className="nav-icon" />
-              <span className="nav-name">Car Reservations</span>
+              <PiClockCounterClockwiseBold className="nav-icon" />
+              <span className="nav-name"><b>Car Reservations</b></span>
             </button>
             <button className="nav-link" onClick={handleSignOut}>
-              <FaSignOutAlt className="nav-icon" />
-              <span className="nav-name">Sign Out</span>
+              <PiSignOutBold className="nav-icon" />
+              <span className="nav-name"><b>Sign Out</b></span>
             </button>
           </div>
         </div>

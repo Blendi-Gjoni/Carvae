@@ -1,71 +1,74 @@
-import React, { useState, useEffect } from 'react';
-import DealershipApiService from '../../api/DealershipApiService';  // Update the import to DealershipApiService
+import React, { useState } from 'react';
 import DefaultModal from '../../components/modals/DefaultModal';
 import { Button, Form } from 'react-bootstrap';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import {
+    useGetDealershipsQuery,
+    useAddDealershipMutation,
+    useUpdateDealershipMutation,
+    useDeleteDealershipMutation,
+} from '../../api/DealershipsApi';
+import { HiFilter, HiOutlinePlus } from 'react-icons/hi';
+import DashboardTable from '../../components/DashboardTable';
 
 const DealershipsDashboard = () => {
-    const [dealerships, setDealerships] = useState([]);
-    const [error, setError] = useState(null);
-    const [modalShow, setModalShow] = useState(false);
-    const [formData, setFormData] = useState({
-        id: '',
-        name: '',
-        address: '',
-        city: '',
-        state: '',
-        phoneNumber: '',
-        email: '',
-        website: '',
-        openingHours: '',
+    const [ modalShow, setModalShow ] = useState(false);
+    const [ formData, setFormData ] = useState({});
+    const [ globalFilter, setGlobalFilter ] = useState("");
+
+    const { data: dealerships = [], error, isLoading, refetch } = useGetDealershipsQuery();
+
+    const [ addDealership, { isLoading: isAdding } ] = useAddDealershipMutation();
+    const [ updateDealership, { isLoading: isUpdating } ] = useUpdateDealershipMutation();
+    const [ deleteDealership, { isLoading: isDeleting } ] = useDeleteDealershipMutation();
+
+    const schema = yup.object().shape({
+        name: yup.string().required("Dealership name is required!"),
+        address: yup.string().required("Dealership address is required!"),
+        city: yup.string().required("Dealership city is required!"),
+        state: yup.string().required("Dealership state is required!"),
+        phoneNumber: yup
+          .string()
+          .matches(/^[0-9]+$/, "Dealership phone number is required, and must contain only digits!")
+          .required("Dealership phone number is required!"),
+        email: yup.string().email("Invalid email!").required("Dealership email is required, and must be a valid email!"),
+        website: yup.string().required("Dealership website is required!"),
+        openingHours: yup.string().required("Dealership opening hours are required!"),
     });
 
-    useEffect(() => {
-        fetchDealerships();
-    }, []);
-
-    const fetchDealerships = async () => {
-        try {
-            const data = await DealershipApiService.getAllDealerships();  // Update to getAllDealerships
-            setDealerships(data);
-        } catch (err) {
-            console.error('Error fetching dealerships:', err);
-            setError(err.message);
-        }
-    };
-
-    const handleFormChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
-
+    const { register, handleSubmit, setValue, reset, formState: { errors }} = useForm ({
+        resolver: yupResolver(schema),
+    });
+    
     const handleEdit = (dealership) => {
-        setFormData(dealership);
         setModalShow(true);
+        Object.keys(dealership).forEach((key) => setValue(key, dealership[key]));
     };
 
     const handleDelete = async (id) => {
-        try {
-            await DealershipApiService.deleteDealership(id);  // Update to deleteDealership
-            fetchDealerships();
-        } catch (err) {
-            console.error('Error deleting dealership:', err);
+        if (id) {
+            try {
+                await deleteDealership({ id });
+                refetch();
+            } catch (err) {
+                console.error('Error deleting dealership:', err);
+            }
+        } else {
+            console.error('Dealership ID is missing!');
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const onSubmit = async (data) => {
         try {
             if (formData.id) {
-                // Update existing dealership
-                await DealershipApiService.updateDealership(formData.id, formData);  // Update to updateDealership
+                await updateDealership({ id: formData.id, ...data });
             } else {
-                // Add new dealership
-                await DealershipApiService.addDealership(formData);  // Update to addDealership
+                await addDealership(data);
             }
             setModalShow(false);
-            fetchDealerships();
+            refetch();
         } catch (err) {
             console.error('Error saving dealership:', err);
         }
@@ -86,162 +89,247 @@ const DealershipsDashboard = () => {
         setModalShow(true);
     };
 
+    const handleModalClose = () => {
+        reset();
+        setModalShow(false);
+    };
+
+    const renderError = 
+    (error) && (
+      <p style={{color:'red'}}>
+        Error: {error?.message}
+      </p>
+    )
+
+    const columns = [
+        {
+          accessorKey: "id",
+          header: "ID",
+          enableSorting: false,
+          cell: (info) => info.getValue(),
+        },
+        {
+          accessorKey: "name",
+          header: "Name",
+          enableSorting: true,
+          cell: (info) => info.getValue(),
+        },
+        {
+          accessorKey: "address",
+          header: "Address",
+          enableSorting: true,
+          cell: (info) => info.getValue(),
+        },
+        {
+          accessorKey: "city",
+          header: "City",
+          enableSorting: true,
+          cell: (info) => info.getValue(),
+        },
+        {
+          accessorKey: "state",
+          header: "State",
+          enableSorting: true,
+          cell: (info) => info.getValue(),
+        },
+        {
+          accessorKey: "phoneNumber",
+          header: "Phone",
+          enableSorting: false,
+          cell: (info) => info.getValue(),
+        },
+        {
+          accessorKey: "email",
+          header: "Email",
+          enableSorting: true,
+          cell: (info) => info.getValue(),
+        },
+        {
+          accessorKey: "website",
+          header: "Website",
+          enableSorting: true,
+          cell: (info) => info.getValue(),
+        },
+        {
+          accessorKey: "openingHours",
+          header: "Opening Hours",
+          enableSorting: false,
+          cell: (info) => info.getValue(),
+        },
+        {
+          accessorKey: "actions",
+          header: "Actions",
+          enableSorting: false,
+          cell: (info) => (
+            <div className='d-flex justify-content-around align-items-center'>
+              <Button
+                variant="primary"
+                onClick={() => handleEdit(info.row.original)}
+                disabled={isUpdating}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => handleDelete(info.row.original.id)}
+                disabled={isDeleting}
+              >
+                Delete
+              </Button>
+            </div>
+          ),
+        },
+    ];
+
+    const filteredDealerships = dealerships.filter((dealership) =>
+        Object.values(dealership)
+          .join(" ")
+          .toLowerCase()
+          .includes(globalFilter.toLowerCase())
+      );
+
     return (
-        <div>
-            <h1>Dealerships Dashboard</h1>
+        <>
+            <h1 className='mb-4'><b>Dealerships Dashboard</b></h1>
 
-            {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+            {renderError}
 
-            <Button className="mb-3" onClick={handleAddNew}>
-                Add New Dealership
-            </Button>
+            {isLoading ? (
+                <p>Loading dealerships...</p>
+            ) : (
+                <>
+                    <div className="container text-center my-3">
+                        <div className="row d-flex justify-content-between align-items-center gap-3">
+                            <div className="col-12 col-sm-12 col-md-4 d-flex justify-content-center">
+                                <Button className="d-flex align-items-center" variant="success" onClick={handleAddNew}>
+                                    <HiOutlinePlus /> Add New Dealership
+                                </Button>
+                            </div>
+                            <div className="col-12 col-sm-12 col-md-4 d-flex justify-content-center">
+                                <div className="input-group">
+                                    <input 
+                                        value={globalFilter ?? ""}
+                                        onChange={(e) => setGlobalFilter(e.target.value)}
+                                        type="text" 
+                                        className="form-control" 
+                                        placeholder="Search..." 
+                                    />
+                                    <button className="btn btn-outline-dark" disabled>
+                                        <HiFilter className="text-dark" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
 
-            <table className="table table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Address</th>
-                    <th scope="col">City</th>
-                    <th scope="col">State</th>
-                    <th scope="col">Phone</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Website</th>
-                    <th scope="col">Opening Hours</th>
-                    <th scope="col">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {dealerships.map((dealership) => (
-                    <tr key={dealership.id}>
-                        <th scope="row">{dealership.id}</th>
-                        <td>{dealership.name}</td>
-                        <td>{dealership.address}</td>
-                        <td>{dealership.city}</td>
-                        <td>{dealership.state}</td>
-                        <td>{dealership.phoneNumber}</td>
-                        <td>{dealership.email}</td>
-                        <td>{dealership.website}</td>
-                        <td>{dealership.openingHours}</td>
-                        <td>
-                            <Button
-                                variant="primary"
-                                onClick={() => handleEdit(dealership)}
-                                className="me-2"
-                            >
-                                Edit
-                            </Button>
-                            <Button
-                                variant="danger"
-                                onClick={() => handleDelete(dealership.id)}
-                            >
-                                Delete
-                            </Button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+                    <DashboardTable
+                        tableData={filteredDealerships}
+                        allColumns={columns}
+                        enableSort
+                    />
+                </>
+            )}
 
-            {/* Modal for Add/Edit */}
             <DefaultModal
                 show={modalShow}
-                onHide={() => setModalShow(false)}
-                title={formData.id ? 'Edit Dealership' : 'Add New Dealership'}
+                onHide={handleModalClose}
+                title={formData.id ? 'Edit Rental' : 'Add New Rental'}
             >
-                <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Name</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleFormChange}
-                            required
-                        />
-                    </Form.Group>
+                <Form onSubmit={handleSubmit(onSubmit)}>
+                <Form.Group className="mb-3">
+                    <Form.Label></Form.Label>
+                    <Form.Control
+                    type="text"
+                    {...register("name")}
+                    isInvalid={!!errors.name}
+                    placeholder='Name'
+                    />
+                    <Form.Control.Feedback type="invalid">{errors.name?.message}</Form.Control.Feedback>
+                </Form.Group>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label>Address</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="address"
-                            value={formData.address}
-                            onChange={handleFormChange}
-                            required
-                        />
-                    </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label></Form.Label>
+                    <Form.Control
+                    type="text"
+                    {...register("address")}
+                    isInvalid={!!errors.address}
+                    placeholder='Address'
+                    />
+                    <Form.Control.Feedback type="invalid">{errors.address?.message}</Form.Control.Feedback>
+                </Form.Group>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label>City</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="city"
-                            value={formData.city}
-                            onChange={handleFormChange}
-                            required
-                        />
-                    </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label></Form.Label>
+                    <Form.Control
+                    type="text"
+                    {...register("city")}
+                    isInvalid={!!errors.city}
+                    placeholder='City'
+                    />
+                    <Form.Control.Feedback type='invalid'>{errors.city?.message}</Form.Control.Feedback>
+                </Form.Group>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label>State</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="state"
-                            value={formData.state}
-                            onChange={handleFormChange}
-                            required
-                        />
-                    </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label></Form.Label>
+                    <Form.Control
+                    type="text"
+                    {...register("state")}
+                    isInvalid={!!errors.state}
+                    placeholder='State'
+                    />
+                    <Form.Control.Feedback type='invalid'>{errors.state?.message}</Form.Control.Feedback>
+                </Form.Group>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label>Phone Number</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="phoneNumber"
-                            value={formData.phoneNumber}
-                            onChange={handleFormChange}
-                            required
-                        />
-                    </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label></Form.Label>
+                    <Form.Control
+                    type="text"
+                    {...register("phoneNumber")}
+                    isInvalid={!!errors.phoneNumber}
+                    placeholder='Phone Number'
+                    />
+                    <Form.Control.Feedback type='invalid'>{errors.phoneNumber?.message}</Form.Control.Feedback>
+                </Form.Group>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label>Email</Form.Label>
-                        <Form.Control
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleFormChange}
-                            required
-                        />
-                    </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label></Form.Label>
+                    <Form.Control
+                    type="text"
+                    {...register("email")}
+                    isInvalid={!!errors.email}
+                    placeholder='Email'
+                    />
+                    <Form.Control.Feedback type='invalid'>{errors.email?.message}</Form.Control.Feedback>
+                </Form.Group>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label>Website</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="website"
-                            value={formData.website}
-                            onChange={handleFormChange}
-                        />
-                    </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label></Form.Label>
+                    <Form.Control
+                    type="text"
+                    {...register("website")}
+                    isInvalid={!!errors.website}
+                    placeholder='Website'
+                    />
+                    <Form.Control.Feedback type='invalid'>{errors.website?.message}</Form.Control.Feedback>
+                </Form.Group>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label>Opening Hours</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="openingHours"
-                            value={formData.openingHours}
-                            onChange={handleFormChange}
-                        />
-                    </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label></Form.Label>
+                    <Form.Control
+                    type="text"
+                    {...register("openingHours")}
+                    isInvalid={!!errors.openingHours}
+                    placeholder='Opening Hours'
+                    />
+                    <Form.Control.Feedback type='invalid'>{errors.openingHours?.message}</Form.Control.Feedback>
+                </Form.Group>
 
-                    <Button variant="primary" type="submit">
-                        Save
-                    </Button>
+                <Button className='mt-3' variant="success" type="submit" disabled={isAdding || isUpdating}>
+                    {isAdding || isUpdating ? 'Saving...' : 'Save'}
+                </Button>
                 </Form>
             </DefaultModal>
-        </div>
+        </>
     );
 };
 

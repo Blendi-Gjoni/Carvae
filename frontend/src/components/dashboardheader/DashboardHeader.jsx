@@ -2,6 +2,7 @@ import React from 'react';
 import { FaBars } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import './DashboardHeader.css';
+import finallogo from '../../assets/finallogo.png';
 
 const DashboardHeader = ({ toggleSidebar }) => (
   <header className="dashboard-header" id="header">
@@ -9,7 +10,7 @@ const DashboardHeader = ({ toggleSidebar }) => (
       <FaBars />
     </div>
     <div className="header-img d-flex">
-      <Link to="/" className="nav-link "><img src="https://i.imgur.com/hczKIze.jpg" alt="Profile" /></Link>
+      <Link to="/" className="nav-link "><img style={{width: '50px'}} src={finallogo} alt="Brand" /></Link>
     </div>
   </header>
 );
