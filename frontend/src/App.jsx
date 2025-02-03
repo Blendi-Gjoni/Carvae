@@ -21,27 +21,25 @@ import AddCarForm from "./components/AddCarForm";
 
 function App() {
   return (
-    <React.StrictMode>
-      <Provider store={store}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<div className="login-page"><Login /></div>} />
-          <Route path="/car-details" element={<CarDetails />} />
+    <Provider store={store}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<div className="login-page"><Login /></div>} />
+        <Route path="/car-details" element={<CarDetails />} />
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route path="page" element={<AdminPage />} /> {/* Admin Home (Dashboard) */}
-            <Route path="users" element={<UsersDashboard />} />
-            <Route path="rentals" element={<RentalsDashboard />} />
-            <Route path="cars" element={<CarsDashboard />} />
-            <Route path="add-car" element={<AddCarForm />} />
-            <Route path="orders" element={<OrdersDashboard />} />
-            <Route path="dealerships" element={<DealershipsDashboard />} />
-            <Route path="reservations" element={<ReservationsDashboard />} />
-          </Route>
-        </Routes>
-      </Provider>
-    </React.StrictMode>
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="page" element={<AdminPage />} /> {/* Admin Home (Dashboard) */}
+          <Route path="users" element={<UsersDashboard />} />
+          <Route path="rentals" element={<RentalsDashboard />} />
+          <Route path="cars" element={<CarsDashboard />} />
+          <Route path="add-car" element={<AddCarForm />} />
+          <Route path="orders" element={<OrdersDashboard />} />
+          <Route path="dealerships" element={<DealershipsDashboard />} />
+          <Route path="reservations" element={<ReservationsDashboard />} />
+        </Route>
+      </Routes>
+    </Provider>
   );
 }
 
