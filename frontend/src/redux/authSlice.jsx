@@ -1,10 +1,23 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
 import api from '../utils/api';
+
+const token = Cookies.get('token') || null;
+
+const isTokenExpired = (token) => {
+  if (!token) return true;
+  try {
+    const { exp } = jwtDecode(token);
+    return exp * 1000 < Date.now();
+  } catch (error) {
+    return true;
+  }
+};
 
 const initialState = {
   user: null,
-  token: Cookies.get('token') || null,
+  token: isTokenExpired(token) ? null : token,
   isLoading: false,
   error: null,
 };
@@ -21,12 +34,7 @@ export const signup = createAsyncThunk('auth/signup', async (userData, { rejectW
 export const login = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
   try {
     const response = await api.post(`/auth/login`, credentials);
-    Cookies.set('token', response.data.token, {
-      expires: 7,
-      path: '/',
-      sameSite: 'None',
-      secure: true,
-    });
+
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response.data);
@@ -45,7 +53,6 @@ export const verify = createAsyncThunk('auth/verify', async ({ email, verificati
 export const logoutAsync = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
   try {
     await api.post(`/auth/logout`);
-    Cookies.remove('token');
     return true;
   } catch (error) {
     return rejectWithValue('Logout failed.');
@@ -59,7 +66,6 @@ const authSlice = createSlice({
     logout(state) {
       state.user = null;
       state.token = null;
-      Cookies.remove('token');
     },
   },
   extraReducers: (builder) => {
@@ -67,10 +73,6 @@ const authSlice = createSlice({
       .addCase(signup.pending, (state) => {
         state.isLoading = true;
         state.error = null;
-      })
-      .addCase(signup.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.user = action.payload;
       })
       .addCase(signup.rejected, (state, action) => {
         state.isLoading = false;

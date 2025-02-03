@@ -10,13 +10,13 @@ import { ordersApi } from '../api/OrdersApi';
 
 const store = configureStore({
   reducer: {
+    auth: authReducer,
     [rentalsApi.reducerPath]: rentalsApi.reducer, 
     [dealershipsApi.reducerPath]: dealershipsApi.reducer,
     [reservationsApi.reducerPath]: reservationsApi.reducer,
     [usersApi.reducerPath]: usersApi.reducer,
     [carsApi.reducerPath]: carsApi.reducer,
     [ordersApi.reducerPath]: ordersApi.reducer,
-    auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()

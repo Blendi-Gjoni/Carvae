@@ -9,13 +9,15 @@ const Sidebar = ({ isSidebarVisible }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  
+
   const handleSignOut = async () => {
     try {
       await dispatch(logoutAsync()).unwrap();
       navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);
-      alert('Failed to logout. Please try again.');
+      alert('Logout failed. Please try again.');
     }
   };
 
