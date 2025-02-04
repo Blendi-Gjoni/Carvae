@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState } from 'react';
 import DefaultModal from '../../components/modals/DefaultModal';
 import { Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
@@ -13,21 +13,20 @@ import {
   useDeleteRentalMutation,
 } from '../../api/RentalsApi';
 import { HiFilter, HiOutlinePlus } from 'react-icons/hi';
-import { RiseLoader } from 'react-spinners';
-const DashboardTable = React.lazy(() => import('../../components/DashboardTable'));
+import DashboardTable from '../../components/DashboardTable';
 
 const RentalsDashboard = () => {
-  const [ modalShow, setModalShow ] = useState(false);
-  const [ formData, setFormData ] = useState({});
-  const [ selectedCity, setSelectedCity ] = useState("");
-  const [ globalFilter, setGlobalFilter ] = useState("");
+  const [modalShow, setModalShow] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [selectedCity, setSelectedCity] = useState("");
+  const [globalFilter, setGlobalFilter] = useState("");
 
-  const { data: rentals = [], error, isLoading, refetch  } = useGetRentalsQuery();
+  const { data: rentals = [], error, isLoading, refetch } = useGetRentalsQuery();
   const { data: rentalCities = [], refetch: refetchRentalCities } = useGetRentalCitiesQuery();
   const { data: rentalsByCity = [], isLoading: isLoadingRentalsByCity, error: cityError } =
     useGetRentalsByCityQuery(selectedCity, {
       skip: selectedCity === "",
-  });
+    });
 
   const [addRental, { isLoading: isAdding }] = useAddRentalMutation();
   const [updateRental, { isLoading: isUpdating }] = useUpdateRentalMutation();
@@ -46,7 +45,7 @@ const RentalsDashboard = () => {
     website: yup.string().required("Rental website is required!"),
     openingHours: yup.string().required("Rental opening hours are required!"),
   });
-  
+
   const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
@@ -54,7 +53,7 @@ const RentalsDashboard = () => {
   const handleEdit = (rental) => {
     setModalShow(true);
     Object.keys(rental).forEach((key) => setValue(key, rental[key]));
-  };  
+  };
 
   const handleDelete = async (id) => {
     if (id) {
@@ -69,7 +68,7 @@ const RentalsDashboard = () => {
       console.error('Rental ID is missing');
     }
   };
-  
+
 
   const onSubmit = async (data) => {
     try {
@@ -109,15 +108,15 @@ const RentalsDashboard = () => {
   const handleCityChange = (e) => {
     const city = e.target.value;
     setSelectedCity(city);
-    
-    if(!city){
+
+    if (!city) {
       refetch();
     }
   };
 
-  const renderError = 
+  const renderError =
     (error || cityError) && (
-      <p style={{color:'red'}}>
+      <p style={{ color: 'red' }}>
         Error: {error?.message || cityError?.message}
       </p>
     )
@@ -209,17 +208,6 @@ const RentalsDashboard = () => {
       .includes(globalFilter.toLowerCase())
   );
 
-  const DelayedSuspense = ({ children }) => {
-    const [showComponent, setShowComponent] = useState(false);
-
-    useEffect(() => {
-      const timeout = setTimeout(() => setShowComponent(true), 500);
-      return () => clearTimeout(timeout);
-    }, []);
-
-    return showComponent ? children : <div className='d-flex justify-content-center my-5'><RiseLoader color="#8f8f8f" size={10} /></div>
-  };
-
   return (
     <>
       <h1 className='mb-4'><b>Rentals Dashboard</b></h1>
@@ -239,12 +227,12 @@ const RentalsDashboard = () => {
               </div>
               <div className='col-12 col-sm-12 col-md-4 d-flex justify-content-center'>
                 <div className='input-group'>
-                  <input 
+                  <input
                     value={globalFilter ?? ""}
                     onChange={(e) => setGlobalFilter(e.target.value)}
-                    type='text' 
-                    className='form-control' 
-                    placeholder='Search...' 
+                    type='text'
+                    className='form-control'
+                    placeholder='Search...'
                   />
                   <button className='btn btn-outline-dark' disabled><HiFilter className='text-dark'></HiFilter></button>
                 </div>
@@ -276,15 +264,11 @@ const RentalsDashboard = () => {
           ) : cityError ? (
             <p style={{ color: 'red' }}>Error: {cityError.message}</p>
           ) : (
-            <DelayedSuspense>
-              <Suspense>
-                <DashboardTable
-                  tableData={selectedCity && rentalsByCity.length ? rentalsByCity : filteredRentals}
-                  allColumns={columns}
-                  enableSort
-                />
-              </Suspense>
-            </DelayedSuspense>
+            <DashboardTable
+              tableData={selectedCity && rentalsByCity.length ? rentalsByCity : filteredRentals}
+              allColumns={columns}
+              enableSort
+            />
           )}
         </>
       )}
