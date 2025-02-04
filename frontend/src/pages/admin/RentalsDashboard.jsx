@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import DefaultModal from '../../components/modals/DefaultModal';
 import { Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
@@ -13,7 +13,8 @@ import {
   useDeleteRentalMutation,
 } from '../../api/RentalsApi';
 import { HiFilter, HiOutlinePlus } from 'react-icons/hi';
-import DashboardTable from '../../components/DashboardTable';
+import { RiseLoader } from 'react-spinners';
+const DashboardTable = React.lazy(() => import('../../components/DashboardTable'));
 
 const RentalsDashboard = () => {
   const [ modalShow, setModalShow ] = useState(false);
@@ -203,10 +204,21 @@ const RentalsDashboard = () => {
 
   const filteredRentals = rentals.filter((rental) =>
     Object.values(rental)
-      .join(" ")
+      .join("")
       .toLowerCase()
       .includes(globalFilter.toLowerCase())
   );
+
+  const DelayedSuspense = ({ children }) => {
+    const [showComponent, setShowComponent] = useState(false);
+
+    useEffect(() => {
+      const timeout = setTimeout(() => setShowComponent(true), 500);
+      return () => clearTimeout(timeout);
+    }, []);
+
+    return showComponent ? children : <div className='d-flex justify-content-center my-5'><RiseLoader color="#8f8f8f" size={10} /></div>
+  };
 
   return (
     <>
@@ -264,11 +276,15 @@ const RentalsDashboard = () => {
           ) : cityError ? (
             <p style={{ color: 'red' }}>Error: {cityError.message}</p>
           ) : (
-            <DashboardTable
-              tableData={selectedCity && rentalsByCity.length ? rentalsByCity : filteredRentals}
-              allColumns={columns}
-              enableSort
-            />
+            <DelayedSuspense>
+              <Suspense>
+                <DashboardTable
+                  tableData={selectedCity && rentalsByCity.length ? rentalsByCity : filteredRentals}
+                  allColumns={columns}
+                  enableSort
+                />
+              </Suspense>
+            </DelayedSuspense>
           )}
         </>
       )}

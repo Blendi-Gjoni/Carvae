@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useGetUsersQuery } from '../../api/UsersApi';
 import { useGetRentalsQuery } from '../../api/RentalsApi';
 import { useGetCarsQuery } from '../../api/CarsApi';
@@ -14,7 +14,8 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { HiFilter, HiOutlinePlus } from 'react-icons/hi';
-import DashboardTable from '../../components/DashboardTable';
+import { RiseLoader } from 'react-spinners';
+const DashboardTable = React.lazy(() => import('../../components/DashboardTable'));
 
 const ReservationsDashboard = () => {
     const [ modalShow, setModalShow ] = useState(false);
@@ -195,10 +196,21 @@ const ReservationsDashboard = () => {
 
     const filteredReservations = reservations.filter((reservation) =>
         Object.values(reservation)
-        .join(" ")
-        .toLowerCase()
-        .includes(globalFilter.toLowerCase())
+            .join("")
+            .toLowerCase()
+            .includes(globalFilter.toLowerCase())
     );
+
+    const DelayedSuspense = ({ children }) => {
+        const [showComponent, setShowComponent] = useState(false);
+    
+        useEffect(() => {
+            const timeout = setTimeout(() => setShowComponent(true), 500);
+            return () => clearTimeout(timeout);
+        }, []);
+    
+        return showComponent ? children : <div className='d-flex justify-content-center my-5'><RiseLoader color='#8f8f8f' size={10} /></div>
+    };
 
     return (
         <div>
@@ -234,11 +246,15 @@ const ReservationsDashboard = () => {
                         </div>
                     </div> 
 
-                    <DashboardTable
-                        tableData={filteredReservations}
-                        allColumns={columns}
-                        enableSort
-                    />
+                    <DelayedSuspense>
+                        <Suspense>
+                            <DashboardTable
+                                tableData={filteredReservations}
+                                allColumns={columns}
+                                enableSort
+                            />
+                        </Suspense>
+                    </DelayedSuspense>
                 </>
             )}
 

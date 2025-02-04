@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import DefaultModal from '../../components/modals/DefaultModal';
 import { Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
@@ -11,7 +11,8 @@ import {
     useDeleteDealershipMutation,
 } from '../../api/DealershipsApi';
 import { HiFilter, HiOutlinePlus } from 'react-icons/hi';
-import DashboardTable from '../../components/DashboardTable';
+import { RiseLoader } from 'react-spinners';
+const DashboardTable = React.lazy(() => import('../../components/DashboardTable'));
 
 const DealershipsDashboard = () => {
     const [ modalShow, setModalShow ] = useState(false);
@@ -183,10 +184,21 @@ const DealershipsDashboard = () => {
 
     const filteredDealerships = dealerships.filter((dealership) =>
         Object.values(dealership)
-          .join(" ")
-          .toLowerCase()
-          .includes(globalFilter.toLowerCase())
-      );
+            .join("")
+            .toLowerCase()
+            .includes(globalFilter.toLowerCase())
+    );
+
+    const DelayedSuspense = ({ children }) => {
+        const [showComponent, setShowComponent] = useState(false);
+    
+        useEffect(() => {
+          const timeout = setTimeout(() => setShowComponent(true), 500);
+          return () => clearTimeout(timeout);
+        }, []);
+    
+        return showComponent ? children : <div className='d-flex justify-content-center my-5'><RiseLoader color="#8f8f8f" size={10} /></div>
+    };
 
     return (
         <>
@@ -222,11 +234,15 @@ const DealershipsDashboard = () => {
                         </div>
                     </div> 
 
-                    <DashboardTable
-                        tableData={filteredDealerships}
-                        allColumns={columns}
-                        enableSort
-                    />
+                    <DelayedSuspense>
+                        <Suspense>
+                            <DashboardTable
+                                tableData={filteredDealerships}
+                                allColumns={columns}
+                                enableSort
+                            />
+                        </Suspense>
+                    </DelayedSuspense>
                 </>
             )}
 
