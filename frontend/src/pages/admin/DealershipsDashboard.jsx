@@ -11,6 +11,7 @@ import {
   useDeleteDealershipMutation,
 } from '../../api/DealershipsApi';
 import { HiFilter, HiOutlinePlus } from 'react-icons/hi';
+import { RiseLoader } from 'react-spinners';
 import DashboardTable from '../../components/DashboardTable';
 
 const DealershipsDashboard = () => {
@@ -195,7 +196,7 @@ const DealershipsDashboard = () => {
       {renderError}
 
       {isLoading ? (
-        <p>Loading dealerships...</p>
+        <div className='d-flex justify-content-center align-items-center vh-100'><RiseLoader color="#8f8f8f" size={10} /></div>
       ) : (
         <>
           <div className="container text-center my-3">

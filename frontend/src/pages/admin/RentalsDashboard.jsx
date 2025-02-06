@@ -13,6 +13,7 @@ import {
   useDeleteRentalMutation,
 } from '../../api/RentalsApi';
 import { HiFilter, HiOutlinePlus } from 'react-icons/hi';
+import { RiseLoader } from 'react-spinners';
 import DashboardTable from '../../components/DashboardTable';
 
 const RentalsDashboard = () => {
@@ -68,7 +69,6 @@ const RentalsDashboard = () => {
       console.error('Rental ID is missing');
     }
   };
-
 
   const onSubmit = async (data) => {
     try {
@@ -215,7 +215,7 @@ const RentalsDashboard = () => {
       {renderError}
 
       {isLoading ? (
-        <p>Loading rentals...</p>
+        <div className='d-flex justify-content-center align-items-center vh-100'><RiseLoader color="#8f8f8f" size={10} /></div>
       ) : (
         <>
           <div className='container text-center'>

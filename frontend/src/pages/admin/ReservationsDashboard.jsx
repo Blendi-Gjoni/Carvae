@@ -208,7 +208,7 @@ const ReservationsDashboard = () => {
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
       {isLoading ? (
-        <p>Loading dealerships...</p>
+        <div className='d-flex justify-content-center align-items-center vh-100'><RiseLoader color="#8f8f8f" size={10} /></div>
       ) : (
         <>
           <div className="container text-center my-3">
