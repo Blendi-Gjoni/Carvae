@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Card, Button, Row, Col } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom';
 import AddCarApiService from "../api/AddCarApiService";
+import CarCard from "./CarCard/CarCard.jsx";
 
 const CarDisplayComponent = () => {
     const [carType, setCarType] = useState("RENTAL"); // Default car type
@@ -32,7 +33,6 @@ const CarDisplayComponent = () => {
             setLoading(false);
         }
     };
-
 
     const handleCarTypeChange = (event) => {
         const selectedType = event.target.value;
@@ -80,22 +80,9 @@ const CarDisplayComponent = () => {
 
             {!loading && cars.length > 0 && (
                 <Row className="my-5">
-                    {cars.map((car, index) => (
-                        <Col key={car.id} md={6} lg={4} className="mb-4">
-                            <Card>
-                                <Card.Body>
-                                    <Card.Title>{car.model.name}</Card.Title>
-                                    <Card.Text>
-                                        <strong>Year:</strong> {car.year}<br />
-                                        <strong>Horsepower:</strong> {car.horsepower}<br />
-                                        <strong>Kilometers:</strong> {car.kilometers}<br />
-                                        <strong>Fuel Type:</strong> {car.fuelType}<br />
-                                        <strong>Transmission:</strong> {car.transmission}<br />
-                                        <strong>Price:</strong> {carType.toUpperCase() === "RENTAL" ? `${car.price} / month` : `${car.price}`}
-                                    </Card.Text>
-                                    <Button variant="primary" onClick={() => handleViewDetails(car)}>View Details</Button>
-                                </Card.Body>
-                            </Card>
+                    {cars.map((car) => (
+                        <Col key={car.id}>
+                            <CarCard carType={carType} carPrice={car.price} carFuelType={car.fuelType} carTransmission={car.transmission} carHorsepower={car.horsepower} viewDetails={() => handleViewDetails(car)} />
                         </Col>
                     ))}
                 </Row>
