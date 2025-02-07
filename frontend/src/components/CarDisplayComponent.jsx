@@ -49,7 +49,7 @@ const CarDisplayComponent = () => {
     }, []);
 
     return (
-        <div className="container mt-3">
+        <div className="container mt-5">
             <h3 className="text-center">Cars Display</h3>
 
             {/* Dropdown for selecting car type */}
@@ -79,7 +79,7 @@ const CarDisplayComponent = () => {
             )}
 
             {!loading && cars.length > 0 && (
-                <Row>
+                <Row className="my-5">
                     {cars.map((car, index) => (
                         <Col key={car.id} md={6} lg={4} className="mb-4">
                             <Card>

@@ -1,6 +1,5 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Provider } from 'react-redux';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
@@ -8,7 +7,6 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import CarDetails from './pages/CarDetails';
-import store from './redux/store';
 import AdminLayout from './components/layouts/AdminLayout';
 import AddCarForm from "./components/AddCarForm";
 import { PacmanLoader } from 'react-spinners';
@@ -23,27 +21,25 @@ const ReservationsDashboard = lazy(() => import('./pages/admin/ReservationsDashb
 
 function App() {
   return (
-    <Provider store={store}>
-      <Suspense fallback={<div className='d-flex justify-content-center'><PacmanLoader size={20} /></div>}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<div className="login-page"><Login /></div>} />
-          <Route path="/car-details" element={<CarDetails />} />
+    <Suspense fallback={<div className='d-flex justify-content-center'><PacmanLoader size={20} /></div>}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<div className="login-page"><Login /></div>} />
+        <Route path="/car-details" element={<CarDetails />} />
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLayout />}>
-              <Route path="page" element={<AdminPage />} /> {/* Admin Home (Dashboard) */}
-              <Route path="users" element={<UsersDashboard />} />
-              <Route path="rentals" element={<RentalsDashboard />} />
-              <Route path="cars" element={<CarsDashboard />} />
-              <Route path="add-car" element={<AddCarForm />} />
-              <Route path="orders" element={<OrdersDashboard />} />
-              <Route path="dealerships" element={<DealershipsDashboard />} />
-              <Route path="reservations" element={<ReservationsDashboard />} />
-          </Route>
-        </Routes>
-      </Suspense>
-    </Provider>
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+            <Route path="page" element={<AdminPage />} /> {/* Admin Home (Dashboard) */}
+            <Route path="users" element={<UsersDashboard />} />
+            <Route path="rentals" element={<RentalsDashboard />} />
+            <Route path="cars" element={<CarsDashboard />} />
+            <Route path="add-car" element={<AddCarForm />} />
+            <Route path="orders" element={<OrdersDashboard />} />
+            <Route path="dealerships" element={<DealershipsDashboard />} />
+            <Route path="reservations" element={<ReservationsDashboard />} />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }
 

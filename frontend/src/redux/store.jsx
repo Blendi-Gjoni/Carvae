@@ -7,6 +7,7 @@ import { reservationsApi } from '../api/ReservationsApi';
 import { usersApi } from '../api/UsersApi';
 import { carsApi } from '../api/CarsApi';
 import { ordersApi } from '../api/OrdersApi';
+import { setupListeners } from '@reduxjs/toolkit/query';
 
 const store = configureStore({
   reducer: {
@@ -27,5 +28,7 @@ const store = configureStore({
       .concat(carsApi.middleware)
       .concat(ordersApi.middleware),
 });
+
+setupListeners(store.dispatch);
 
 export default store;

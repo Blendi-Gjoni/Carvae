@@ -32,7 +32,7 @@ const LoginForm = () => {
         navigate('/');
       })
       .catch((err) => {
-        setError('Login failed. Please check your credentials and try again.');
+        setError('Login failed. Please check your credentials and try again.', err);
       });
   };
 
