@@ -15,6 +15,7 @@ import {
 import { HiFilter, HiOutlinePlus } from 'react-icons/hi';
 import { RiseLoader } from 'react-spinners';
 import DashboardTable from '../../components/DashboardTable';
+import { motion } from 'framer-motion';
 
 const RentalsDashboard = () => {
   const [modalShow, setModalShow] = useState(false);

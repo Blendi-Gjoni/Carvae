@@ -5,6 +5,7 @@ import DefaultModal from './modals/DefaultModal';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { motion } from 'framer-motion';
 
 const RegisterForm = () => {
   const [showModal, setShowModal] = useState(false);
@@ -65,7 +66,13 @@ const RegisterForm = () => {
   return (
     <section className="my-5">
       <div className="container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: 'auto' }}>
-        <form style={{ maxWidth: '400px', width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
+        <motion.form
+          initial={{ x: 1000 }}
+          animate={{ x: 0 }}
+          transition={{ type: "spring", stiffness: 50, damping: 15, duration: 0.5}}
+          style={{ maxWidth: '400px', width: '100%' }} 
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <div className="text-center mb-3">
             <p>Sign up with:</p>
             <button type="button" className="btn btn-link btn-floating mx-1">
@@ -144,7 +151,7 @@ const RegisterForm = () => {
           <button type="submit" className="btn btn-primary btn-block mb-3" disabled={isLoading}>
             {isLoading ? 'Signing up...' : 'Sign up'}
           </button>
-        </form>
+        </motion.form>
       </div>
 
       <DefaultModal

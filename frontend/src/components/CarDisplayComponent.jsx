@@ -52,7 +52,7 @@ const CarDisplayComponent = () => {
 
   return (
     <>
-      <div className="container mt-5">
+      <div id="carDisplaySection" className="container vh-100 mt-5">
         <h3 className="text-center">Cars Display</h3>
 
         {/* Dropdown for selecting car type */}

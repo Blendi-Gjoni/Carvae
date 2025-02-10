@@ -11,6 +11,7 @@ import {
   getPaginationRowModel
 } from '@tanstack/react-table';
 import { HiOutlineSwitchVertical } from "react-icons/hi";
+import { motion } from 'framer-motion';
 
 const DashboardTable = ({ tableData, allColumns, enableSort }) => {
   const [sorting, setSorting] = useState([]);
@@ -80,13 +81,18 @@ const DashboardTable = ({ tableData, allColumns, enableSort }) => {
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
+              <motion.tr 
+                key={row.id}
+                initial={{ x: -500 }}
+                animate={{ x: 0 }}
+                transition={{ type: "spring", duration: 0 }}
+              >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
-              </tr>
+              </motion.tr>
             ))}
           </tbody>
         </table>
