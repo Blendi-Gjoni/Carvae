@@ -80,12 +80,18 @@ const DashboardTable = ({ tableData, allColumns, enableSort }) => {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
+            {table.getRowModel().rows.map((row, index) => (
               <motion.tr 
                 key={row.id}
-                initial={{ x: -500 }}
-                animate={{ x: 0 }}
-                transition={{ type: "spring", duration: 0 }}
+                initial={{ x: -1000, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ 
+                  type: "tween",
+                  stiffness: 50,
+                  damping: 20, 
+                  duration: 0.5,
+                  delay: index * 0.1,
+                }}
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id}>
