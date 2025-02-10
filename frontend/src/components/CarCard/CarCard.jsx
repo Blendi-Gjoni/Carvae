@@ -7,10 +7,10 @@ const CarCard = ({ carType, carBrand, carModel, carPrice, carFuelType, carTransm
   return (
     <div className="car-card-container col-sm-4">
       <motion.div 
-        animate={{ x: 100, scale: 1 }}
+        animate={{ x: 0, scale: 1 }}
         initial={{ scale: 0 }}
         transition={{ type: "spring" }}
-        whileHover={{ scale: 1.1 }}
+        whileHover={{ scale: 1.05 }}
       >
         <div className="card">
           <img src={carCardPhoto} className="card-img-top" width="100%" alt="car-card-photo" />
