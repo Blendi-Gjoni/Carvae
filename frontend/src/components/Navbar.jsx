@@ -110,7 +110,9 @@ const Navbar = () => {
                         </form>
                         <div className="user-icons d-flex align-items-center">
                             <div className="account me-3">
-                                <i className="bi bi-person"></i>
+                                <Link to="/user-profile" className="nav-link">
+                                    <i className="bi bi-person"></i>
+                                </Link>
                             </div>
                             <div className="wishlist me-3">
                                 <i className="bi bi-heart"></i>
@@ -123,7 +125,7 @@ const Navbar = () => {
                     <div className="contact-info">
                         <p>+9876543210 | +1234567890</p>
                         <p>
-                            <a href="mailto:contact@domainname.com">contact@domainname.com</a>
+                            <a href="mailto:info@carvae.com">info@carvae.com</a>
                         </p>
                     </div>
                 </div>

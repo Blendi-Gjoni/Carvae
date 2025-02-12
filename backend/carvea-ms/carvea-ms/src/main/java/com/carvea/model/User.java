@@ -23,6 +23,9 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(nullable = true)
+    private String usernameF;
+
     @Column(unique = true, nullable = false)
     private String email;
 
@@ -95,6 +98,6 @@ public class User implements UserDetails {
     public String getUsername() {
         return this.email;
     }
-
-
+    
+    public String getUsernameF() { return this.username; }
 }

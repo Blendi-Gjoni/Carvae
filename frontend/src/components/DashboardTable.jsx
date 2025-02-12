@@ -88,8 +88,8 @@ const DashboardTable = ({ tableData, allColumns, enableSort }) => {
                 transition={{ 
                   type: "tween",
                   stiffness: 50,
-                  damping: 20, 
-                  duration: 0.5,
+                  damping: 0,
+                  duration: 0.2,
                   delay: index * 0.1,
                 }}
               >

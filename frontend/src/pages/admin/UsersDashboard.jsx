@@ -40,7 +40,7 @@ const UsersDashboard = () => {
           {users.map((user) => (
             <tr key={user.id}>
               <th scope="row">{user.id}</th>
-              <td>{user.username}</td>
+              <td>{user.usernameF}</td>
               <td>{user.email}</td>
               <td>{user.role?.name}</td>
               <td>
