@@ -22,7 +22,7 @@ const ReservationsDashboard = lazy(() => import('./pages/admin/ReservationsDashb
 
 function App() {
   return (
-    <Suspense fallback={<div className='d-flex justify-content-center'><PacmanLoader size={20} /></div>}>
+    <Suspense fallback={<div className='d-flex justify-content-center align-items-center'><PacmanLoader size={20} /></div>}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<div className="login-page"><Login /></div>} />

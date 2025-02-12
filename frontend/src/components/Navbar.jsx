@@ -106,6 +106,7 @@ const Navbar = () => {
                                 type="search"
                                 aria-label="Search"
                                 placeholder="Search"
+                                style={{borderRadius: '3px'}}
                             />
                         </form>
                         <div className="user-icons d-flex align-items-center">

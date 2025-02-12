@@ -94,12 +94,8 @@ const UserProfile = () => {
                         <hr className="" />
                         <MDBRow className="py-1 d-flex align-items-center">
                           <MDBCol size="6" className="my-2 d-flex flex-row align-items-center">
-                          <MDBBtn className='me-1' style={{backgroundColor: '#FF2800'}}>
-                            SAVE CHANGES
-                          </MDBBtn>
-                          <MDBBtn className='me-1' style={{color: '#FF2800', backgroundColor: '#fff'}}>
-                            RESTORE CHANGES
-                          </MDBBtn>
+                          <MDBBtn className='me-1' style={{backgroundColor: '#FF2800'}}>SAVE</MDBBtn>
+                          <MDBBtn className='me-1' style={{color: '#FF2800', backgroundColor: '#fff'}}>RESTORE</MDBBtn>
                           </MDBCol>
                           <MDBCol size="6" className="my-2">
                             <div className="d-flex justify-content-end align-items-center">
