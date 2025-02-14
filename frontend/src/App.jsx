@@ -11,6 +11,7 @@ import UserProfile from './pages/UserProfile';
 import AdminLayout from './components/layouts/AdminLayout';
 import AddCarForm from "./components/AddCarForm";
 import { PacmanLoader } from 'react-spinners';
+import { Scrollbars } from 'react-custom-scrollbars-2';
 
 const AdminPage = lazy(() => import('./pages/admin/AdminPage'));
 const UsersDashboard = lazy(() => import('./pages/admin/UsersDashboard'));
@@ -23,24 +24,26 @@ const ReservationsDashboard = lazy(() => import('./pages/admin/ReservationsDashb
 function App() {
   return (
     <Suspense fallback={<div className='d-flex justify-content-center align-items-center'><PacmanLoader size={20} /></div>}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<div className="login-page"><Login /></div>} />
-        <Route path="/car-details" element={<CarDetails />} />
-        <Route path="/user-profile" element={<UserProfile />} />
+      <Scrollbars style={{height: '100vh', width: '100vw'}}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<div className="login-page"><Login /></div>} />
+          <Route path="/car-details" element={<CarDetails />} />
+          <Route path="/user-profile" element={<UserProfile />} />
 
-        {/* Admin Routes */}
-        <Route path="/admin" element={<AdminLayout />}>
-            <Route path="page" element={<AdminPage />} /> {/* Admin Home (Dashboard) */}
-            <Route path="users" element={<UsersDashboard />} />
-            <Route path="rentals" element={<RentalsDashboard />} />
-            <Route path="cars" element={<CarsDashboard />} />
-            <Route path="add-car" element={<AddCarForm />} />
-            <Route path="orders" element={<OrdersDashboard />} />
-            <Route path="dealerships" element={<DealershipsDashboard />} />
-            <Route path="reservations" element={<ReservationsDashboard />} />
-        </Route>
-      </Routes>
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+              <Route path="page" element={<AdminPage />} /> {/* Admin Home (Dashboard) */}
+              <Route path="users" element={<UsersDashboard />} />
+              <Route path="rentals" element={<RentalsDashboard />} />
+              <Route path="cars" element={<CarsDashboard />} />
+              <Route path="add-car" element={<AddCarForm />} />
+              <Route path="orders" element={<OrdersDashboard />} />
+              <Route path="dealerships" element={<DealershipsDashboard />} />
+              <Route path="reservations" element={<ReservationsDashboard />} />
+          </Route>
+        </Routes>
+      </Scrollbars>
     </Suspense>
   );
 }
