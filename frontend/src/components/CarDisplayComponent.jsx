@@ -3,6 +3,7 @@ import { Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import AddCarApiService from "../api/AddCarApiService";
 import CarCard from "./CarCard/CarCard.jsx";
+import { SyncLoader } from "react-spinners";
 
 const CarDisplayComponent = () => {
   const [carType, setCarType] = useState("RENTAL"); // Default car type
@@ -73,7 +74,7 @@ const CarDisplayComponent = () => {
 
         {loading && (
           <div className="text-center mt-3">
-            <p>Loading cars...</p>
+            <p>Loading cars...<SyncLoader margin={3} size={5} /></p>
           </div>
         )}
 
