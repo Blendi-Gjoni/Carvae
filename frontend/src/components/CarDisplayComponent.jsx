@@ -88,9 +88,9 @@ const CarDisplayComponent = () => {
             {cars.map((car) => (
               <Col className="my-5" key={car.id}>
                 <CarCard
-                  carType={carType}
                   carBrand={car.model?.brand?.name}
                   carModel={car.model?.name}
+                  carType={carType}
                   carPrice={car.price}
                   carFuelType={car.fuelType}
                   carTransmission={car.transmission}

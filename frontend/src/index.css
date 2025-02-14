@@ -18,7 +18,7 @@ code {
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -26,10 +26,10 @@ code {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #FF2800;
+  background: #ff260081;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #00000;
+  background: #ff6969;
 }
