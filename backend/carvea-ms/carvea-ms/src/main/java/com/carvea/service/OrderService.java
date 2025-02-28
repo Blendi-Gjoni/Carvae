@@ -13,6 +13,7 @@ import com.carvea.repository.DealershipRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -57,9 +58,9 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public void delete(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderId));
+    public void delete(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
         orderRepository.delete(order);
     }
 
@@ -71,8 +72,8 @@ public class OrderService {
         return orderRepository.findByCar_Id(carId);
     }
 
-    public Order getByOrderId(Long orderId) {
-        return orderRepository.findByOrderId(orderId);
+    public Optional<Order> getByOrderId(Long id) {
+        return orderRepository.findById(id);
     }
 
     public List<Order> getByUserId(Long userId) {

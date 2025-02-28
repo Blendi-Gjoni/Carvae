@@ -13,6 +13,7 @@
 }
 
 #header .header-toggle {
+  color: #fff;
   cursor: pointer;
   font-size: 1.5rem;
 }

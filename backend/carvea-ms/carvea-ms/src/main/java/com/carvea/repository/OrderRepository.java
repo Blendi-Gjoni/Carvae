@@ -11,6 +11,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByCar_Id(Long carId); // Using "car.id" for nested property
     List<Order> findByUser_Id(Long userId);
-    Order findByOrderId(Long orderId);
     List<Order> findByUserId(Long userId);
 }

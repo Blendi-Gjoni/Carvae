@@ -23,7 +23,7 @@ public class Order implements Subject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderId;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "car_id", nullable = false)
@@ -55,14 +55,14 @@ public class Order implements Subject {
     protected void onCreate() {
         orderDate = LocalDateTime.now();
         deliveryDate = orderDate.plusMonths(2);
-        notifyObservers("Order created: " + orderId);
+        notifyObservers("Order created: " + id);
     }
 
     @PreUpdate
     public void onUpdate() {
         this.updatedAt = LocalDateTime.now();
         if (deliveryDate != null && deliveryDate.isBefore(LocalDateTime.now().plusDays(1))) {
-            notifyObservers("Order about to arrive: " + orderId + ". Email: " + user.getEmail());
+            notifyObservers("Order about to arrive: " + id + ". Email: " + user.getEmail());
         }
     }
 

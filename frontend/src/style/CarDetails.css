@@ -25,3 +25,8 @@
     position: relative;
     z-index: 2;
 }
+
+.custom-card-header{
+    background-color: #ff0000;
+    color: #fff;
+}

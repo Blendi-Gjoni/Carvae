@@ -3,10 +3,13 @@ package com.carvea.controller;
 import com.carvea.dto.OrderDto;
 import com.carvea.model.Order;
 import com.carvea.service.OrderService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("/orders")
 @RestController
@@ -30,11 +33,13 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
-    @GetMapping("/{orderId}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long orderId) {
-        Order order = orderService.getByOrderId(orderId);
+    @GetMapping("/{id}")
+    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
+        Order order = orderService.getByOrderId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found with ID: " + id));
         return ResponseEntity.ok(order);
     }
+
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Order>> getOrdersByUserId(@PathVariable Long userId) {
@@ -48,8 +53,8 @@ public class OrderController {
         return ResponseEntity.ok(order);
     }
 
-    @DeleteMapping("/{orderId}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable("orderId") Long orderId) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteOrder(@PathVariable("id") Long orderId) {
         orderService.delete(orderId);
         return ResponseEntity.noContent().build();
     }
