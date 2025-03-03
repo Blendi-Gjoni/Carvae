@@ -35,7 +35,7 @@ const LoginForm = () => {
       .then(() => {
         navigate('/');
       })
-      .catch((error: any) => {
+      .catch(() => {
         setError('Login failed. Please check your credentials and try again.');
       });
   };
@@ -52,16 +52,16 @@ const LoginForm = () => {
         >
           <div className="text-center mb-3">
             <p>Sign in with:</p>
-            <button type="button" className="btn btn-link btn-floating mx-1">
+            <button type="button" className="btn btn-link btn-floating mx-1" style={{color: '#ff0000'}}>
               <i className="fab fa-facebook-f"></i>
             </button>
-            <button type="button" className="btn btn-link btn-floating mx-1">
+            <button type="button" className="btn btn-link btn-floating mx-1" style={{color: '#ff0000'}}>
               <i className="fab fa-google"></i>
             </button>
-            <button type="button" className="btn btn-link btn-floating mx-1">
+            <button type="button" className="btn btn-link btn-floating mx-1" style={{color: '#ff0000'}}>
               <i className="fab fa-twitter"></i>
             </button>
-            <button type="button" className="btn btn-link btn-floating mx-1">
+            <button type="button" className="btn btn-link btn-floating mx-1" style={{color: '#ff0000'}}>
               <i className="fab fa-github"></i>
             </button>
           </div>
@@ -100,24 +100,25 @@ const LoginForm = () => {
                   type="checkbox"
                   id="loginCheck"
                   defaultChecked
+                  style={{backgroundColor: '#a4250b', color: '#fff', border: '#a4250b'}}
                 />
                 <label className="form-check-label" htmlFor="loginCheck"> Remember me </label>
               </div>
             </div>
 
             <div className="col-md-6 d-flex justify-content-center">
-              <a href="#!">Forgot password?</a>
+              <a href="#!" style={{color: '#a4250b'}}>Forgot password?</a>
             </div>
           </div>
 
-          <button type="submit" className="btn btn-primary btn-block mb-3" style={{width: '100%'}} disabled={isLoading}>
+          <button type="submit" className="btn btn-block mb-3" style={{width: '100%', backgroundColor: '#ff0000', color: '#fff'}} disabled={isLoading}>
             {isLoading ? 'Signing in...' : 'Sign in'}
           </button>
 
           {error && <div className="alert alert-danger">{error}</div>}
 
           <div className="text-center">
-            <p>Not a member? <a href="#!">Register</a></p>
+            <p>Not a member? <a href="#!" style={{color: '#a4250b'}}>Register</a></p>
           </div>
         </motion.form>
       </div>

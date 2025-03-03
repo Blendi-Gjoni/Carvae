@@ -110,7 +110,7 @@ const Navbar = () => {
                         </form>
                         <div className="user-icons d-flex align-items-center">
                             <div className="account me-3">
-                                <Link to="/" className="nav-link">
+                                <Link to="/user-profile" className="nav-link">
                                     <i className="bi bi-person"></i>
                                 </Link>
                             </div>

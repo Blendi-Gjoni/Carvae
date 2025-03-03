@@ -42,7 +42,7 @@ const CarDetails = () => {
 
     return (
         <Layout>
-            <Container className="mt-5">
+            <Container className="vh-100 mt-5">
                 {/* Hero Section */}
                 <div className="hero-section text-white rounded">
                     <Row className="align-items-center p-4">

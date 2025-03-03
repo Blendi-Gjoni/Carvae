@@ -86,16 +86,16 @@ const RegisterForm = () => {
         >
           <div className="text-center mb-3">
             <p>Sign up with:</p>
-            <button type="button" className="btn btn-link btn-floating mx-1">
+            <button type="button" className="btn btn-link btn-floating mx-1" style={{color: '#ff0000'}}>
               <i className="fab fa-facebook-f"></i>
             </button>
-            <button type="button" className="btn btn-link btn-floating mx-1">
+            <button type="button" className="btn btn-link btn-floating mx-1" style={{color: '#ff0000'}}>
               <i className="fab fa-google"></i>
             </button>
-            <button type="button" className="btn btn-link btn-floating mx-1">
+            <button type="button" className="btn btn-link btn-floating mx-1" style={{color: '#ff0000'}}>
               <i className="fab fa-twitter"></i>
             </button>
-            <button type="button" className="btn btn-link btn-floating mx-1">
+            <button type="button" className="btn btn-link btn-floating mx-1" style={{color: '#ff0000'}}>
               <i className="fab fa-github"></i>
             </button>
           </div>
@@ -153,13 +153,14 @@ const RegisterForm = () => {
               value=""
               id="registerCheck"
               {...register("termsAccepted", { required: true })}
+              style={{backgroundColor: '#a4250b', color: '#fff', border: '#ff0000'}}
             />
             <label className="form-check-label" htmlFor="registerCheck">
               I have read and agree to the terms
             </label>
           </div>
 
-          <button type="submit" className="btn btn-primary btn-block mb-3" style={{width: '100%'}} disabled={isLoading}>
+          <button type="submit" className="btn btn-block mb-3" style={{width: '100%', backgroundColor: '#ff0000', color: '#fff'}} disabled={isLoading}>
             {isLoading ? 'Signing up...' : 'Sign up'}
           </button>
         </motion.form>

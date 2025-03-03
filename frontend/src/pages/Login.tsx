@@ -10,30 +10,41 @@ const Login = () => {
         <Layout>
             <div className="vh-100">
                 <ul className="nav nav-pills my-5 mb-3 justify-content-center" id="ex1" role="tablist">
-                    <li className="nav-item" role="presentation">
-                        <a
-                            className={`nav-link ${activeTab === 'login' ? 'active' : ''}`}
-                            data-mdb-pill-init
-                            onClick={() => setActiveTab('login')}
-                            href="#pills-login"
-                            role="tab"
-                            aria-controls="pills-login"
-                            aria-selected={activeTab === 'login'}>
-                            Login
-                        </a>
-                    </li>
-                    <li className="nav-item" role="presentation">
-                        <a
-                            className={`nav-link ${activeTab === 'register' ? 'active' : ''}`}
-                            data-mdb-pill-init
-                            onClick={() => setActiveTab('register')}
-                            href="#pills-register"
-                            role="tab"
-                            aria-controls="pills-register"
-                            aria-selected={activeTab === 'register'}>
-                            Register
-                        </a>
-                    </li>
+                <li className="nav-item" role="presentation">
+                    <a
+                        className={`nav-link ${activeTab === 'login' ? 'active' : ''}`}
+                        data-mdb-pill-init
+                        onClick={() => setActiveTab('login')}
+                        href="#pills-login"
+                        role="tab"
+                        aria-controls="pills-login"
+                        aria-selected={activeTab === 'login'}
+                        style={{
+                            color: activeTab === 'login' ? 'white' : '#a4250b',
+                            backgroundColor: activeTab === 'login' ? '#a4250b' : 'white'
+                        }}
+                    >
+                        Login
+                    </a>
+                </li>
+                <li className="nav-item" role="presentation">
+                    <a
+                        className={`nav-link ${activeTab === 'register' ? 'active' : ''}`}
+                        data-mdb-pill-init
+                        onClick={() => setActiveTab('register')}
+                        href="#pills-register"
+                        role="tab"
+                        aria-controls="pills-register"
+                        aria-selected={activeTab === 'register'}
+                        style={{
+                            color: activeTab === 'register' ? 'white' : '#a4250b',
+                            backgroundColor: activeTab === 'register' ? '#a4250b' : 'white'
+                        }}
+                    >
+                        Register
+                    </a>
+                </li>
+
                 </ul>
 
                 <div className="tab-content">

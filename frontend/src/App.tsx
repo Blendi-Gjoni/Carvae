@@ -6,6 +6,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import CarDetails from './pages/CarDetails';
+import UserProfile from './pages/UserProfile';
 import AdminLayout from './components/layouts/AdminLayout';
 import AddCarForm from "./components/AddCarForm";
 import { PacmanLoader } from 'react-spinners';
@@ -27,6 +28,7 @@ function App(): JSX.Element {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<div className="login-page"><Login /></div>} />
           <Route path="/car-details" element={<CarDetails />} />
+          <Route path='/user-profile' element={<UserProfile />} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminLayout />}>
