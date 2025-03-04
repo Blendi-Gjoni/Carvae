@@ -44,4 +44,10 @@ public class DealershipController {
         dealershipService.deleteDealership(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/number-of-dealerships-by-state")
+    public ResponseEntity<List<Object[]>> getNumberOfDealershipsByState(){
+        List<Object[]> results = dealershipService.getNumberOfDealershipsByState();
+        return ResponseEntity.ok(results);
+    }
 }

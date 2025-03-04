@@ -64,6 +64,10 @@ public class RentalService {
         return rentalRepository.findRentalCities();
     }
 
+    public List<Object[]> getNumberOfRentalsByCity(){
+        return rentalRepository.findNumberOfRentalsByCity();
+    }
+
     public List<RentalDto> searchRentalsByCity(String city) {
         final Specification<Rental> specification = RentalSpecification.filterRentalByCity(city);
         final List<Rental> rentals = rentalRepository.findAll(specification);

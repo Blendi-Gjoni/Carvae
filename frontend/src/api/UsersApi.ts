@@ -30,10 +30,14 @@ export const usersApi = createApi ({
         getCurrentUser: builder.query<User, void> ({
             query: () => `/users/me`,
         }),
+        getNumberOfUsersByRole: builder.query<Array<[string, number]>, void> ({
+            query: () => `/users/number-of-users-by-role`,
+        })
     }),
 });
 
 export const {
     useGetUsersQuery,
     useGetCurrentUserQuery,
+    useGetNumberOfUsersByRoleQuery,
 } = usersApi;

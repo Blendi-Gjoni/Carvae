@@ -42,6 +42,9 @@ export const rentalsApi = createApi ({
                 params: {city},
             })
         }),
+        getNumberOfRentalsByCity: builder.query<Array<[string, number]>, void> ({
+            query: () => `/rentals/number-of-rentals-by-city`,
+        }),
         addRental: builder.mutation<Rental, Partial<Rental>> ({
             query: (rental) => ({
                 url: `/rentals`,
@@ -71,6 +74,7 @@ export const {
     useGetRentalsByNameQuery,
     useGetRentalCitiesQuery,
     useGetRentalsByCityQuery,
+    useGetNumberOfRentalsByCityQuery,
     useAddRentalMutation,
     useUpdateRentalMutation,
     useDeleteRentalMutation,

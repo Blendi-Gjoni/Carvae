@@ -36,6 +36,10 @@ public class UserService {
         return users;
     }
 
+    public List<Object[]> getNumberOfUsersByRole() {
+        return userRepository.findNumberOfUsersByRole();
+    }
+
     public User createAdministrator(RegisterUserDto input){
         Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.ADMIN);
 

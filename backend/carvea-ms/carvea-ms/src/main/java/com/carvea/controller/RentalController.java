@@ -58,6 +58,12 @@ public class RentalController {
         return ResponseEntity.ok(cities);
     }
 
+    @GetMapping("/number-of-rentals-by-city")
+    public ResponseEntity<List<Object[]>> getNumberOfRentalsByCity(){
+        List<Object[]> results = rentalService.getNumberOfRentalsByCity();
+        return ResponseEntity.ok(results);
+    }
+
     @GetMapping("/by-city")
     public ResponseEntity<List<RentalDto>> getRentalByCity(
             @RequestParam(required = false) String city

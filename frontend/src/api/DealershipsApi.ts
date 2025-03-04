@@ -27,6 +27,9 @@ export const dealershipsApi = createApi ({
         getDealershipById: builder.query<Dealership, number> ({
             query: (id) => `/dealerships/${id}`,
         }),
+        getNumberOfDealershipsByState: builder.query<Array<[string, number]>, void> ({
+            query: () => `/dealerships/number-of-dealerships-by-state`,
+        }),
         addDealership: builder.mutation<Dealership, Partial<Dealership>> ({
             query: (dealership) => ({
                 url: `/dealerships`,
@@ -53,6 +56,7 @@ export const dealershipsApi = createApi ({
 export const {
     useGetDealershipsQuery,
     useGetDealershipByIdQuery,
+    useGetNumberOfDealershipsByStateQuery,
     useAddDealershipMutation,
     useUpdateDealershipMutation,
     useDeleteDealershipMutation,

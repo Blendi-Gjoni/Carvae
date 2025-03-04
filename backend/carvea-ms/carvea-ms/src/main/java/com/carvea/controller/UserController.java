@@ -34,4 +34,10 @@ public class UserController {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
+
+    @GetMapping("/number-of-users-by-role")
+    public ResponseEntity<List<Object[]>> getNumberOfUsersByRole() {
+        List<Object[]> results = userService.getNumberOfUsersByRole();
+        return ResponseEntity.ok(results);
+    }
 }

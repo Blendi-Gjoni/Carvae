@@ -48,4 +48,8 @@ public class DealershipService {
                 .orElseThrow(() -> new RuntimeException("Dealership not found"));
         dealershipRepository.delete(dealership);
     }
+
+    public List<Object[]> getNumberOfDealershipsByState(){
+        return dealershipRepository.findNumberOfDealershipsByState();
+    }
 }

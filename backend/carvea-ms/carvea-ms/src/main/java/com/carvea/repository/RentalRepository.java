@@ -15,4 +15,7 @@ public interface RentalRepository extends JpaRepository<Rental, Long>, JpaSpecif
 
     @Query("SELECT DISTINCT r.city FROM Rental r")
     List<String> findRentalCities();
+
+    @Query("SELECT r.city, COUNT(r) FROM Rental r GROUP BY r.city")
+    List<Object[]> findNumberOfRentalsByCity();
 }
