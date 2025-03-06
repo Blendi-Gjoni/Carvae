@@ -1,5 +1,5 @@
 .hero-section {
-    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.2)), url('https://www.reviewtrackers.com/wp-content/uploads/blog-hero_car-dealership-review-monitoring-banner-1536x461.jpg'); /* Replace with actual image URL */
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.2)), url('../assets/car-details-bg-photo.jpg'); /* Replace with actual image URL */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

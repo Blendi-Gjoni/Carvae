@@ -101,7 +101,7 @@ const CarDetails = () => {
                                         onClick={handleOrder}
                                         disabled={!selectedDealership}
                                     >
-                                        Order
+                                        Place Order
                                     </Button>
                                 </>
                             ) : (
@@ -126,7 +126,7 @@ const CarDetails = () => {
                                     onClick={handleReserve}
                                     disabled={!selectedRental}
                                 >
-                                    Reserve
+                                    Rent the Car
                                 </Button>
                                 </>
                             )}
@@ -137,7 +137,7 @@ const CarDetails = () => {
                 {/* Car Details Section */}
                 <Row className='m-2'>
                     <h3>Car Details</h3>
-                    <hr className="border-primary" />
+                    <hr className="border-primary"/>
                     <Col className='m-3 d-flex flex-row justify-content-between' style={{height: '150px'}}>
                         <Card className='custom-card d-flex justify-content-center align-items-center' style={{width: '150px'}}>
                             <Card.Header className='custom-card-header d-flex justify-content-center' style={{width: '150px'}}>

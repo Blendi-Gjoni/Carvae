@@ -1,3 +1,4 @@
+import '../style/UserProfile.css'
 import Layout from '../components/layouts/Layout';
 import { useGetCurrentUserQuery } from '../api/UsersApi';
 
@@ -42,14 +43,14 @@ const UserProfile = () => {
             </div>
             <div className="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
               <div className="card h-100">
-                <div className="card-body d-flex flex-column justify-content-between" style={{height: '300px'}}>
+                <div className="custom-user-profile-bg card-body d-flex flex-column justify-content-between" style={{height: '300px'}}>
                   <div className="row gutters">
                     <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                      <h6 className="mb-2" style={{color: '#a4250b'}}><b>Personal Details</b></h6>
+                      <h6 className="mb-2" style={{color: '#fd3a3a'}}><b>Personal Details</b></h6>
                     </div>
                     <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                       <div className="form-group">
-                        <label htmlFor="fullName">Username</label>
+                        <label htmlFor="fullName" style={{color: '#ffffff'}}>Username</label>
                         <input
                           type="text"
                           className="form-control"
@@ -60,7 +61,7 @@ const UserProfile = () => {
                     </div>
                     <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                       <div className="form-group">
-                        <label htmlFor="eMail">Email</label>
+                        <label htmlFor="eMail" style={{color: '#ffffff'}}>Email</label>
                         <input
                           type="email"
                           className="form-control"
@@ -71,7 +72,7 @@ const UserProfile = () => {
                     </div>
                     <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                       <div className="form-group">
-                        <label htmlFor="phone">User Role</label>
+                        <label htmlFor="phone" style={{color: '#ffffff'}}>User Role</label>
                         <input
                           type="text"
                           className="form-control"
@@ -91,6 +92,7 @@ const UserProfile = () => {
                           name="submit"
                           className="btn btn-outline-secondary"
                           style={{width: '100%'}}
+                          disabled
                         >
                           Reset
                         </button>
@@ -100,6 +102,7 @@ const UserProfile = () => {
                           name="submit"
                           className="btn"
                           style={{width: '100%', backgroundColor: '#ff0000', color: '#ffffff'}}
+                          disabled
                         >
                           Update
                         </button>

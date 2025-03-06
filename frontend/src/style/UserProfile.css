@@ -1,0 +1,7 @@
+.custom-user-profile-bg {
+  background-image: url('../assets/user-profile-bg.jpg'); /* Replace with actual image URL */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+}
