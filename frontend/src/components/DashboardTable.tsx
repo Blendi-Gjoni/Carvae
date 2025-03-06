@@ -12,7 +12,6 @@ import {
   SortingState
 } from '@tanstack/react-table';
 import { HiOutlineSwitchVertical } from "react-icons/hi";
-import { motion } from 'framer-motion';
 
 export interface Column<T> {
   accessorKey: keyof T;
@@ -94,24 +93,13 @@ const DashboardTable = <T extends object> ({ tableData, allColumns, enableSort }
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row, index) => (
-              <motion.tr 
-                key={row.id}
-                initial={{ x: -1000, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ 
-                  type: "tween",
-                  stiffness: 50,
-                  damping: 0,
-                  duration: 0.2,
-                  delay: index * 0.1,
-                }}
-              >
+              <tr>
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
-              </motion.tr>
+              </tr>
             ))}
           </tbody>
         </table>

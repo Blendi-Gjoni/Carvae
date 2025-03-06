@@ -61,6 +61,13 @@ public abstract class Car {
     private List<Features> features;
 
     @Transient
+    public String getCarType() {
+        return this.getClass().getAnnotation(DiscriminatorValue.class) != null
+                ? this.getClass().getAnnotation(DiscriminatorValue.class).value()
+                : null;
+    }
+
+    @Transient
     private PricingStrategy pricingStrategy;
 
     public abstract BigDecimal getPrice();

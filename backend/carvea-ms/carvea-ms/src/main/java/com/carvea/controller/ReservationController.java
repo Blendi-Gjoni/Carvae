@@ -1,6 +1,7 @@
 package com.carvea.controller;
 
 import com.carvea.dto.ReservationDto;
+import com.carvea.model.Reservation;
 import com.carvea.service.ReservationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,9 +29,9 @@ public class ReservationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ReservationDto>> getAllReservations() {
-        List<ReservationDto> reservationDtos = reservationService.getAllReservations();
-        return ResponseEntity.ok(reservationDtos);
+    public ResponseEntity<List<Reservation>> getAllReservations() {
+        List<Reservation> reservations = reservationService.getAllReservations();
+        return ResponseEntity.ok(reservations);
     }
 
     @PutMapping("/{id}")

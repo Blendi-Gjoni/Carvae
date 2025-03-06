@@ -1,6 +1,5 @@
 import Layout from '../components/layouts/Layout';
 import { useGetCurrentUserQuery } from '../api/UsersApi';
-import { motion } from 'framer-motion';
 
 const UserProfile = () => {
   const { data: user , isLoading } = useGetCurrentUserQuery();
@@ -11,12 +10,7 @@ const UserProfile = () => {
         <div>Loading...</div>
       ) : (
         <div className="container vh-100 mt-5">
-          <motion.div 
-            className="row gutters"
-            initial={{ y: 1000 }}
-            animate={{ y: 0 }}
-            transition={{ type: "spring", stiffness: 80, damping: 20, duration: 0.5}}  
-          >
+          <div className="row gutters">
             <div className="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
               <div className="card h-100">
                 <div className="card-body">
@@ -115,7 +109,7 @@ const UserProfile = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
     </Layout>

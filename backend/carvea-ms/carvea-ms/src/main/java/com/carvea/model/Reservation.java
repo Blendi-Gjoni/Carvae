@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +33,9 @@ public class Reservation implements Subject {
     @JoinColumn(name = "rental_id", nullable = false)
     private Rental rental;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "reservation_id")
-    private List<Car> cars;
+    @ManyToOne
+    @JoinColumn(name = "car_id", nullable = false)
+    private Car car;
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
@@ -44,6 +45,9 @@ public class Reservation implements Subject {
 
     @Column(name = "status", nullable = false)
     private String status;
+
+    @Column(name = "price", nullable = false)
+    private BigDecimal price;
 
     @Transient
     private List<Observer> observers = new ArrayList<>();

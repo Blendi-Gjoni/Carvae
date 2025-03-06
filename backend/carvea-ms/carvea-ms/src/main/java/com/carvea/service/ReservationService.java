@@ -42,16 +42,21 @@ public class ReservationService {
         Rental rental = rentalRepository.findById(reservationDto.getRentalId())
                 .orElseThrow(() -> new RuntimeException("Rental Not Found"));
 
-        List<Long> carIds = reservationDto.getCarIds();
-        if (carIds.size() == 1) {
-            carIds = Arrays.asList(carIds.get(0));
-        }
+        Car car = carRepository.findById(reservationDto.getCarId())
+                .orElseThrow(() -> new RuntimeException("Car Not Found"));
 
-        List<Car> cars = carRepository.findAllById(carIds);
+        Reservation createdReservation = new Reservation();
+        createdReservation.setUser(user);
+        createdReservation.setRental(rental);
+        createdReservation.setCar(car);
+        createdReservation.setStartDate(reservationDto.getStartDate());
+        createdReservation.setEndDate(reservationDto.getEndDate());
+        createdReservation.setStatus("RESERVED");
+        createdReservation.setPrice(car.getPrice());
 
-        Reservation reservation = ReservationMapper.toReservationEntity(reservationDto, user, rental, cars);
-        Reservation savedReservation = reservationRepository.save(reservation);
-        return ReservationMapper.toReservationDto(savedReservation);
+        createdReservation = reservationRepository.save(createdReservation);
+
+        return ReservationMapper.toReservationDto(createdReservation);
     }
 
     public ReservationDto getReservationById(Long id) {
@@ -60,11 +65,9 @@ public class ReservationService {
         return ReservationMapper.toReservationDto(reservation);
     }
 
-    public List<ReservationDto> getAllReservations() {
+    public List<Reservation> getAllReservations() {
         List<Reservation> reservations = reservationRepository.findAll();
-        return reservations.stream()
-                .map(ReservationMapper::toReservationDto)
-                .collect(Collectors.toList());
+        return reservations;
     }
 
     public ReservationDto updateReservation(Long id, ReservationDto reservationDto) {
@@ -77,11 +80,12 @@ public class ReservationService {
         Rental rental = rentalRepository.findById(reservationDto.getRentalId())
                 .orElseThrow(() -> new RuntimeException("Rental Not Found"));
 
-        List<Car> cars = carRepository.findAllById(reservationDto.getCarIds());
+        Car car = carRepository.findById(reservationDto.getCarId())
+                .orElseThrow(() -> new RuntimeException("Car Not Found"));
 
         existingReservation.setUser(user);
         existingReservation.setRental(rental);
-        existingReservation.setCars(cars);
+        existingReservation.setCar(car);
         existingReservation.setStartDate(reservationDto.getStartDate());
         existingReservation.setEndDate(reservationDto.getEndDate());
         existingReservation.setStatus(reservationDto.getStatus());

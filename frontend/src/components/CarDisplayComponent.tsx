@@ -9,7 +9,7 @@ import CarCard from "./CarCard/CarCard";
 import { SyncLoader } from "react-spinners";
 
 const CarDisplayComponent = () => {
-  const [carType, setCarType] = useState<string>("RENTAL");
+  const [carType, setCarType] = useState<string>("DEALERSHIP");
   const navigate = useNavigate();
 
   const { data: carsByType = [], error, isLoading } = useGetCarsByTypeQuery(carType);
@@ -49,8 +49,8 @@ const CarDisplayComponent = () => {
             onChange={handleCarTypeChange}
             className="form-select w-auto d-inline-block"
           >
-            <option value="RENTAL">Rental</option>
-            <option value="DEALERSHIP">Dealership</option>
+            <option value="RENTAL">Rent a Car</option>
+            <option value="DEALERSHIP">Buy a Car</option>
           </select>
         </div>
 
@@ -69,7 +69,7 @@ const CarDisplayComponent = () => {
                 <CarCard
                   carBrand={car.model?.brand?.name}
                   carModel={car.model?.name}
-                  carType={carType}
+                  carType={car.carType}
                   carPrice={car.price}
                   carFuelType={car.fuelType}
                   carTransmission={car.transmission}

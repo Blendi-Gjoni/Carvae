@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 @Component
 public class ReservationMapper {
 
-    public static Reservation toReservationEntity(ReservationDto reservatonDto, User user, Rental rental, List<Car> cars){
+    public static Reservation toReservationEntity(ReservationDto reservatonDto, User user, Rental rental, Car car){
         Reservation reservation = new Reservation();
         reservation.setId(reservatonDto.getId());
         reservation.setUser(user);
         reservation.setRental(rental);
-        reservation.setCars(cars);
+        reservation.setCar(car);
         reservation.setStartDate(reservatonDto.getStartDate());
         reservation.setEndDate(reservatonDto.getEndDate());
         reservation.setStatus(reservatonDto.getStatus());
@@ -30,7 +30,7 @@ public class ReservationMapper {
         reservationDto.setId(reservation.getId());
         reservationDto.setUserId(reservation.getUser().getId());
         reservationDto.setRentalId(reservation.getRental().getId());
-        reservationDto.setCarIds(reservation.getCars().stream().map(Car::getId).collect(Collectors.toList()));
+        reservationDto.setCarId(reservation.getCar().getId());
         reservationDto.setStartDate(reservation.getStartDate());
         reservationDto.setEndDate(reservation.getEndDate());
         reservationDto.setStatus(reservation.getStatus());

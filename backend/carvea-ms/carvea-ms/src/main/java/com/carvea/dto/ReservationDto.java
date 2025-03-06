@@ -14,7 +14,7 @@ public class ReservationDto {
     private Long id;
     private Long userId;
     private Long rentalId;
-    private List<Long> carIds;
+    private Long carId;
     private LocalDate startDate;
     private LocalDate endDate;
     private String status;

@@ -42,7 +42,7 @@ const OrdersDashboard = () => {
         carId: yup.number().required(),
         userId: yup.number().required(),
         dealershipId: yup.number().required(),
-    })
+    });
 
     const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<OrderDTO>({
         resolver: yupResolver(schema),
@@ -251,6 +251,7 @@ const OrdersDashboard = () => {
                             {...register("userId")}
                             isInvalid={!!errors.userId}
                         >
+                            <option value="">Select User</option>
                             {users?.map(user => (
                                 <option key={user.id} value={user.id}>
                                     {user.usernameF}
@@ -266,6 +267,7 @@ const OrdersDashboard = () => {
                             {...register("carId")}
                             isInvalid={!!errors.carId}
                         >
+                            <option value="">Select Car</option>
                             {cars?.map(car => (
                                 <option key={car.id} value={car.id}>
                                     {car.model.name}
@@ -281,6 +283,7 @@ const OrdersDashboard = () => {
                             {...register("dealershipId")}
                             isInvalid={!!errors.dealershipId}
                         >
+                            <option value="">Select Dealership</option>
                             {dealerships?.map(dealership => (
                                 <option key={dealership.id} value={dealership.id}>
                                     {dealership.name}

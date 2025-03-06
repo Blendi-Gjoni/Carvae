@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Button, Container, Row, Col, Form, Card } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Layout from '../components/layouts/Layout'
 import '../style/CarDetails.css'; // Import the CSS file for custom styles
 import { useAddOrderMutation } from '../api/OrdersApi';
+import { useAddReservationMutation } from '../api/ReservationsApi';
 import { useGetCurrentUserQuery } from '../api/UsersApi';
 import { useGetDealershipsQuery } from '../api/DealershipsApi';
+import { useGetRentalsQuery } from '../api/RentalsApi';
 
 const CarDetails = () => {
     const location = useLocation();
@@ -15,9 +17,13 @@ const CarDetails = () => {
     const { data: dealerships = [] } = useGetDealershipsQuery();
     const [selectedDealership, setSelectedDealership] = useState<number>(0);
 
+    const { data: rentals = [] } = useGetRentalsQuery();
+    const [selectedRental, setSelectedRental] = useState<number>(0);
+
     const { data: currentUser } = useGetCurrentUserQuery();
 
     const [addOrder] = useAddOrderMutation();
+    const [addReservation] = useAddReservationMutation();
 
     const handleOrder = async () => {
         try {
@@ -26,19 +32,42 @@ const CarDetails = () => {
                 userId: currentUser?.id,
                 dealershipId: selectedDealership,
             };
-            const response = await addOrder(order);
-            console.log('Order successfully placed:', response);
+            await addOrder(order);
             alert('Order successfully placed!');
         } catch (error) {
             console.error('Error placing order:', error);
-            alert('Failed to place order. Please try again.');
+        }
+    };
+
+    const handleReserve = async () => {
+        try {
+            const today = new Date();
+            const nextMonth = new Date();
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+            const reservation = {
+                carId: car.id,
+                userId: currentUser?.id,
+                rentalId: selectedRental,
+                startDate: today.toISOString().split("T")[0],
+                endDate: nextMonth.toISOString().split("T")[0]
+            };
+            await addReservation(reservation);
+            alert('Reservation successfully placed!');
+        } catch (error) {
+            console.error('Error placing reservation:', error);
         }
     };
 
     const handleDealershipSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
         setSelectedDealership(Number(value));
-    }
+    };
+
+    const handleRentalSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setSelectedRental(Number(value));
+    };
 
     return (
         <Layout>
@@ -76,7 +105,30 @@ const CarDetails = () => {
                                     </Button>
                                 </>
                             ) : (
-                                <Button variant="warning" className="me-2">Reserve</Button>
+                                <>
+                                <Form.Group controlId="dealershipSelect" className="mb-3">
+                                        <Form.Label>Select Rental</Form.Label>
+                                        <Form.Select
+                                            value={selectedRental}
+                                            onChange={handleRentalSelect}
+                                        >
+                                            <option value="">Choose...</option>
+                                            {rentals.map((rental) => (
+                                                <option key={rental.id} value={rental.id}>
+                                                    {rental.name}
+                                                </option>
+                                            ))}
+                                        </Form.Select>
+                                    </Form.Group>
+                                <Button 
+                                    variant="warning" 
+                                    className="me-2"
+                                    onClick={handleReserve}
+                                    disabled={!selectedRental}
+                                >
+                                    Reserve
+                                </Button>
+                                </>
                             )}
                         </Col>
                     </Row>
