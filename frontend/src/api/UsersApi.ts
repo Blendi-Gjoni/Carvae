@@ -5,7 +5,7 @@ const baseQuery = fetchBaseQuery({
     credentials: 'include',
 });
 
-interface Role {
+export interface Role {
     id: number;
     name: string;
 }
@@ -14,10 +14,10 @@ export interface User {
     id: number;
     username: string;
     email: string;
-    password: string;
+    password?: string;
     usernameF?: string | null,
     role: Role;
-    verificationCode: string | null,
+    verificationCode?: string | null,
 }
 
 export const usersApi = createApi ({

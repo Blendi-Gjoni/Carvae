@@ -1,9 +1,26 @@
-import '../style/UserProfile.css'
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logoutAsync } from '../redux/authSlice';
+import { AppDispatch } from '../redux/store';
+import '../style/UserProfile.css';
 import Layout from '../components/layouts/Layout';
 import { useGetCurrentUserQuery } from '../api/UsersApi';
 
 const UserProfile = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { data: user , isLoading } = useGetCurrentUserQuery();
+
+  const handleSignOut = async () => {
+    try {
+      await dispatch(logoutAsync()).unwrap();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      alert('Logout failed. Please try again.');
+    }
+  }
 
   return (
     <Layout>
@@ -36,6 +53,9 @@ const UserProfile = () => {
                       <p>
                         Lorem, ipsum dolor sit amet consectetur adipisicing elit. Autem, aspernatur doloribus.
                       </p>
+                    </div>
+                    <div className='d-flex justify-content-center'>
+                      <button className='btn btn-outline-dark' onClick={handleSignOut}>Sign Out</button>
                     </div>
                   </div>
                 </div>

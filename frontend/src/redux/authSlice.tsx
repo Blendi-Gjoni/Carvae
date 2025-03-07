@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import api from '../utils/api';
-import { User } from '../api/UsersApi';
+import { User, Role } from '../api/UsersApi';
 
 const token: string | null = Cookies.get('token') || null;
 
@@ -108,6 +108,19 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.token = action.payload.token;
+
+        try {
+          const decoded: { sub: number; username: string; email: string; usernameF: string; role: Role } = jwtDecode(action.payload.token);
+          state.user = {
+            id: decoded.sub,
+            username: decoded.username,
+            email: decoded.email,
+            usernameF: decoded.usernameF,
+            role: decoded.role,
+          };
+        } catch (error) {
+          state.user = null;
+        }
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
@@ -135,5 +148,4 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
 export default authSlice.reducer;

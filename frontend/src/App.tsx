@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import { Roles } from './utils/Roles';
+import PrivateRoute from './components/PrivateRoute';
 import CarDetails from './pages/CarDetails';
 import UserProfile from './pages/UserProfile';
 import AdminLayout from './components/layouts/AdminLayout';
@@ -31,7 +33,7 @@ function App(): JSX.Element {
           <Route path='/user-profile' element={<UserProfile />} />
 
           {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin" element={<PrivateRoute role={Roles.SUPER_ADMIN}><AdminLayout /></PrivateRoute>}>
               <Route path="page" element={<AdminPage />} /> {/* Admin Home (Dashboard) */}
               <Route path="users" element={<UsersDashboard />} />
               <Route path="rentals" element={<RentalsDashboard />} />
