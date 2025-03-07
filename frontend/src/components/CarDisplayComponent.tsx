@@ -39,15 +39,13 @@ const CarDisplayComponent = () => {
         <h3 className="text-center">Cars Display</h3>
 
         {/* Dropdown for selecting car type */}
-        <div className="text-center mb-3">
-          <label htmlFor="carType" className="me-2">
-            Select Car Type:
-          </label>
+        <div className="text-center m-4">
           <select
             id="carType"
             value={carType}
             onChange={handleCarTypeChange}
-            className="form-select w-auto d-inline-block"
+            className="form-select d-inline-block"
+            style={{width: '150px'}}
           >
             <option value="RENTAL">Rent a Car</option>
             <option value="DEALERSHIP">Buy a Car</option>
