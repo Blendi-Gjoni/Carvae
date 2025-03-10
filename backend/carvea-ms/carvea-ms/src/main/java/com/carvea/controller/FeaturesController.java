@@ -1,7 +1,6 @@
 package com.carvea.controller;
 
 import com.carvea.dto.FeaturesDto;
-import com.carvea.model.Features;
 import com.carvea.service.FeaturesService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package com.carvea.service;
+package com.carvea.service.impl;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;

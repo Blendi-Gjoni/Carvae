@@ -4,7 +4,6 @@ import com.carvea.dto.LoginUserDto;
 import com.carvea.dto.RegisterUserDto;
 import com.carvea.dto.VerifyUserDto;
 import com.carvea.model.User;
-import com.carvea.responses.LoginResponse;
 import com.carvea.service.AuthenticationService;
 import com.carvea.service.JwtService;
 import org.springframework.http.HttpHeaders;
