@@ -1,9 +1,12 @@
 package com.carvea.service.impl;
 
 import com.carvea.dto.ModelDto;
+import com.carvea.enums.ModelCustomError;
+import com.carvea.exceptions.CustomException;
 import com.carvea.model.Model;
 import com.carvea.repository.ModelRepository;
 import com.carvea.service.ModelService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +29,9 @@ public class ModelServiceImpl implements ModelService {
 
     public List<ModelDto> getModelsByBrandId(Long brandId) {
         List<Model> models = modelRepository.findByBrandId(brandId);
+        if (models.isEmpty()) {
+            throw new CustomException(ModelCustomError.NO_MODEL_FOUND); // No models found
+        }
         return models.stream()
                 .map(model -> new ModelDto(model.getId(), model.getName()))
                 .toList(); // Convert Model entities to DTOs

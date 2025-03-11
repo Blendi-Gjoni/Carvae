@@ -36,9 +36,7 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody LoginUserDto loginUserDto) {
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
-
         String jwtToken = jwtService.generateToken(authenticatedUser);
-
         ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwtToken)
                 .httpOnly(true)
                 .secure(true)
@@ -46,7 +44,6 @@ public class AuthenticationController {
                 .sameSite("None")
                 .maxAge(24 * 60 * 60)
                 .build();
-
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(Map.of("token", jwtToken, "message", "Login successful"));
@@ -81,7 +78,6 @@ public class AuthenticationController {
                 .sameSite("None")
                 .maxAge(0)
                 .build();
-
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(Map.of("message", "Logged out successfully"));

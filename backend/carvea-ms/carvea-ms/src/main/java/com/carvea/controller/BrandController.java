@@ -35,9 +35,6 @@ public class BrandController {
     @GetMapping("/{brandId}/models")
     public ResponseEntity<List<ModelDto>> getModelsByBrandId(@PathVariable Long brandId) {
         List<ModelDto> models = modelService.getModelsByBrandId(brandId);
-        if (models.isEmpty()) {
-            return ResponseEntity.noContent().build(); // No models found
-        }
         return ResponseEntity.ok(models); // Return models
     }
 }
