@@ -1,6 +1,10 @@
 package com.carvea.service.impl;
 
 import com.carvea.dto.CarDto;
+import com.carvea.enums.CarCustomError;
+import com.carvea.enums.CategoryCustomError;
+import com.carvea.enums.ModelCustomError;
+import com.carvea.exceptions.CustomException;
 import com.carvea.mapper.CarMapper;
 import com.carvea.model.*;
 import com.carvea.repository.CarRepository;
@@ -33,10 +37,10 @@ public class CarServiceImpl implements CarService {
 
     public Car addCar(CarDto carDto) {
         Model model = modelRepository.findById(carDto.getModelId())
-                .orElseThrow(() -> new RuntimeException("Model not found"));
+                .orElseThrow(() -> new CustomException(ModelCustomError.MODEL_NOT_FOUND));
 
         Category category = categoryRepository.findById(carDto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CustomException(CategoryCustomError.CATEGORY_NOT_FOUND));
 
         List<Features> features = featuresRepository.findAllById(carDto.getFeatures());
 
@@ -45,7 +49,7 @@ public class CarServiceImpl implements CarService {
         // Validation for RentalCar
         if ("RENTAL".equalsIgnoreCase(carDto.getCarType())) {
             if (carDto.getPrice() == null) {
-                throw new IllegalArgumentException("Monthly payment is required for RentalCar");
+                throw new CustomException(CarCustomError.RENTAL_CAR_PRICE_REQUIRED);
             }
             RentalCar rentalCar = new RentalCar();
             rentalCar.setMonthlyPayment(carDto.getPrice());  // Set BigDecimal price
@@ -54,13 +58,13 @@ public class CarServiceImpl implements CarService {
         // Validation for DealershipCar
         else if ("DEALERSHIP".equalsIgnoreCase(carDto.getCarType())) {
             if (carDto.getPrice() == null) {
-                throw new IllegalArgumentException("Full price is required for DealershipCar");
+                throw new CustomException(CarCustomError.DEALERSHIP_CAR_PRICE_REQUIRED);
             }
             DealershipCar dealershipCar = new DealershipCar();
             dealershipCar.setFullPrice(carDto.getPrice());  // Set BigDecimal price
             car = dealershipCar;
         } else {
-            throw new IllegalArgumentException("Invalid car type: " + carDto.getCarType());
+            throw new CustomException(CarCustomError.INVALID_CAR_TYPE);
         }
 
         car.setModel(model);
@@ -84,24 +88,24 @@ public class CarServiceImpl implements CarService {
         } else if ("DEALERSHIP".equalsIgnoreCase(carType)) {
             return carRepository.findCarsByType(DealershipCar.class);
         } else {
-            throw new IllegalArgumentException("Invalid car type: " + carType);
+            throw new CustomException(CarCustomError.INVALID_CAR_TYPE);
         }
     }
 
     public Car updateCar(Long id, CarDto carDto) {
         Car existingCar = carRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Car not found"));
+                .orElseThrow(() -> new CustomException(CarCustomError.CAR_NOT_FOUND));
         carMapper.updateCarFromDto(carDto, existingCar);
         existingCar.setModel(modelRepository.findById(carDto.getModelId())
-                .orElseThrow(() -> new RuntimeException("Model not found")));
+                .orElseThrow(() -> new CustomException(ModelCustomError.MODEL_NOT_FOUND)));
         existingCar.setCategory(categoryRepository.findById(carDto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found")));
+                .orElseThrow(() -> new CustomException(CategoryCustomError.CATEGORY_NOT_FOUND)));
         existingCar.setFeatures(featuresRepository.findAllById(carDto.getFeatures()));
         return carRepository.save(existingCar);
     }
 
     public Car getCarById(Long carId){
-        return carRepository.findById(carId).orElseThrow(() -> new RuntimeException("Car not found"));
+        return carRepository.findById(carId).orElseThrow(() -> new CustomException(CarCustomError.CAR_NOT_FOUND));
     }
 
     public List<Car> getAllCars(){
@@ -110,7 +114,7 @@ public class CarServiceImpl implements CarService {
     }
 
     public void deleteCar(Long id){
-        Car car = carRepository.findById(id).orElseThrow(() -> new RuntimeException("Car not found"));
+        Car car = carRepository.findById(id).orElseThrow(() -> new CustomException(CarCustomError.CAR_NOT_FOUND));
         carRepository.delete(car);
     }
 

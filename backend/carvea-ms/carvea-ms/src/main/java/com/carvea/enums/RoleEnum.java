@@ -1,4 +1,4 @@
-package com.carvea.model;
+package com.carvea.enums;
 
 public enum RoleEnum {
     USER,

@@ -1,7 +1,7 @@
 package com.carvea.bootstrap;
 
 import com.carvea.model.Role;
-import com.carvea.model.RoleEnum;
+import com.carvea.enums.RoleEnum;
 import com.carvea.repository.RoleRepository;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;

@@ -1,5 +1,6 @@
 package com.carvea.model;
 
+import com.carvea.enums.RoleEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

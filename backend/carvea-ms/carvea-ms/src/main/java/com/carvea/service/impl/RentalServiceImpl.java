@@ -1,6 +1,8 @@
 package com.carvea.service.impl;
 
 import com.carvea.dto.RentalDto;
+import com.carvea.enums.RentalCustomError;
+import com.carvea.exceptions.CustomException;
 import com.carvea.mapper.RentalMapper;
 import com.carvea.model.Rental;
 import com.carvea.repository.RentalRepository;
@@ -26,7 +28,7 @@ public class RentalServiceImpl implements RentalService {
 
     public RentalDto getRentalById(Long id) {
         Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rental not found"));
+                .orElseThrow(() -> new CustomException(RentalCustomError.RENTAL_NOT_FOUND));
         return RentalMapper.toRentalDto(rental);
     }
 
@@ -39,7 +41,7 @@ public class RentalServiceImpl implements RentalService {
 
     public RentalDto updateRental(Long id, RentalDto rentalDto) {
         Rental existingRental = rentalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rental not found"));
+                .orElseThrow(() -> new CustomException(RentalCustomError.RENTAL_NOT_FOUND));
         Rental updatedRental = RentalMapper.toRentalEntity(rentalDto);
         updatedRental.setId(existingRental.getId());
         rentalRepository.save(updatedRental);
@@ -48,7 +50,7 @@ public class RentalServiceImpl implements RentalService {
 
     public void deleteRental(Long id) {
         Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rental not found"));
+                .orElseThrow(() -> new CustomException(RentalCustomError.RENTAL_NOT_FOUND));
         rentalRepository.delete(rental);
     }
 

@@ -1,7 +1,7 @@
 package com.carvea.repository;
 
 import com.carvea.model.Role;
-import com.carvea.model.RoleEnum;
+import com.carvea.enums.RoleEnum;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

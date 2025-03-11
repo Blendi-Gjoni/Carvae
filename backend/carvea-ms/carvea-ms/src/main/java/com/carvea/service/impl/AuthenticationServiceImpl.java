@@ -3,8 +3,10 @@ package com.carvea.service.impl;
 import com.carvea.dto.LoginUserDto;
 import com.carvea.dto.RegisterUserDto;
 import com.carvea.dto.VerifyUserDto;
+import com.carvea.exceptions.CustomException;
+import com.carvea.enums.UserCustomError;
 import com.carvea.model.Role;
-import com.carvea.model.RoleEnum;
+import com.carvea.enums.RoleEnum;
 import com.carvea.model.User;
 import com.carvea.repository.RoleRepository;
 import com.carvea.repository.UserRepository;
@@ -64,10 +66,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     public User authenticate(LoginUserDto input) {
         User user = userRepository.findByEmail(input.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new CustomException(UserCustomError.USER_NOT_FOUND));
 
         if(!user.isEnabled()) {
-            throw new RuntimeException("User account is not verified. Please verify your account!");
+            throw new CustomException(UserCustomError.USER_NOT_VERIFIED);
         }
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -83,7 +85,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if(optionalUser.isPresent()){
             User user = optionalUser.get();
             if(user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())){
-                throw new RuntimeException("User verification expired!");
+                throw new CustomException(UserCustomError.USER_VERIFICATION_CODE_EXPIRED);
             }
             if(user.getVerificationCode().equals(input.getVerificationCode())){
                 user.setEnabled(true);
@@ -91,10 +93,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 user.setVerificationCodeExpiresAt(null);
                 userRepository.save(user);
             } else{
-                throw new RuntimeException("User verification code is incorrect!");
+                throw new CustomException(UserCustomError.USER_VERIFICATION_CODE_INVALID);
             }
         } else {
-            throw new RuntimeException("User not found");
+            throw new CustomException(UserCustomError.USER_NOT_FOUND);
         }
     }
 
@@ -103,14 +105,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if(optionalUser.isPresent()){
             User user = optionalUser.get();
             if(user.isEnabled()) {
-                throw new RuntimeException("Account is already verified!");
+                throw new CustomException(UserCustomError.USER_ACCOUNT_ALREADY_VERIFIED);
             }
             user.setVerificationCode(generateVerificationCode());
             user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
             sendVerificationEmail(user);
             userRepository.save(user);
         }else {
-            throw new RuntimeException("User not found");
+            throw new CustomException(UserCustomError.USER_NOT_FOUND);
         }
     }
 

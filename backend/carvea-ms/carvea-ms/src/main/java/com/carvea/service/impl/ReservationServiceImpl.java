@@ -1,6 +1,11 @@
 package com.carvea.service.impl;
 
 import com.carvea.dto.ReservationDto;
+import com.carvea.enums.CarCustomError;
+import com.carvea.enums.RentalCustomError;
+import com.carvea.enums.ReservationCustomError;
+import com.carvea.enums.UserCustomError;
+import com.carvea.exceptions.CustomException;
 import com.carvea.mapper.ReservationMapper;
 import com.carvea.model.Car;
 import com.carvea.model.Rental;
@@ -36,13 +41,13 @@ public class ReservationServiceImpl implements ReservationService {
 
     public ReservationDto createReservation(ReservationDto reservationDto) {
         User user = userRepository.findById(reservationDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
+                .orElseThrow(() -> new CustomException(UserCustomError.USER_NOT_FOUND));
 
         Rental rental = rentalRepository.findById(reservationDto.getRentalId())
-                .orElseThrow(() -> new RuntimeException("Rental Not Found"));
+                .orElseThrow(() -> new CustomException(RentalCustomError.RENTAL_NOT_FOUND));
 
         Car car = carRepository.findById(reservationDto.getCarId())
-                .orElseThrow(() -> new RuntimeException("Car Not Found"));
+                .orElseThrow(() -> new CustomException(CarCustomError.CAR_NOT_FOUND));
 
         Reservation createdReservation = new Reservation();
         createdReservation.setUser(user);
@@ -60,7 +65,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     public ReservationDto getReservationById(Long id) {
         Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reservation Not Found"));
+                .orElseThrow(() -> new CustomException(ReservationCustomError.RESERVATION_NOT_FOUND));
         return ReservationMapper.toReservationDto(reservation);
     }
 
@@ -71,16 +76,16 @@ public class ReservationServiceImpl implements ReservationService {
 
     public ReservationDto updateReservation(Long id, ReservationDto reservationDto) {
         Reservation existingReservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reservation Not Found"));
+                .orElseThrow(() -> new CustomException(ReservationCustomError.RESERVATION_NOT_FOUND));
 
         User user = userRepository.findById(reservationDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
+                .orElseThrow(() -> new CustomException(UserCustomError.USER_NOT_FOUND));
 
         Rental rental = rentalRepository.findById(reservationDto.getRentalId())
-                .orElseThrow(() -> new RuntimeException("Rental Not Found"));
+                .orElseThrow(() -> new CustomException(RentalCustomError.RENTAL_NOT_FOUND));
 
         Car car = carRepository.findById(reservationDto.getCarId())
-                .orElseThrow(() -> new RuntimeException("Car Not Found"));
+                .orElseThrow(() -> new CustomException(CarCustomError.CAR_NOT_FOUND));
 
         existingReservation.setUser(user);
         existingReservation.setRental(rental);
@@ -96,7 +101,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     public void deleteReservation(Long id) {
         Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reservation Not Found"));
+                .orElseThrow(() -> new CustomException(ReservationCustomError.RESERVATION_NOT_FOUND));
         reservationRepository.delete(reservation);
     }
 

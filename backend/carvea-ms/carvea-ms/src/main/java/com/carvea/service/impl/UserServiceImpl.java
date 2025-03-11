@@ -2,7 +2,7 @@ package com.carvea.service.impl;
 
 import com.carvea.dto.RegisterUserDto;
 import com.carvea.model.Role;
-import com.carvea.model.RoleEnum;
+import com.carvea.enums.RoleEnum;
 import com.carvea.model.User;
 import com.carvea.repository.RoleRepository;
 import com.carvea.repository.UserRepository;

@@ -1,7 +1,12 @@
 package com.carvea.service.impl;
 
 import com.carvea.dto.OrderDto;
+import com.carvea.enums.CarCustomError;
+import com.carvea.enums.DealershipCustomError;
+import com.carvea.enums.OrderCustomError;
+import com.carvea.exceptions.CustomException;
 import com.carvea.exceptions.ResourceNotFoundException;
+import com.carvea.enums.UserCustomError;
 import com.carvea.model.Car;
 import com.carvea.model.Order;
 import com.carvea.model.User;
@@ -32,23 +37,23 @@ public class OrderServiceImpl implements OrderService {
 
     public Order save(OrderDto request) {
         if (request.getCarId() == null) {
-            throw new ResourceNotFoundException("Car Id is required");
+            throw new CustomException(CarCustomError.CAR_ID_REQUIRED);
         }
         if (request.getUserId() == null) {
-            throw new ResourceNotFoundException("User Id is required");
+            throw new CustomException(UserCustomError.USER_ID_REQUIRED);
         }
         if (request.getDealershipId() == null) {
-            throw new ResourceNotFoundException("Dealership Id is required");
+            throw new ResourceNotFoundException(DealershipCustomError.DEALERSHIP_NOT_FOUND.getMessage());
         }
 
         Car car = carRepository.findById(request.getCarId())
-                .orElseThrow(() -> new ResourceNotFoundException("Car not found with ID: " + request.getCarId()));
+                .orElseThrow(() -> new CustomException(CarCustomError.CAR_NOT_FOUND));
 
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + request.getUserId()));
+                .orElseThrow(() -> new CustomException(UserCustomError.USER_NOT_FOUND));
 
         Dealership dealership = dealershipRepository.findById(request.getDealershipId())
-                .orElseThrow(() -> new ResourceNotFoundException("Dealership not found with ID: " + request.getDealershipId()));
+                .orElseThrow(() -> new CustomException(DealershipCustomError.DEALERSHIP_NOT_FOUND));
 
         Order order = new Order();
         order.setCar(car);
@@ -61,7 +66,7 @@ public class OrderServiceImpl implements OrderService {
 
     public void delete(Long id) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new CustomException(OrderCustomError.ORDER_NOT_FOUND));
         orderRepository.delete(order);
     }
 

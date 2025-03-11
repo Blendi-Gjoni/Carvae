@@ -1,6 +1,8 @@
 package com.carvea.service.impl;
 
 import com.carvea.dto.DealershipDto;
+import com.carvea.enums.DealershipCustomError;
+import com.carvea.exceptions.CustomException;
 import com.carvea.mapper.DealershipMapper;
 import com.carvea.model.Dealership;
 import com.carvea.repository.DealershipRepository;
@@ -24,7 +26,7 @@ public class DealershipServiceImpl implements DealershipService {
 
     public DealershipDto getDealershipById(Long id) {
         Dealership dealership = dealershipRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Dealership not found"));
+                .orElseThrow(() -> new CustomException(DealershipCustomError.DEALERSHIP_NOT_FOUND));
         return DealershipMapper.toDealershipDto(dealership);
     }
 
@@ -37,7 +39,7 @@ public class DealershipServiceImpl implements DealershipService {
 
     public DealershipDto updateDealership(Long id, DealershipDto dealershipDto) {
         Dealership existingDealership = dealershipRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Dealership not found"));
+                .orElseThrow(() -> new CustomException(DealershipCustomError.DEALERSHIP_NOT_FOUND));
         Dealership updatedDealership = DealershipMapper.toDealershipEntity(dealershipDto);
         updatedDealership.setId(existingDealership.getId());
         dealershipRepository.save(updatedDealership);
@@ -46,7 +48,7 @@ public class DealershipServiceImpl implements DealershipService {
 
     public void deleteDealership(Long id) {
         Dealership dealership = dealershipRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Dealership not found"));
+                .orElseThrow(() -> new CustomException(DealershipCustomError.DEALERSHIP_NOT_FOUND));
         dealershipRepository.delete(dealership);
     }
 
