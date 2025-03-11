@@ -46,8 +46,6 @@ public class Order implements Subject {
 
     private BigDecimal price;
 
-    private LocalDateTime updatedAt;
-
     @Transient
     private List<Observer> observers = new ArrayList<>();
 
@@ -55,15 +53,6 @@ public class Order implements Subject {
     protected void onCreate() {
         orderDate = LocalDateTime.now();
         deliveryDate = orderDate.plusMonths(2);
-        notifyObservers("Order created: " + id);
-    }
-
-    @PreUpdate
-    public void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-        if (deliveryDate != null && deliveryDate.isBefore(LocalDateTime.now().plusDays(1))) {
-            notifyObservers("Order about to arrive: " + id + ". Email: " + user.getEmail());
-        }
     }
 
     @Override
@@ -77,9 +66,10 @@ public class Order implements Subject {
     }
 
     @Override
-    public void notifyObservers(String message) {
+    public void notifyObservers(String email, String subject, String message) {
         for (Observer observer : observers) {
-            observer.update(message);
+            observer.update(email, subject, message);
         }
     }
+
 }

@@ -1,6 +1,7 @@
 package com.carvea.observer;
 
 public interface Observer {
-    void update(String message);
+    void update(String email, String subject, String message);
 }
+
 

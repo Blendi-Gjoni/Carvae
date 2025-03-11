@@ -16,6 +16,7 @@ import com.carvea.repository.OrderRepository;
 import com.carvea.repository.UserRepository;
 import com.carvea.repository.DealershipRepository;
 import com.carvea.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,11 +29,15 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final DealershipRepository dealershipRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository, CarRepository carRepository, UserRepository userRepository, DealershipRepository dealershipRepository) {
+    @Autowired
+    private EmailNotifier emailNotifier;
+
+    public OrderServiceImpl(OrderRepository orderRepository, CarRepository carRepository, UserRepository userRepository, DealershipRepository dealershipRepository, EmailNotifier emailNotifier) {
         this.orderRepository = orderRepository;
         this.carRepository = carRepository;
         this.userRepository = userRepository;
         this.dealershipRepository = dealershipRepository;
+        this.emailNotifier = emailNotifier;
     }
 
     public Order save(OrderDto request) {
@@ -61,6 +66,28 @@ public class OrderServiceImpl implements OrderService {
         order.setDealership(dealership);
         order.setStatus("PENDING");
         order.setPrice(car.getPrice());
+
+        order.attach(emailNotifier);
+        order.notifyObservers(
+                user.getEmail(),
+                "Your Car Order Confirmation",
+                "<html>"
+                        + "<body style=\"font-family: Arial, sans-serif;\">"
+                        + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
+                        + "<h2 style=\"color: #333;\">Your Car Order is Confirmed!</h2>"
+                        + "<p style=\"font-size: 16px;\">Hello " + user.getUsernameF() + ",</p>"
+                        + "<p style=\"font-size: 16px;\">Your order has been successfully created.</p>"
+                        + "<p><strong>Dealership:</strong> " + dealership.getName() + "</p>"
+                        + "<p><strong>Car:</strong> " + car.getModel().getBrand().getName() + " " + car.getModel().getName() + "</p>"
+                        + "<p><strong>Price:</strong> $" + car.getPrice() + "</p>"
+                        + "<div style=\"background-color: #007bff; color: #fff; padding: 10px; text-align: center; border-radius: 5px;\">"
+                        + "<p>Thank you for choosing Carvea!</p>"
+                        + "</div>"
+                        + "</div>"
+                        + "</body>"
+                        + "</html>"
+        );
+
         return orderRepository.save(order);
     }
 

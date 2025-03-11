@@ -63,16 +63,9 @@ public class Reservation implements Subject {
     }
 
     @Override
-    public void notifyObservers(String message) {
+    public void notifyObservers(String email, String subject, String message) {
         for (Observer observer : observers) {
-            observer.update(message);
-        }
-    }
-
-    @PreUpdate
-    public void onUpdate() {
-        if (endDate != null && endDate.isBefore(LocalDate.now().plusDays(1))) {
-            notifyObservers("Reservation about to end: " + id + ". Email: " + user.getEmail());
+            observer.update(email, subject, message);
         }
     }
 }
