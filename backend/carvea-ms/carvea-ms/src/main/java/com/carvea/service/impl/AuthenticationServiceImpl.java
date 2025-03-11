@@ -45,18 +45,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public User signup(RegisterUserDto input) {
-        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
-
-        if (optionalRole.isEmpty()) {
-            return null;
-        }
+        Role role = roleRepository.findByName(RoleEnum.USER)
+                .orElseThrow(() -> new CustomException(UserCustomError.USER_ROLE_NOT_FOUND));
 
         User user = new User(input.getUsername(), input.getEmail(), passwordEncoder.encode(input.getPassword()));
 
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
         user.setEnabled(true);
-        user.setRole(optionalRole.get());
+        user.setRole(role);
 
         sendVerificationEmail(user);
 

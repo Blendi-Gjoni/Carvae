@@ -4,6 +4,7 @@ import com.carvea.exceptions.CustomError;
 
 public enum UserCustomError implements CustomError {
     USER_NOT_FOUND("User not found!"),
+    USER_ROLE_NOT_FOUND("User role not found!"),
     USER_ID_REQUIRED("User id is required!"),
     USER_NOT_VERIFIED("User account is not verified. Please verify your account!"),
     USER_VERIFICATION_CODE_EXPIRED("User verification code is expired!"),

@@ -1,6 +1,8 @@
 package com.carvea.service.impl;
 
 import com.carvea.dto.RegisterUserDto;
+import com.carvea.enums.UserCustomError;
+import com.carvea.exceptions.CustomException;
 import com.carvea.model.Role;
 import com.carvea.enums.RoleEnum;
 import com.carvea.model.User;
@@ -43,18 +45,15 @@ public class UserServiceImpl implements UserService {
     }
 
     public User createAdministrator(RegisterUserDto input){
-        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.ADMIN);
-
-        if(optionalRole.isEmpty()){
-            return null;
-        }
+        Role role = roleRepository.findByName(RoleEnum.ADMIN)
+                .orElseThrow(() -> new CustomException(UserCustomError.USER_ROLE_NOT_FOUND));
 
         User user = new User(input.getUsername(), input.getEmail(), passwordEncoder.encode(input.getPassword()));
 
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
         user.setEnabled(true);
-        user.setRole(optionalRole.get());
+        user.setRole(role);
 
         sendVerificationEmail(user);
 
