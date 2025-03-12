@@ -77,7 +77,7 @@ public class DealershipServiceImpl implements DealershipService {
     }
 
     public List<Object[]> getNumberOfDealershipsByState(){
-        log.info("Got number of Dealerships by state.");
+        log.info("Fetched number of Dealerships by state.");
         return dealershipRepository.findNumberOfDealershipsByState();
     }
 }

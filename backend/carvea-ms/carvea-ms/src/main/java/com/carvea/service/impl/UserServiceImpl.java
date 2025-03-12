@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public List<Object[]> getNumberOfUsersByRole() {
-        log.info("Fetching number of users by role.");
+        log.info("Fetched number of users by role.");
         return userRepository.findNumberOfUsersByRole();
     }
 

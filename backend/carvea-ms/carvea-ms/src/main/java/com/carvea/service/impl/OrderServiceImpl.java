@@ -119,8 +119,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public List<Order> getAllOrders() {
-        log.info("Fetched all orders from the database.");
-        return orderRepository.findAll();
+        List<Order> orders = orderRepository.findAll();
+        log.info("Fetched {} orders from the database.", orders.size());
+        return orders;
     }
 
     public List<Order> getByCarId(Long carId) {
