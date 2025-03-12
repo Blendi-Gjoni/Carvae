@@ -16,41 +16,52 @@ import com.carvea.repository.RentalRepository;
 import com.carvea.repository.ReservationRepository;
 import com.carvea.repository.UserRepository;
 import com.carvea.service.ReservationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class ReservationServiceImpl implements ReservationService {
-    private ReservationRepository reservationRepository;
-    private UserRepository userRepository;
-    private RentalRepository rentalRepository;
-    private CarRepository carRepository;
-
-    @Autowired
-    private EmailNotifier emailNotifier;
+    private final ReservationRepository reservationRepository;
+    private final UserRepository userRepository;
+    private final RentalRepository rentalRepository;
+    private final CarRepository carRepository;
+    private final EmailNotifier emailNotifier;
 
     @Autowired
     public ReservationServiceImpl(ReservationRepository reservationRepository,
                                   UserRepository userRepository,
                                   RentalRepository rentalRepository,
-                                  CarRepository carRepository) {
+                                  CarRepository carRepository,
+                                  EmailNotifier emailNotifier) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
         this.rentalRepository = rentalRepository;
         this.carRepository = carRepository;
+        this.emailNotifier = emailNotifier;
     }
 
     public ReservationDto createReservation(ReservationDto reservationDto) {
         User user = userRepository.findById(reservationDto.getUserId())
-                .orElseThrow(() -> new CustomException(UserCustomError.USER_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.error("User with ID {} not found. Cannot create.", reservationDto.getUserId());
+                    return new CustomException(UserCustomError.USER_NOT_FOUND);
+                });
 
         Rental rental = rentalRepository.findById(reservationDto.getRentalId())
-                .orElseThrow(() -> new CustomException(RentalCustomError.RENTAL_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.error("Rental with ID {} not found. Cannot create.", reservationDto.getRentalId());
+                    return new CustomException(RentalCustomError.RENTAL_NOT_FOUND);
+                });
 
         Car car = carRepository.findById(reservationDto.getCarId())
-                .orElseThrow(() -> new CustomException(CarCustomError.CAR_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.error("Car with ID {} not found. Cannot create.", reservationDto.getCarId());
+                    return new CustomException(CarCustomError.CAR_NOT_FOUND);
+                });
 
         Reservation createdReservation = new Reservation();
         createdReservation.setUser(user);
@@ -61,6 +72,7 @@ public class ReservationServiceImpl implements ReservationService {
         createdReservation.setStatus("RESERVED");
         createdReservation.setPrice(car.getPrice());
         createdReservation.attach(emailNotifier);
+        log.info("Sending reservation confirmation email to: {}.", user.getEmail());
         createdReservation.notifyObservers(
                 user.getEmail(),
                 "Your Car Reservation Confirmation",
@@ -82,37 +94,58 @@ public class ReservationServiceImpl implements ReservationService {
                         + "</body>"
                         + "</html>"
         );
+        log.info("Successfully sent reservation confirmation email to: {}.", user.getEmail());
 
-
-
+        log.info("Adding order: {}.", createdReservation);
         createdReservation = reservationRepository.save(createdReservation);
+        log.info("Successfully added reservation: {}.", createdReservation);
 
         return ReservationMapper.toReservationDto(createdReservation);
     }
 
     public ReservationDto getReservationById(Long id) {
         Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ReservationCustomError.RESERVATION_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.error("Reservation with ID {} not found. Cannot get reservation.", id);
+                    return new CustomException(ReservationCustomError.RESERVATION_NOT_FOUND);
+                });
+        log.info("Fetched reservatin with ID {}.", id);
         return ReservationMapper.toReservationDto(reservation);
     }
 
     public List<Reservation> getAllReservations() {
         List<Reservation> reservations = reservationRepository.findAll();
+        if(reservations.isEmpty()) {
+            log.warn("No reservations found!");
+        }
+        log.info("Fetched {} reservations from the database.", reservations.size());
         return reservations;
     }
 
     public ReservationDto updateReservation(Long id, ReservationDto reservationDto) {
         Reservation existingReservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ReservationCustomError.RESERVATION_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.error("Reservation with ID {} not found. Cannot update.", id);
+                    return new CustomException(ReservationCustomError.RESERVATION_NOT_FOUND);
+                });
 
         User user = userRepository.findById(reservationDto.getUserId())
-                .orElseThrow(() -> new CustomException(UserCustomError.USER_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.error("User with ID {} not found. Cannot update.", id);
+                    return new CustomException(UserCustomError.USER_NOT_FOUND);
+                });
 
         Rental rental = rentalRepository.findById(reservationDto.getRentalId())
-                .orElseThrow(() -> new CustomException(RentalCustomError.RENTAL_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.error("Rental with ID {} not found. Cannot update.", id);
+                    return new CustomException(RentalCustomError.RENTAL_NOT_FOUND);
+                });
 
         Car car = carRepository.findById(reservationDto.getCarId())
-                .orElseThrow(() -> new CustomException(CarCustomError.CAR_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.error("Car with ID {} not found. Cannot update.", id);
+                    return new CustomException(CarCustomError.CAR_NOT_FOUND);
+                });
 
         existingReservation.setUser(user);
         existingReservation.setRental(rental);
@@ -121,15 +154,29 @@ public class ReservationServiceImpl implements ReservationService {
         existingReservation.setEndDate(reservationDto.getEndDate());
         existingReservation.setStatus(reservationDto.getStatus());
 
+        log.info("Updating reservation with ID: {}.", id);
+
         Reservation savedReservation = reservationRepository.save(existingReservation);
+
+        log.info("Successfully updated reservation with ID: {}.", id);
 
         return ReservationMapper.toReservationDto(savedReservation);
     }
 
     public void deleteReservation(Long id) {
-        Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ReservationCustomError.RESERVATION_NOT_FOUND));
-        reservationRepository.delete(reservation);
+        try {
+            Reservation reservation = reservationRepository.findById(id)
+                    .orElseThrow(() -> {
+                        log.error("Reservation with ID {} not found. Cannot delete.", id);
+                        return new CustomException(ReservationCustomError.RESERVATION_NOT_FOUND);
+                    });
+            log.info("Deleting reservation with ID: {}.", id);
+            reservationRepository.delete(reservation);
+            log.info("Successfully deleted reservation with ID: {}", id);
+        } catch( CustomException e ) {
+            log.error("Error deleting reservation with ID {}: {}", id, e.getMessage());
+            throw e;
+        }
     }
 
 }

@@ -68,4 +68,18 @@ public class Reservation implements Subject {
             observer.update(email, subject, message);
         }
     }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "id=" + id +
+                ", user='" + user.getUsernameF() + '\'' +
+                ", rental='" + rental.getName() + '\'' +
+                ", car='" + car.getModel().getName() + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", status='" + status + '\'' +
+                ", price=" + price +
+                "}";
+    }
 }

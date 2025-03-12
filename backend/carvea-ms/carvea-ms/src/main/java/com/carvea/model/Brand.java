@@ -34,4 +34,12 @@ public class Brand {
         return name != null && !name.trim().isEmpty();
     }
 
+    @Override
+    public String toString() {
+        return "Brand{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                "}";
+    }
+
 }

@@ -25,4 +25,19 @@ public class Dealership {
     private String email;
     private String website;
     private String openingHours;
+
+    @Override
+    public String toString() {
+        return "Dealership{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", phoneNumber=" + phoneNumber +
+                ", email='" + email + '\'' +
+                ", website='" + website + '\'' +
+                ", openingHours=" + openingHours +
+                "}";
+    }
 }

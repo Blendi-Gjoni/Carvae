@@ -80,4 +80,22 @@ public abstract class Car {
         return pricingStrategy.calculatePrice(this);
     }
 
+    @Override
+    public String toString() {
+        return "Car{" +
+                "id=" + id +
+                ", model='" + model.getName() + '\'' +
+                ", year=" + year +
+                ", horsepower=" + horsepower +
+                ", kilometers=" + kilometers +
+                ", description='" + description + '\'' +
+                ", exterior='" + exterior + '\'' +
+                ", interior='" + interior + '\'' +
+                ", fuelType='" + fuelType + '\'' +
+                ", transmission='" + transmission + '\'' +
+                ", category={" + category +
+                "}, features={" + features +
+                "}, car type='" + getCarType() + '\'' +
+                "}";
+    }
 }

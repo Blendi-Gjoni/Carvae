@@ -35,6 +35,15 @@ public class Features {
         this.description = description;
     }
 
+    @Override
+    public String toString() {
+        return "Features{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                "}";
+    }
+
 //    @JsonIgnore
 //    public String getAssociatedCars() {
 //        if (cars == null || cars.isEmpty()) {

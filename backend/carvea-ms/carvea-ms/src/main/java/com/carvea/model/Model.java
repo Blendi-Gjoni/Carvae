@@ -26,4 +26,13 @@ public class Model {
         this.name = name;
         this.brand = brand;
     }
+
+    @Override
+    public String toString() {
+        return "Model{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", brand='" + brand.getName() + '\'' +
+                "}";
+    }
 }

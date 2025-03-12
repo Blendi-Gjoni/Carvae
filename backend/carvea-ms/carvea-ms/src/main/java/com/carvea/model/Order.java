@@ -72,4 +72,17 @@ public class Order implements Subject {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", car='" + car.getModel().getName() + '\'' +
+                ", user='" + user.getUsernameF() + '\'' +
+                ", orderDate=" + orderDate +
+                ", dealership=" + dealership +
+                ", deliveryDate=" + deliveryDate +
+                ", status='" + status + '\'' +
+                ", price=" + price +
+                "}";
+    }
 }

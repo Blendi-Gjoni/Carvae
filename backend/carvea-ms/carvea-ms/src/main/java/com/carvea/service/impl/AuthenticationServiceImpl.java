@@ -13,6 +13,7 @@ import com.carvea.repository.UserRepository;
 import com.carvea.service.AuthenticationService;
 import com.carvea.service.EmailService;
 import jakarta.mail.MessagingException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
 
+@Slf4j
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
@@ -46,7 +48,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     public User signup(RegisterUserDto input) {
         Role role = roleRepository.findByName(RoleEnum.USER)
-                .orElseThrow(() -> new CustomException(UserCustomError.USER_ROLE_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.error("Role with name {} not found!", RoleEnum.USER.name());
+                    return new CustomException(UserCustomError.USER_ROLE_NOT_FOUND);
+                });
 
         User user = new User(input.getUsername(), input.getEmail(), passwordEncoder.encode(input.getPassword()));
 
@@ -57,15 +62,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         sendVerificationEmail(user);
 
-        return userRepository.save(user);
+        log.info("Creating user: {}.", user);
+        User createdUser = userRepository.save(user);
+        log.info("Successfully created user: {}.", createdUser);
+        return user;
     }
 
 
     public User authenticate(LoginUserDto input) {
         User user = userRepository.findByEmail(input.getEmail())
-                .orElseThrow(() -> new CustomException(UserCustomError.USER_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.info("User with email {} not found!", input.getEmail());
+                    return new CustomException(UserCustomError.USER_NOT_FOUND);
+                });
 
         if(!user.isEnabled()) {
+            log.error("User with email {} not enabled!", input.getEmail());
             throw new CustomException(UserCustomError.USER_NOT_VERIFIED);
         }
         authenticationManager.authenticate(
@@ -74,6 +86,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         input.getPassword()
                 )
         );
+        log.info("Authenticated/Logged in user: {}.", user);
         return user;
     }
 
@@ -82,6 +95,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if(optionalUser.isPresent()){
             User user = optionalUser.get();
             if(user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())){
+                log.error("User verification code expired!");
                 throw new CustomException(UserCustomError.USER_VERIFICATION_CODE_EXPIRED);
             }
             if(user.getVerificationCode().equals(input.getVerificationCode())){
@@ -90,11 +104,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 user.setVerificationCodeExpiresAt(null);
                 userRepository.save(user);
             } else{
+                log.error("User verification code not matched!");
                 throw new CustomException(UserCustomError.USER_VERIFICATION_CODE_INVALID);
             }
         } else {
+            log.error("User with email {} not found!", input.getEmail());
             throw new CustomException(UserCustomError.USER_NOT_FOUND);
         }
+        log.info("Verifying user: {}.", input.getEmail());
     }
 
     public void resendVerificationCode(String email){
@@ -102,13 +119,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if(optionalUser.isPresent()){
             User user = optionalUser.get();
             if(user.isEnabled()) {
+                log.info("User is already verified!");
                 throw new CustomException(UserCustomError.USER_ACCOUNT_ALREADY_VERIFIED);
             }
             user.setVerificationCode(generateVerificationCode());
             user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
             sendVerificationEmail(user);
+            log.info("Verfying user: {}.", user);
             userRepository.save(user);
+            log.info("User verified successfully!");
         }else {
+            log.error("User with email {} not found!", email);
             throw new CustomException(UserCustomError.USER_NOT_FOUND);
         }
     }
