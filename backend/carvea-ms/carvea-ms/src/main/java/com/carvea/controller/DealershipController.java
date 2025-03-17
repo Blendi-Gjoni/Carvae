@@ -27,14 +27,14 @@ public class DealershipController {
 
     @GetMapping("/{id}")
     public ResponseEntity<DealershipDto> getDealershipById(@PathVariable Long id) {
-        DealershipDto rentalDto = dealershipService.getDealershipById(id);
-        return ResponseEntity.ok(rentalDto);
+        DealershipDto dealershipDto = dealershipService.getDealershipById(id);
+        return ResponseEntity.ok(dealershipDto);
     }
 
     @GetMapping
     public ResponseEntity<List<DealershipDto>> getAllDealerships() {
-        List<DealershipDto> rentals = dealershipService.getAllDealerships();
-        return ResponseEntity.ok(rentals);
+        List<DealershipDto> dealerships = dealershipService.getAllDealerships();
+        return ResponseEntity.ok(dealerships);
     }
 
     @PutMapping("/{id}")

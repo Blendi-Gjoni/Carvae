@@ -30,15 +30,15 @@ public class CarController {
     }
 
     @GetMapping("/allCars")
-    public ResponseEntity<List<Car>> getAllCars() {
-        List<Car> cars = carService.getAllCars();
+    public ResponseEntity<List<CarDto>> getAllCars() {
+        List<CarDto> cars = carService.getAllCars();
         return ResponseEntity.ok(cars);
     }
 
     @GetMapping("/{carId}")
-    public ResponseEntity<Car> getCarById(@PathVariable Long carId){
-        Car car = carService.getCarById(carId);
-        return ResponseEntity.ok(car);
+    public ResponseEntity<CarDto> getCarById(@PathVariable Long carId){
+        CarDto carDto = carService.getCarById(carId);
+        return ResponseEntity.ok(carDto);
     }
 
     @GetMapping("/type")

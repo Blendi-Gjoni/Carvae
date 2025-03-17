@@ -60,7 +60,7 @@ public abstract class Car {
     )
     private List<Features> features;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name="car_images", joinColumns = @JoinColumn(name = "car_id"))
     @Column(name = "image_path")
     private List<String> imagePaths = new ArrayList<>();

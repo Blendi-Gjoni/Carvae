@@ -11,7 +11,7 @@ public interface CarService {
     public Car addCar(CarRequestDto carRequestDto) throws IOException;
     public List<Car> getCarsByType(String carType);
     public Car updateCar(Long id, CarDto carDto);
-    public Car getCarById(Long carId);
-    public List<Car> getAllCars();
+    public CarDto getCarById(Long carId);
+    public List<CarDto> getAllCars();
     public void deleteCar(Long id);
 }

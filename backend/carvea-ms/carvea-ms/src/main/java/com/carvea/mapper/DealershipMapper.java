@@ -15,7 +15,7 @@ public class DealershipMapper {
         dealership.setEmail(dealershipDto.getEmail());
         dealership.setWebsite(dealershipDto.getWebsite());
         dealership.setOpeningHours(dealershipDto.getOpeningHours());
-        dealership.setImagePath(dealershipDto.getImagePath());
+        dealership.setImagePath(dealershipDto.getImagePath() != null ? dealershipDto.getImagePath() : null);
         return dealership;
     }
 

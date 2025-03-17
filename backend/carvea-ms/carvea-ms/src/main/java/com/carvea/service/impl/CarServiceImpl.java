@@ -14,7 +14,6 @@ import com.carvea.repository.FeaturesRepository;
 import com.carvea.repository.ModelRepository;
 import com.carvea.service.CarService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -150,21 +150,25 @@ public class CarServiceImpl implements CarService {
         return updatedCar;
     }
 
-    public Car getCarById(Long carId){
+    public CarDto getCarById(Long carId){
+        Car car = carRepository.findById(carId)
+                .orElseThrow(() -> {
+                    log.error("Car with ID {} not found. Cannot get.", carId);
+                    return new CustomException(CarCustomError.CAR_NOT_FOUND);
+                });
         log.info("Getting car by ID {}.", carId);
-        return carRepository.findById(carId).orElseThrow(() -> {
-            log.error("Car with ID {} not found. Cannot get.", carId);
-            return new CustomException(CarCustomError.CAR_NOT_FOUND);
-        });
+        return CarMapper.toCarDto(car);
     }
 
-    public List<Car> getAllCars(){
+    public List<CarDto> getAllCars(){
         List<Car> cars = carRepository.findAll();
         if(cars.isEmpty()){
             log.warn("No cars found!");
         }
         log.info("Fetched {} cars from the database.", cars.size());
-        return cars;
+        return cars.stream()
+                .map(CarMapper::toCarDto)
+                .collect(Collectors.toList());
     }
 
     public void deleteCar(Long id){
