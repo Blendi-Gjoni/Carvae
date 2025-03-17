@@ -74,7 +74,7 @@ public class CarServiceImpl implements CarService {
                 throw new CustomException(CarCustomError.RENTAL_CAR_PRICE_REQUIRED);
             }
             RentalCar rentalCar = new RentalCar();
-            rentalCar.setMonthlyPayment(carRequestDto.getPrice());
+            rentalCar.setDailyRent(carRequestDto.getPrice());
             car = rentalCar;
         } else if ("DEALERSHIP".equalsIgnoreCase(carRequestDto.getCarType())) {
             if (carRequestDto.getPrice() == null) {

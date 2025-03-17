@@ -15,11 +15,11 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RentalCar extends Car {
-    @Column(name = "monthly_payment")
-    private BigDecimal monthlyPayment;
+    @Column(name = "daily_rent")
+    private BigDecimal dailyRent;
 
     @Override
     public BigDecimal getPrice() {
-        return monthlyPayment;
+        return dailyRent;
     }
 }

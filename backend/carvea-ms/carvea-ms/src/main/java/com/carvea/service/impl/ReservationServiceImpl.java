@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Slf4j
@@ -70,7 +72,21 @@ public class ReservationServiceImpl implements ReservationService {
         createdReservation.setStartDate(reservationDto.getStartDate());
         createdReservation.setEndDate(reservationDto.getEndDate());
         createdReservation.setStatus("RESERVED");
-        createdReservation.setPrice(car.getPrice());
+        long days = ChronoUnit.DAYS.between(reservationDto.getStartDate(), reservationDto.getEndDate());
+
+        if (days <= 0) {
+            days = 1;
+        }
+
+        BigDecimal carPrice = car.getPrice();
+
+        if (carPrice == null) {
+            throw new IllegalStateException("Car price is not set for car ID: " + car.getId());
+        }
+
+        BigDecimal totalPrice = BigDecimal.valueOf(days).multiply(carPrice);
+        createdReservation.setPrice(totalPrice);
+
         createdReservation.attach(emailNotifier);
         log.info("Sending reservation confirmation email to: {}.", user.getEmail());
         createdReservation.notifyObservers(
@@ -86,7 +102,7 @@ public class ReservationServiceImpl implements ReservationService {
                         + "<p><strong>Car:</strong> " + car.getModel().getBrand().getName() + " " + car.getModel().getName() + "</p>"
                         + "<p><strong>Start Date:</strong> " + reservationDto.getStartDate() + "</p>"
                         + "<p><strong>End Date:</strong> " + reservationDto.getEndDate() + "</p>"
-                        + "<p><strong>Price:</strong> $" + car.getPrice() + "</p>"
+                        + "<p><strong>Price:</strong> $" + totalPrice + "</p>"
                         + "<div style=\"background-color: #007bff; color: #fff; padding: 10px; text-align: center; border-radius: 5px;\">"
                         + "<p>Thank you for choosing Carvea!</p>"
                         + "</div>"

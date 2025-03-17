@@ -12,7 +12,7 @@ public class CarMapper {
         if (car instanceof DealershipCar) {
             ((DealershipCar) car).setFullPrice(carDto.getPrice());
         } else if (car instanceof RentalCar) {
-            ((RentalCar) car).setMonthlyPayment(carDto.getPrice());
+            ((RentalCar) car).setDailyRent(carDto.getPrice());
         } else {
             throw new IllegalArgumentException("Invalid car type: " + carDto.getCarType());
         }
