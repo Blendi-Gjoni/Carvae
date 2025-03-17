@@ -1,12 +1,14 @@
 package com.carvea.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RentalDto {
+public class RentalRequestDto {
     private Long id;
     private String name;
     private String address;
@@ -17,4 +19,7 @@ public class RentalDto {
     private String website;
     private String openingHours;
     private String imagePath;
+
+    @JsonIgnore
+    private MultipartFile image;
 }

@@ -1,12 +1,15 @@
 package com.carvea.controller;
 
 import com.carvea.dto.DealershipDto;
+import com.carvea.dto.DealershipRequestDto;
 import com.carvea.service.DealershipService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -16,8 +19,9 @@ public class DealershipController {
     private final DealershipService dealershipService;
 
     @PostMapping
-    public ResponseEntity<DealershipDto> addDealership(@RequestBody DealershipDto dealershipDto) {
-        DealershipDto savedDealership = dealershipService.addDealership(dealershipDto);
+    public ResponseEntity<DealershipDto> addDealership(@RequestPart("dealership") DealershipRequestDto dealershipRequestDto,@RequestPart("image") MultipartFile image) throws IOException {
+        dealershipRequestDto.setImage(image);
+        DealershipDto savedDealership = dealershipService.addDealership(dealershipRequestDto);
         return new ResponseEntity<>(savedDealership, HttpStatus.CREATED);
     }
 

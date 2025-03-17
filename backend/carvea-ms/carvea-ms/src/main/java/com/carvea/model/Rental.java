@@ -1,16 +1,14 @@
 package com.carvea.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "rentals")
 public class Rental {
     @Id
@@ -25,6 +23,8 @@ public class Rental {
     private String email;
     private String website;
     private String openingHours;
+
+    private String imagePath;
 
     @Override
     public String toString() {

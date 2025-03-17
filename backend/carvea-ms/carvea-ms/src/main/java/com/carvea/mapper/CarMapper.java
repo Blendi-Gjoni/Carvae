@@ -25,6 +25,7 @@ public class CarMapper {
         car.setInterior(carDto.getInterior());
         car.setFuelType(carDto.getFuelType());
         car.setTransmission(carDto.getTransmission());
+        car.setImagePaths(carDto.getImagePaths());
     }
 
     public static CarDto toCarDto(Car car) {
@@ -40,6 +41,7 @@ public class CarMapper {
         carDto.setFuelType(car.getFuelType());
         carDto.setTransmission(car.getTransmission());
         carDto.setCategoryId(car.getCategory().getId());
+        carDto.setImagePaths(car.getImagePaths());
 
         if (car instanceof DealershipCar) {
             carDto.setCarType("DEALERSHIP");

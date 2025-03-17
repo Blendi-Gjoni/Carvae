@@ -1,12 +1,15 @@
 package com.carvea.controller;
 
 import com.carvea.dto.RentalDto;
+import com.carvea.dto.RentalRequestDto;
 import com.carvea.service.RentalService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -16,8 +19,9 @@ public class RentalController {
     private final RentalService rentalService;
 
     @PostMapping
-    public ResponseEntity<RentalDto> addRental(@RequestBody RentalDto rentalDto) {
-        RentalDto savedRental = rentalService.addRental(rentalDto);
+    public ResponseEntity<RentalDto> addRental(@RequestPart("rental") RentalRequestDto rentalRequestDto, @RequestPart("image") MultipartFile image) throws IOException {
+        rentalRequestDto.setImage(image);
+        RentalDto savedRental = rentalService.addRental(rentalRequestDto);
         return new ResponseEntity<>(savedRental, HttpStatus.CREATED);
     }
 

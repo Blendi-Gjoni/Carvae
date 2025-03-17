@@ -1,10 +1,11 @@
 package com.carvea.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class DealershipDto {
     private Long id;
     private String name;
@@ -15,4 +16,5 @@ public class DealershipDto {
     private String email;
     private String website;
     private String openingHours;
+    private String imagePath;
 }

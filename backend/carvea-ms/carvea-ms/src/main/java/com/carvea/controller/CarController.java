@@ -2,11 +2,14 @@ package com.carvea.controller;
 
 
 import com.carvea.dto.CarDto;
+import com.carvea.dto.CarRequestDto;
 import com.carvea.model.Car;
 import com.carvea.service.CarService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,8 +23,9 @@ public class CarController {
 
 
     @PostMapping("/add")
-    public ResponseEntity<Car> addCar(@RequestBody CarDto carDto) {
-        Car car = carService.addCar(carDto);
+    public ResponseEntity<Car> addCar(@RequestPart("car") CarRequestDto carRequestDto, @RequestPart("images") List<MultipartFile> images) throws IOException {
+        carRequestDto.setImages(images);
+        Car car = carService.addCar(carRequestDto);
         return ResponseEntity.ok(car);
     }
 

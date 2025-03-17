@@ -1,6 +1,7 @@
 package com.carvea.service.impl;
 
 import com.carvea.dto.DealershipDto;
+import com.carvea.dto.DealershipRequestDto;
 import com.carvea.enums.DealershipCustomError;
 import com.carvea.exceptions.CustomException;
 import com.carvea.mapper.DealershipMapper;
@@ -9,7 +10,13 @@ import com.carvea.repository.DealershipRepository;
 import com.carvea.service.DealershipService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,8 +29,23 @@ public class DealershipServiceImpl implements DealershipService {
         this.dealershipRepository = dealershipRepository;
     }
 
-    public DealershipDto addDealership(DealershipDto dealershipDto) {
-        Dealership dealership = DealershipMapper.toDealershipEntity(dealershipDto);
+    public DealershipDto addDealership(DealershipRequestDto dealershipRequestDto) throws IOException {
+        Dealership dealership = Dealership.builder()
+                .name(dealershipRequestDto.getName())
+                .address(dealershipRequestDto.getAddress())
+                .city(dealershipRequestDto.getCity())
+                .state(dealershipRequestDto.getState())
+                .phoneNumber(dealershipRequestDto.getPhoneNumber())
+                .email(dealershipRequestDto.getEmail())
+                .website(dealershipRequestDto.getWebsite())
+                .openingHours(dealershipRequestDto.getOpeningHours())
+                .build();
+
+        if(dealershipRequestDto.getImage() != null && !dealershipRequestDto.getImage().isEmpty()) {
+            String imagePath = saveImage(dealershipRequestDto.getImage(), "dealerships");
+            dealership.setImagePath(imagePath);
+        }
+
         log.info("Adding dealership: {}.", dealership);
         Dealership savedDealership = dealershipRepository.save(dealership);
         log.info("Successfully added dealership: {}.", savedDealership);
@@ -79,5 +101,19 @@ public class DealershipServiceImpl implements DealershipService {
     public List<Object[]> getNumberOfDealershipsByState(){
         log.info("Fetched number of Dealerships by state.");
         return dealershipRepository.findNumberOfDealershipsByState();
+    }
+
+    private String saveImage(MultipartFile image, String folder) throws IOException {
+        File uploadDir = new File("uploads/" + folder);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
+
+        String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+        Path filePath = Path.of(uploadDir + "/" + fileName);
+
+        Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        return filePath.toString();
     }
 }

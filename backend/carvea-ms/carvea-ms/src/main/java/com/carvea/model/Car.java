@@ -1,11 +1,10 @@
 package com.carvea.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,6 +12,7 @@ import java.util.List;
 @DiscriminatorColumn(name = "car_type")
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
 public abstract class Car {
 
@@ -59,6 +59,11 @@ public abstract class Car {
             inverseJoinColumns = @JoinColumn(name = "feature_id")
     )
     private List<Features> features;
+
+    @ElementCollection
+    @CollectionTable(name="car_images", joinColumns = @JoinColumn(name = "car_id"))
+    @Column(name = "image_path")
+    private List<String> imagePaths = new ArrayList<>();
 
     @Transient
     public String getCarType() {

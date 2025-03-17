@@ -15,6 +15,7 @@ public class DealershipMapper {
         dealership.setEmail(dealershipDto.getEmail());
         dealership.setWebsite(dealershipDto.getWebsite());
         dealership.setOpeningHours(dealershipDto.getOpeningHours());
+        dealership.setImagePath(dealershipDto.getImagePath());
         return dealership;
     }
 
@@ -29,6 +30,7 @@ public class DealershipMapper {
         dealershipDto.setEmail(dealership.getEmail());
         dealershipDto.setWebsite(dealership.getWebsite());
         dealershipDto.setOpeningHours(dealership.getOpeningHours());
+        dealershipDto.setImagePath(dealership.getImagePath());
         return dealershipDto;
     }
 }

@@ -1,11 +1,13 @@
 package com.carvea.service;
 
 import com.carvea.dto.RentalDto;
+import com.carvea.dto.RentalRequestDto;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface RentalService {
-    public RentalDto addRental(RentalDto rentalDto);
+    public RentalDto addRental(RentalRequestDto rentalRequestDto) throws IOException;
     public RentalDto getRentalById(Long id);
     public List<RentalDto> getAllRentals();
     public RentalDto updateRental(Long id, RentalDto rentalDto);

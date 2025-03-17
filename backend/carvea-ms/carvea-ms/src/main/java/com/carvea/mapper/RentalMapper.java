@@ -15,6 +15,7 @@ public class RentalMapper {
         rental.setEmail(rentalDto.getEmail());
         rental.setWebsite(rentalDto.getWebsite());
         rental.setOpeningHours(rentalDto.getOpeningHours());
+        rental.setImagePath(rentalDto.getImagePath());
         return rental;
     }
 
@@ -29,6 +30,7 @@ public class RentalMapper {
         rentalDto.setEmail(rental.getEmail());
         rentalDto.setWebsite(rental.getWebsite());
         rentalDto.setOpeningHours(rental.getOpeningHours());
+        rentalDto.setImagePath(rental.getImagePath());
         return rentalDto;
     }
 }

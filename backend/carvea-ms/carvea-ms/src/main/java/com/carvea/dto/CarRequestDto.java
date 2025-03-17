@@ -1,6 +1,7 @@
 package com.carvea.dto;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -9,8 +10,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CarDto {
-    private Long modelId;       // Maps to "modelId" in JSON
+public class CarRequestDto {
+    private Long modelId;
     private int year;
     private int horsepower;
     private double kilometers;
@@ -19,10 +20,10 @@ public class CarDto {
     private String interior;
     private String fuelType;
     private String transmission;
-    private Long categoryId;    // Maps to "categoryId" in JSON
-    private List<Long> features; // Maps to "features" in JSON
-    private List<String> imagePaths;
-
+    private Long categoryId;
+    private List<Long> features;
     private String carType;
     private BigDecimal price;
+
+    private List<MultipartFile> images;
 }

@@ -1,6 +1,7 @@
 package com.carvea.service.impl;
 
 import com.carvea.dto.RentalDto;
+import com.carvea.dto.RentalRequestDto;
 import com.carvea.enums.RentalCustomError;
 import com.carvea.exceptions.CustomException;
 import com.carvea.mapper.RentalMapper;
@@ -11,7 +12,13 @@ import com.carvea.specification.RentalSpecification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,8 +31,23 @@ public class RentalServiceImpl implements RentalService {
         this.rentalRepository = rentalRepository;
     }
 
-    public RentalDto addRental(RentalDto rentalDto) {
-        Rental rental = RentalMapper.toRentalEntity(rentalDto);
+    public RentalDto addRental(RentalRequestDto rentalRequestDto) throws IOException {
+        Rental rental = Rental.builder()
+                .name(rentalRequestDto.getName())
+                .address(rentalRequestDto.getAddress())
+                .city(rentalRequestDto.getCity())
+                .state(rentalRequestDto.getState())
+                .phoneNumber(rentalRequestDto.getPhoneNumber())
+                .email(rentalRequestDto.getEmail())
+                .website(rentalRequestDto.getWebsite())
+                .openingHours(rentalRequestDto.getOpeningHours())
+                .build();
+
+        if (rentalRequestDto.getImage() != null && !rentalRequestDto.getImage().isEmpty()) {
+            String imagePath = saveImage(rentalRequestDto.getImage(), "rentals");
+            rental.setImagePath(imagePath);
+        }
+
         log.info("Adding rental: {}.", rental);
         Rental savedRental = rentalRepository.save(rental);
         log.info("Successfully added rental: {}.", savedRental);
@@ -119,4 +141,17 @@ public class RentalServiceImpl implements RentalService {
                 .collect(Collectors.toList());
     }
 
+    private String saveImage(MultipartFile image, String folder) throws IOException {
+        File uploadDir = new File("uploads/" + folder);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
+
+        String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+        Path filePath = Path.of(uploadDir + "/" + fileName);
+
+        Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        return filePath.toString();
+    }
 }
