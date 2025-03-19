@@ -3,7 +3,8 @@ import { Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import {
   useGetCarsByTypeQuery,
-  Car
+  Car,
+  CarDTO
 } from "../api/CarsApi";
 import CarCard from "./CarCard/CarCard";
 import { SyncLoader } from "react-spinners";
@@ -19,7 +20,7 @@ const CarDisplayComponent = () => {
     setCarType(selectedType);
   };
 
-  const handleViewDetails = (car: Car) => {
+  const handleViewDetails = (car: CarDTO) => {
     navigate("/car-details", { state: { car } });
   };
 
@@ -32,6 +33,8 @@ const CarDisplayComponent = () => {
       }
     </p>
   );
+  
+  console.log(carsByType);
 
   return (
     <>
@@ -62,11 +65,12 @@ const CarDisplayComponent = () => {
 
         {!isLoading && carsByType.length > 0 && (
           <Row className="my-5">
-            {carsByType.map((car: Car) => (
+            {carsByType.map((car: CarDTO) => (
               <Col className="my-5" key={car.id}>
                 <CarCard
-                  carBrand={car.model?.brand?.name}
-                  carModel={car.model?.name}
+                  carImage={car.imagePaths[0]}
+                  carBrand={car.brandName}
+                  carModel={car.modelName}
                   carType={car.carType}
                   carPrice={car.price}
                   carFuelType={car.fuelType}

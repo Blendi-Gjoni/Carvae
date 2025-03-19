@@ -5,6 +5,7 @@ import com.carvea.dto.RentalRequestDto;
 import com.carvea.service.RentalService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,8 +19,8 @@ import java.util.List;
 public class RentalController {
     private final RentalService rentalService;
 
-    @PostMapping
-    public ResponseEntity<RentalDto> addRental(@RequestPart("rental") RentalRequestDto rentalRequestDto, @RequestPart("image") MultipartFile image) throws IOException {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<RentalDto> addRental(@RequestPart("rental") RentalRequestDto rentalRequestDto, @RequestPart(value = "image") MultipartFile image) throws IOException {
         rentalRequestDto.setImage(image);
         RentalDto savedRental = rentalService.addRental(rentalRequestDto);
         return new ResponseEntity<>(savedRental, HttpStatus.CREATED);

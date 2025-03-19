@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -42,8 +43,8 @@ public class CarController {
     }
 
     @GetMapping("/type")
-    public ResponseEntity<List<Car>> getCarsByType(@RequestParam String carType){
-        List<Car> cars = carService.getCarsByType(carType);
+    public ResponseEntity<List<CarDto>> getCarsByType(@RequestParam String carType){
+        List<CarDto> cars = carService.getCarsByType(carType);
         return ResponseEntity.ok(cars);
     }
 
@@ -58,5 +59,11 @@ public class CarController {
     public ResponseEntity<Car> deleteCar(@PathVariable("id") Long id){
         carService.deleteCar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/import-duty/{id}")
+    public ResponseEntity<List<BigDecimal>> getImportDuty(@PathVariable Long id) {
+        List<BigDecimal> importDuty = carService.calculateImportDuty(id);
+        return ResponseEntity.ok(importDuty);
     }
 }

@@ -43,11 +43,14 @@ export interface Car {
     features: Features[];
     price: number;
     carType: string;
+    imagePaths: string[];
 };
 
 export interface CarDTO {
     id: number;
     modelId: number;
+    brandName: string;
+    modelName: string;
     year: number;
     horsepower: number;
     kilometers: number;
@@ -57,9 +60,11 @@ export interface CarDTO {
     fuelType: string;
     transmission: string;
     categoryId: number;
+    categoryName: string;
     features: number[];
     price: number;
     carType: string;
+    imagePaths: string[];
 };
 
 export const carsApi = createApi ({
@@ -69,13 +74,13 @@ export const carsApi = createApi ({
         getModelsByBrandId: builder.query<Model[], number> ({
             query: (brandId) => `/brands/${brandId}/models`,
         }),
-        getCarsByType: builder.query<Car[], string> ({
+        getCarsByType: builder.query<CarDTO[], string> ({
             query: (carType) => `/car/type?carType=${carType}`,
         }),
         getBrandById: builder.query<Brand, number> ({
             query: (brandId) => `/brands/${brandId}`,
         }),
-        getCars: builder.query<Car[], void> ({
+        getCars: builder.query<CarDTO[], void> ({
             query: () => `/car/allCars`,
         }),
         addCar: builder.mutation<Car, Partial<CarDTO>> ({
@@ -110,6 +115,9 @@ export const carsApi = createApi ({
                 method: 'DELETE',
             })
         }),
+        getCarImportDuty: builder.query<number[], number> ({
+            query: (id) => `/car/import-duty/${id}`,
+        }),
     }),
 });
 
@@ -125,4 +133,5 @@ export const {
     useGetFeaturesQuery,
     useUpdateCarMutation,
     useDeleteCarMutation,
+    useGetCarImportDutyQuery,
 } = carsApi;

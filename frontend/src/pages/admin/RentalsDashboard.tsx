@@ -12,6 +12,7 @@ import {
   useUpdateRentalMutation,
   useDeleteRentalMutation,
   Rental,
+  RentalRequestDTO,
 } from '../../api/RentalsApi';
 import { HiFilter, HiOutlinePlus } from 'react-icons/hi';
 import { RiseLoader } from 'react-spinners';
@@ -19,7 +20,7 @@ import DashboardTable, { Column } from '../../components/DashboardTable';
 
 const RentalsDashboard: React.FC = () => {
   const [modalShow, setModalShow] = useState<boolean>(false);
-  const [formData, setFormData] = useState<Rental>({
+  const [formData, setFormData] = useState<RentalRequestDTO>({
     id: 0,
     name: '',
     address: '',
@@ -29,8 +30,9 @@ const RentalsDashboard: React.FC = () => {
     email: '',
     website: '',
     openingHours: '',
+    image: null,
   });
-  
+  const [selectedFile, setSelectedFile] = useState<string>("No file chosen");
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [globalFilter, setGlobalFilter] = useState<string>("");
 
@@ -57,15 +59,19 @@ const RentalsDashboard: React.FC = () => {
     email: yup.string().email("Invalid email!").required("Rental email is required, and must be a valid email!"),
     website: yup.string().required("Rental website is required!"),
     openingHours: yup.string().required("Rental opening hours are required!"),
+    image: yup
+      .mixed<File>()
+      .nullable()
+      .notRequired(),
   });
 
-  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<Rental>({
+  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<RentalRequestDTO>({
     resolver: yupResolver(schema),
   });
 
-  const handleEdit = (rental: Rental): void => {
+  const handleEdit = (rental: RentalRequestDTO): void => {
     setModalShow(true);
-    Object.keys(rental).forEach((key) => {setValue(key as keyof Rental, rental[key as keyof Rental])});
+    Object.keys(rental).forEach((key) => {setValue(key as keyof RentalRequestDTO, rental[key as keyof RentalRequestDTO])});
   };
 
   const handleDelete = async (id: number) => {
@@ -82,13 +88,22 @@ const RentalsDashboard: React.FC = () => {
     }
   };
 
-  const onSubmit = async (data: Rental) => {
+  const onSubmit = async (data: RentalRequestDTO) => {
     try {
-      if (formData.id) {
-        await updateRental({ id: formData.id, rental: data });
-      } else {
-        await addRental(data);
-      }
+      const rentalData: RentalRequestDTO = {
+        id: data.id,
+        name: data.name,
+        address: data.address,
+        city: data.city,
+        state: data.state,
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+        website: data.website,
+        openingHours: data.openingHours,
+        image: data.image ?? null, 
+      };
+      await addRental({ rentalData, image: rentalData.image as File }).unwrap();
+
       setModalShow(false);
       refetch();
       refetchRentalCities();
@@ -96,7 +111,7 @@ const RentalsDashboard: React.FC = () => {
       console.error('Error saving rental:', err);
     }
   };
-
+  
   const handleAddNew = () => {
     setFormData({
       id: 0,
@@ -108,6 +123,7 @@ const RentalsDashboard: React.FC = () => {
       email: '',
       website: '',
       openingHours: '',
+      image: null,
     });
     setModalShow(true);
   };
@@ -125,6 +141,19 @@ const RentalsDashboard: React.FC = () => {
       refetch();
     }
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+  
+    if (file) {
+      setSelectedFile(file.name);
+    } else {
+      setSelectedFile("No file chosen")
+    }
+    
+    setValue("image", file, { shouldValidate: true });
+  };
+  
 
   const renderError = error && (
     <p style={{ color: 'red' }}>
@@ -200,6 +229,24 @@ const RentalsDashboard: React.FC = () => {
       header: "Opening Hours",
       enableSorting: false,
       cell: (info: any) => info.getValue(),
+    },
+    {
+      accessorKey: "imagePath",
+      header: "Rental image",
+      enableSorting: false,
+      cell: (info: any) => {
+        const imageUrl = info.getValue();
+        
+        return imageUrl ? (
+          <img
+            src={imageUrl}
+            alt="Rental"
+            style={{ width: "50px", height: "auto", objectFit: "cover" }}
+          />
+        ) : (
+          <span>No Image</span>
+        );
+      },
     },
     {
       accessorKey: "id",
@@ -392,6 +439,20 @@ const RentalsDashboard: React.FC = () => {
               placeholder='Opening Hours'
             />
             <Form.Control.Feedback type='invalid'>{errors.openingHours?.message}</Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Rental Image</Form.Label>
+            <Form.Control
+              type="file"
+              accept="image/*"
+              ref={(e: any) => register("image").ref(e)} 
+              isInvalid={!!errors.image}
+              onChange={handleFileChange}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.image?.message}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Button className='mt-3' variant="success" type="submit" disabled={isAdding || isUpdating}>

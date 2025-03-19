@@ -26,71 +26,7 @@ const Navbar = () => {
                         <li className="nav-item">
                             <Link to="/" className="nav-link" aria-current="page">Home</Link>
                         </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/">Link</Link>
-                        </li>
-                        <li className="nav-item dropdown">
-                            <a
-                                className="nav-link dropdown-toggle"
-                                href="#"
-                                role="button"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                            >
-                                Dropdown
-                            </a>
-                            <ul className="dropdown-menu">
-                                <li>
-                                    <a className="dropdown-item" href="#">
-                                        Action
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="dropdown-item" href="#">
-                                        Another action
-                                    </a>
-                                </li>
-                                <li>
-                                    <hr className="dropdown-divider" />
-                                </li>
-                                <li>
-                                    <a className="dropdown-item" href="#">
-                                        Something else here
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li className="nav-item dropdown">
-                            <a
-                                className="nav-link dropdown-toggle"
-                                href="#"
-                                role="button"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                            >
-                                Dropdown
-                            </a>
-                            <ul className="dropdown-menu">
-                                <li>
-                                    <a className="dropdown-item" href="#">
-                                        Action
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="dropdown-item" href="#">
-                                        Another action
-                                    </a>
-                                </li>
-                                <li>
-                                    <hr className="dropdown-divider" />
-                                </li>
-                                <li>
-                                    <a className="dropdown-item" href="#">
-                                        Something else here
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                        
                         <li className="nav-item">
                             <Link to="/login" className="nav-link">Log In</Link>
                         </li>
@@ -105,7 +41,7 @@ const Navbar = () => {
                                 type="search"
                                 aria-label="Search"
                                 placeholder="Search"
-                                style={{borderRadius: '3px'}}
+                                style={{borderRadius: '3px', width: '200px'}}
                             />
                         </form>
                         <div className="user-icons d-flex align-items-center">

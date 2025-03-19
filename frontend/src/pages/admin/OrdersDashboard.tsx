@@ -127,7 +127,7 @@ const OrdersDashboard = () => {
             enableSorting: true,
             cell: (info: any) => {
                 const car = info.getValue();
-                return <span>{car?.model.name || "Unknown"}</span>;
+                return <span>{car?.id || "Unknown"}</span>;
             },
         },
         {
@@ -270,7 +270,7 @@ const OrdersDashboard = () => {
                             <option value="">Select Car</option>
                             {cars?.map(car => (
                                 <option key={car.id} value={car.id}>
-                                    {car.model.name}
+                                    {car.id}
                                 </option>
                             ))}
                         </Form.Select>

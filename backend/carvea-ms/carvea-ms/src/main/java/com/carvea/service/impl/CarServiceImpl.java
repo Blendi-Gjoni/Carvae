@@ -19,10 +19,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,17 +116,19 @@ public class CarServiceImpl implements CarService {
     }
 
 
-    public List<Car> getCarsByType(String carType) {
+    public List<CarDto> getCarsByType(String carType) {
+        List<Car> cars;
         if ("RENTAL".equalsIgnoreCase(carType)) {
             log.info("Getting cars by type RENTAL!");
-            return carRepository.findCarsByType(RentalCar.class);
+            cars = carRepository.findCarsByType(RentalCar.class);
         } else if ("DEALERSHIP".equalsIgnoreCase(carType)) {
             log.info("Getting cars by type DEALERSHIP!");
-            return carRepository.findCarsByType(DealershipCar.class);
+            cars = carRepository.findCarsByType(DealershipCar.class);
         } else {
             log.error("Invalid car type!");
             throw new CustomException(CarCustomError.INVALID_CAR_TYPE);
         }
+        return cars.stream().map(CarMapper::toCarDto).toList();
     }
 
     public Car updateCar(Long id, CarDto carDto) {
@@ -180,6 +185,30 @@ public class CarServiceImpl implements CarService {
         carRepository.delete(car);
         log.info("Successfully deleted car with ID: {}.", id);
     }
+
+    public List<BigDecimal> calculateImportDuty(Long id) {
+        Car car = carRepository.findById(id).orElseThrow(() -> {
+            log.error("Car with ID {} not found. Cannot calculate import duty", id);
+            return new CustomException(CarCustomError.CAR_NOT_FOUND);
+        });
+
+        BigDecimal carPrice = car.getPrice();
+        int carYear = car.getYear();
+
+        BigDecimal baseAkciza = new BigDecimal("0.05");
+        int currentYear = java.time.Year.now().getValue();
+        BigDecimal depreciationFactor = new BigDecimal("0.02").multiply(new BigDecimal(currentYear - carYear));
+        BigDecimal akcizaRate = baseAkciza.subtract(depreciationFactor).max(BigDecimal.ZERO);
+
+        BigDecimal taksaDoganores = carPrice.multiply(new BigDecimal("0.10")).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal akciza = carPrice.multiply(akcizaRate).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal tvsh = (carPrice.add(taksaDoganores).add(akciza)).multiply(new BigDecimal("0.18")).setScale(2, RoundingMode.HALF_UP);
+
+        BigDecimal totali = carPrice.add(taksaDoganores).add(akciza).add(tvsh).setScale(2, RoundingMode.HALF_UP);
+
+        return Arrays.asList(taksaDoganores, akciza, tvsh, totali);
+    }
+
 
     private List<String> saveImages(List<MultipartFile> images, String folder) throws IOException {
         File uploadDir = new File("uploads/" + folder);

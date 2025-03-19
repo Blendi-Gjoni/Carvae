@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,11 +48,25 @@ public class RentalServiceImpl implements RentalService {
             String imagePath = saveImage(rentalRequestDto.getImage(), "rentals");
             rental.setImagePath(imagePath);
         }
-
+ 
         log.info("Adding rental: {}.", rental);
         Rental savedRental = rentalRepository.save(rental);
         log.info("Successfully added rental: {}.", savedRental);
         return RentalMapper.toRentalDto(savedRental);
+    }
+
+    public RentalDto updateRental(Long id, RentalDto rentalDto) {
+        Rental existingRental = rentalRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("Rental with ID {} not found. Cannot update.", id);
+                    return new CustomException(RentalCustomError.RENTAL_NOT_FOUND);
+                });
+        Rental updatedRental = RentalMapper.toRentalEntity(rentalDto);
+        updatedRental.setId(existingRental.getId());
+        log.info("Updating rental with ID: {}.", id);
+        rentalRepository.save(updatedRental);
+        log.info("Successfully updated rental with ID: {}.", id);
+        return RentalMapper.toRentalDto(updatedRental);
     }
 
     public RentalDto getRentalById(Long id) {
@@ -73,20 +88,6 @@ public class RentalServiceImpl implements RentalService {
         return rentals.stream()
                 .map(RentalMapper::toRentalDto)
                 .collect(Collectors.toList());
-    }
-
-    public RentalDto updateRental(Long id, RentalDto rentalDto) {
-        Rental existingRental = rentalRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.error("Rental with ID {} not found. Cannot update.", id);
-                    return new CustomException(RentalCustomError.RENTAL_NOT_FOUND);
-                });
-        Rental updatedRental = RentalMapper.toRentalEntity(rentalDto);
-        updatedRental.setId(existingRental.getId());
-        log.info("Updating rental with ID: {}.", id);
-        rentalRepository.save(updatedRental);
-        log.info("Successfully updated rental with ID: {}.", id);
-        return RentalMapper.toRentalDto(updatedRental);
     }
 
     public void deleteRental(Long id) {
@@ -142,16 +143,17 @@ public class RentalServiceImpl implements RentalService {
     }
 
     private String saveImage(MultipartFile image, String folder) throws IOException {
-        File uploadDir = new File("uploads/" + folder);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
+        String uploadDir = "uploads/" + folder;
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
         }
 
         String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-        Path filePath = Path.of(uploadDir + "/" + fileName);
+        Path filePath = Paths.get(directory.getAbsolutePath(), fileName);
 
         Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        return filePath.toString();
+        return folder + "/" + fileName;
     }
 }

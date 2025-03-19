@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Button, Container, Row, Col, Form, Card } from 'react-bootstrap';
+import { Button, Container, Row, Col, Form, Card, Accordion } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Layout from '../components/layouts/Layout'
 import '../style/CarDetails.css'; // Import the CSS file for custom styles
@@ -9,10 +9,13 @@ import { useAddReservationMutation } from '../api/ReservationsApi';
 import { useGetCurrentUserQuery } from '../api/UsersApi';
 import { useGetDealershipsQuery } from '../api/DealershipsApi';
 import { useGetRentalsQuery } from '../api/RentalsApi';
+import { useGetCarImportDutyQuery } from '../api/CarsApi';
 
 const CarDetails = () => {
     const location = useLocation();
     const { car } = location.state;
+
+    const { data: carImportDuty = [], isLoading: isImportDutyLoading } = useGetCarImportDutyQuery(car.id);
 
     const { data: dealerships = [] } = useGetDealershipsQuery();
     const [selectedDealership, setSelectedDealership] = useState<number>(0);
@@ -24,6 +27,14 @@ const CarDetails = () => {
 
     const [addOrder] = useAddOrderMutation();
     const [addReservation] = useAddReservationMutation();
+
+    const [totalPrice, setTotalPrice] = useState<number | null>(null);
+
+    const handleCalculatePrice = () => {
+        if (carImportDuty) {
+            setTotalPrice(carImportDuty[3]);
+        }
+    };
 
     const handleOrder = async () => {
         try {
@@ -71,13 +82,13 @@ const CarDetails = () => {
 
     return (
         <Layout>
-            <Container className="vh-100 mt-5">
+            <Container className="vh-auto mt-5">
                 {/* Hero Section */}
                 <div className="hero-section text-white rounded">
                     <Row className="align-items-center p-4">
                         <Col md={6}>
-                            <h1>{car.model.name}</h1>
-                            <h5 className="text-light">{car.year} {car.category.name}</h5>
+                            <h1>{car.modelName}</h1>
+                            <h5 className="text-light">{car.year} {car.categoryName}</h5>
                             <p className="lead">{car.description}</p>
                             {car.carType === 'DEALERSHIP' ? (
                                 <>
@@ -135,7 +146,7 @@ const CarDetails = () => {
                 </div>
 
                 {/* Car Details Section */}
-                <Row className='m-2'>
+                <Row className='mx-2 my-4'>
                     <h3>Car Details</h3>
                     <hr className="border-primary"/>
                     <Col className='m-3 d-flex flex-row justify-content-between' style={{height: '150px'}}>
@@ -190,6 +201,29 @@ const CarDetails = () => {
                                 <Card.Title>{car.transmission}</Card.Title>
                             </Card.Body>
                         </Card>
+                    </Col>
+                </Row>
+                <Row className='mx-2 my-4'>
+                    <h3>Car Price</h3>
+                    <hr className="border-primary"/>
+                    <Col>
+                        <h4>Car price: <strong>{car.price}$</strong></h4>
+                        <Button 
+                            className="btn mb-2"
+                            style={{backgroundColor: '#a4250b', borderColor: '#fff'}} 
+                            onClick={handleCalculatePrice} 
+                            disabled={isImportDutyLoading}
+                        >
+                            {isImportDutyLoading ? "Calculating..." : "Calculate Total Price"}
+                        </Button>
+                        {totalPrice !== null && (
+                            <>
+                                <h4>Customs Tax: <strong>{carImportDuty[0]}$</strong></h4>
+                                <h4>Excise Duty: <strong>{carImportDuty[1]}$</strong></h4>
+                                <h4>VAT: <strong>{carImportDuty[2]}$</strong></h4>
+                                <h4>Car total price (with import duty): <strong>{totalPrice}$</strong></h4>
+                            </>
+                        )}
                     </Col>
                 </Row>
             </Container>

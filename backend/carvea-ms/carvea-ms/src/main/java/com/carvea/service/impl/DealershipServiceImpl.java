@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -104,16 +105,17 @@ public class DealershipServiceImpl implements DealershipService {
     }
 
     private String saveImage(MultipartFile image, String folder) throws IOException {
-        File uploadDir = new File("uploads/" + folder);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
+        String uploadDir = "uploads/" + folder;
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
         }
 
         String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-        Path filePath = Path.of(uploadDir + "/" + fileName);
+        Path filePath = Paths.get(directory.getAbsolutePath(), fileName);
 
         Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        return filePath.toString();
+        return folder + "/" + fileName;
     }
 }

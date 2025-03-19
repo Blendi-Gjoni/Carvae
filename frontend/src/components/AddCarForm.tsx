@@ -19,6 +19,8 @@ const AddCarForm = () => {
     const [carData, setCarData] = useState<CarDTO>({
         id: 0,
         modelId: 0,
+        brandName: '',
+        modelName: '',
         year: 0,
         price: 0,
         horsepower: 0,
@@ -29,8 +31,10 @@ const AddCarForm = () => {
         fuelType: '',
         transmission: '',
         categoryId: 0,
+        categoryName: '',
         features: [],
         carType: '',
+        imagePaths: [],
     });
 
     const [addCar, { isLoading: isAdding }] = useAddCarMutation();

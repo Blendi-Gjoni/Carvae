@@ -10,7 +10,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CarDto {
-    private Long modelId;       // Maps to "modelId" in JSON
+    private Long id;
+    private Long modelId;
+    private String brandName;
+    private String modelName;
     private int year;
     private int horsepower;
     private double kilometers;
@@ -19,7 +22,8 @@ public class CarDto {
     private String interior;
     private String fuelType;
     private String transmission;
-    private Long categoryId;    // Maps to "categoryId" in JSON
+    private Long categoryId;
+    private String categoryName;
     private List<Long> features; // Maps to "features" in JSON
     private List<String> imagePaths;
 

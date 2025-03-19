@@ -30,7 +30,13 @@ public class DealershipMapper {
         dealershipDto.setEmail(dealership.getEmail());
         dealershipDto.setWebsite(dealership.getWebsite());
         dealershipDto.setOpeningHours(dealership.getOpeningHours());
-        dealershipDto.setImagePath(dealership.getImagePath());
+        if (dealership.getImagePath() != null) {
+            String correctedPath = dealership.getImagePath()
+                    .replace("\\", "/");
+            dealershipDto.setImagePath("http://localhost:8080/uploads/" + correctedPath);
+        } else {
+            dealershipDto.setImagePath(null);
+        }
         return dealershipDto;
     }
 }

@@ -30,7 +30,13 @@ public class RentalMapper {
         rentalDto.setEmail(rental.getEmail());
         rentalDto.setWebsite(rental.getWebsite());
         rentalDto.setOpeningHours(rental.getOpeningHours());
-        rentalDto.setImagePath(rental.getImagePath());
+        if (rental.getImagePath() != null) {
+            String correctedPath = rental.getImagePath()
+                    .replace("\\", "/");
+            rentalDto.setImagePath("http://localhost:8080/uploads/" + correctedPath);
+        } else {
+            rentalDto.setImagePath(null);
+        }
         return rentalDto;
     }
 }

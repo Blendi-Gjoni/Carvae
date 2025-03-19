@@ -15,6 +15,20 @@ export interface Rental {
     email: string;
     website: string;
     openingHours: string;
+    imagePath: string;
+};
+
+export interface RentalRequestDTO {
+    id?: number;
+    name: string;
+    address: string;
+    city: string;
+    state: string;
+    phoneNumber: string;
+    email: string;
+    website: string;
+    openingHours: string;
+    image?: File | null;
 };
 
 export const rentalsApi = createApi ({
@@ -45,12 +59,17 @@ export const rentalsApi = createApi ({
         getNumberOfRentalsByCity: builder.query<Array<[string, number]>, void> ({
             query: () => `/rentals/number-of-rentals-by-city`,
         }),
-        addRental: builder.mutation<Rental, Partial<Rental>> ({
-            query: (rental) => ({
-                url: `/rentals`,
-                method: 'POST',
-                body: rental,
-            })
+        addRental: builder.mutation({
+            query: ({ rentalData, image }: { rentalData: RentalRequestDTO; image: File }) => {
+                const formData = new FormData();
+                formData.append('rental', new Blob([JSON.stringify(rentalData)], { type: 'application/json' }));
+                formData.append('image', image);    
+                return {
+                  url: '/rentals',
+                  method: 'POST',
+                  body: formData,
+                };
+            },
         }),
         updateRental: builder.mutation<Rental, { id: number; rental: Partial<Rental> }> ({
             query: ({id, ...rental}) => ({

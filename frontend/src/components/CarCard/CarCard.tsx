@@ -11,10 +11,11 @@ interface CarCardProps {
   carFuelType: string;
   carTransmission: string;
   carHorsepower: number;
+  carImage: string;
   viewDetails: () => void;
 }
 
-const CarCard: React.FC<CarCardProps> = ({ carType, carBrand, carModel, carPrice, carFuelType, carTransmission, carHorsepower, viewDetails }) => {
+const CarCard: React.FC<CarCardProps> = ({ carType, carBrand, carModel, carPrice, carFuelType, carTransmission, carHorsepower, carImage, viewDetails }) => {
   return (
     <div className="car-card-container col-sm-4">
       <motion.div 
@@ -24,7 +25,7 @@ const CarCard: React.FC<CarCardProps> = ({ carType, carBrand, carModel, carPrice
         whileHover={{ scale: 1.05 }}
       >
         <div className="card">
-          <img src={carCardPhoto} className="card-img-top" width="100%" alt="car-card-photo" />
+          <img src={carImage} className="card-img-top" style={{ width: "auto", height: "180px", objectFit: "cover" }} alt="car-card-photo" />
           <div className="card-body pt-0 px-0">
             <div className="d-flex flex-row justify-content-between mt-1">
               <div className="d-flex flex-column justify-content-between px-3">

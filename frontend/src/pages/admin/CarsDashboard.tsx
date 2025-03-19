@@ -13,6 +13,8 @@ const CarsDashboard = () => {
     const [formData, setFormData] = useState<CarDTO>({
         id: 0,
         modelId: 0,
+        brandName: '',
+        modelName: '',
         year: 0,
         horsepower: 0,
         kilometers: 0,
@@ -22,9 +24,11 @@ const CarsDashboard = () => {
         fuelType: '',
         transmission: '',
         categoryId: 0,
+        categoryName: '',
         features: [],
         carType: '',
         price: 0,
+        imagePaths: [],
     });
 
     const [addCar] = useAddCarMutation();
@@ -111,6 +115,7 @@ const CarsDashboard = () => {
                     <th scope="col">Transmission</th>
                     <th scope="col">Category</th>
                     <th scope="col">Price</th>
+                    <th scope="col">Image</th>
                     <th scope="col">Actions</th>
                 </tr>
                 </thead>
@@ -118,7 +123,7 @@ const CarsDashboard = () => {
                 {cars.map((car) => (
                     <tr key={car.id}>
                         <th scope="row">{car.id}</th>
-                        <td>{car.model.name}</td>
+                        <td>{car.modelName}</td>
                         <td>{car.year}</td>
                         <td>{car.horsepower}</td>
                         <td>{car.kilometers}</td>
@@ -127,8 +132,17 @@ const CarsDashboard = () => {
                         <td>{car.interior}</td>
                         <td>{car.fuelType}</td>
                         <td>{car.transmission}</td>
-                        <td>{car.category.name}</td>
+                        <td>{car.categoryName}</td>
                         <td>{car.price}</td>
+                        <td>
+                            {car.imagePaths.length > 0 ? (
+                                <img 
+                                    src={car.imagePaths[0]}
+                                    alt='Car'
+                                    style={{ width: "50px", height: "auto", objectFit: "cover" }}
+                                />
+                            ) : "No Image"}
+                        </td>
                         <td>
                             {/*<Button*/}
                             {/*    variant="primary"*/}

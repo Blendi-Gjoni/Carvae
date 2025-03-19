@@ -6,6 +6,9 @@ import com.carvea.model.DealershipCar;
 import com.carvea.model.RentalCar;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class CarMapper {
     public static void updateCarFromDto(CarDto carDto, Car car) {
@@ -17,6 +20,7 @@ public class CarMapper {
             throw new IllegalArgumentException("Invalid car type: " + carDto.getCarType());
         }
 
+        car.setId(carDto.getId());
         car.setYear(carDto.getYear());
         car.setHorsepower(carDto.getHorsepower());
         car.setKilometers(carDto.getKilometers());
@@ -31,7 +35,10 @@ public class CarMapper {
     public static CarDto toCarDto(Car car) {
         CarDto carDto = new CarDto();
 
+        carDto.setId(car.getId());
         carDto.setModelId(car.getModel().getId());
+        carDto.setBrandName(car.getModel().getBrand().getName());
+        carDto.setModelName(car.getModel().getName());
         carDto.setYear(car.getYear());
         carDto.setHorsepower(car.getHorsepower());
         carDto.setKilometers(car.getKilometers());
@@ -41,8 +48,15 @@ public class CarMapper {
         carDto.setFuelType(car.getFuelType());
         carDto.setTransmission(car.getTransmission());
         carDto.setCategoryId(car.getCategory().getId());
-        carDto.setImagePaths(car.getImagePaths());
-
+        carDto.setCategoryName(car.getCategory().getName());
+        if (car.getImagePaths() != null) {
+            List<String> correctedPaths = car.getImagePaths().stream()
+                    .map(path -> "http://localhost:8080/" + path.replace("\\", "/"))
+                    .collect(Collectors.toList());
+            carDto.setImagePaths(correctedPaths);
+        } else {
+            carDto.setImagePaths(null);
+        }
         if (car instanceof DealershipCar) {
             carDto.setCarType("DEALERSHIP");
             carDto.setPrice(((DealershipCar) car).getPrice());

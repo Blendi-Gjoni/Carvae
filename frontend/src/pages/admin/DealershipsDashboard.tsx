@@ -9,7 +9,8 @@ import {
   useAddDealershipMutation,
   useUpdateDealershipMutation,
   useDeleteDealershipMutation,
-  Dealership
+  Dealership,
+  DealershipRequestDTO
 } from '../../api/DealershipsApi';
 import { HiFilter, HiOutlinePlus } from 'react-icons/hi';
 import { RiseLoader } from 'react-spinners';
@@ -17,7 +18,7 @@ import DashboardTable, { Column } from '../../components/DashboardTable';
 
 const DealershipsDashboard = () => {
   const [modalShow, setModalShow] = useState<boolean>(false);
-  const [formData, setFormData] = useState<Dealership>({
+  const [formData, setFormData] = useState<DealershipRequestDTO>({
     id: 0,
     name: '',
     address: '',
@@ -27,7 +28,9 @@ const DealershipsDashboard = () => {
     email: '',
     website: '',
     openingHours: '',
+    image: null,
   });
+  const [selectedFile, setSelectedFile] = useState<string>("No file chosen");
   const [globalFilter, setGlobalFilter] = useState<string>("");
 
   const { data: dealerships = [], error, isLoading, refetch } = useGetDealershipsQuery();
@@ -48,15 +51,19 @@ const DealershipsDashboard = () => {
     email: yup.string().email("Invalid email!").required("Dealership email is required, and must be a valid email!"),
     website: yup.string().required("Dealership website is required!"),
     openingHours: yup.string().required("Dealership opening hours are required!"),
+    image: yup
+          .mixed<File>()
+          .nullable()
+          .notRequired(),
   });
 
-  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<Dealership>({
+  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<DealershipRequestDTO>({
     resolver: yupResolver(schema),
   });
 
-  const handleEdit = (dealership: Dealership) => {
+  const handleEdit = (dealership: DealershipRequestDTO) => {
     setModalShow(true);
-    Object.keys(dealership).forEach((key) => setValue(key as keyof Dealership, dealership[key as keyof Dealership]));
+    Object.keys(dealership).forEach((key) => setValue(key as keyof DealershipRequestDTO, dealership[key as keyof DealershipRequestDTO]));
   };
 
   const handleDelete = async (id: number) => {
@@ -72,13 +79,22 @@ const DealershipsDashboard = () => {
     }
   };
 
-  const onSubmit = async (data: Dealership) => {
+  const onSubmit = async (data: DealershipRequestDTO) => {
     try {
-      if (formData.id) {
-        await updateDealership({ id: formData.id, dealership: data });
-      } else {
-        await addDealership(data);
-      }
+      const dealershipData: DealershipRequestDTO = {
+        id: data.id,
+        name: data.name,
+        address: data.address,
+        city: data.city,
+        state: data.state,
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+        website: data.website,
+        openingHours: data.openingHours,
+        image: data.image ?? null, 
+      };
+      await addDealership({ dealershipData, image: dealershipData.image as File}).unwrap();
+      
       setModalShow(false);
       refetch();
     } catch (err) {
@@ -97,6 +113,7 @@ const DealershipsDashboard = () => {
       email: '',
       website: '',
       openingHours: '',
+      image: null,
     });
     setModalShow(true);
   };
@@ -104,6 +121,18 @@ const DealershipsDashboard = () => {
   const handleModalClose = () => {
     reset();
     setModalShow(false);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+  
+    if (file) {
+      setSelectedFile(file.name);
+    } else {
+      setSelectedFile("No file chosen")
+    }
+    
+    setValue("image", file, { shouldValidate: true });
   };
 
   const renderError = error && (
@@ -170,6 +199,24 @@ const DealershipsDashboard = () => {
       header: "Opening Hours",
       enableSorting: false,
       cell: (info: any) => info.getValue(),
+    },
+    {
+      accessorKey: "imagePath",
+      header: "Dealership image",
+      enableSorting: false,
+      cell: (info: any) => {
+        const imageUrl = info.getValue();
+        
+        return imageUrl ? (
+          <img
+            src={imageUrl}
+            alt="Dealership"
+            style={{ width: "50px", height: "auto", objectFit: "cover" }}
+          />
+        ) : (
+          <span>No Image</span>
+        );
+      },
     },
     {
       accessorKey: "id",
@@ -337,6 +384,20 @@ const DealershipsDashboard = () => {
             />
             <Form.Control.Feedback type='invalid'>{errors.openingHours?.message}</Form.Control.Feedback>
           </Form.Group>
+
+          <Form.Group className="mb-3">
+                      <Form.Label>Dealership Image</Form.Label>
+                      <Form.Control
+                        type="file"
+                        accept="image/*"
+                        ref={(e: any) => register("image").ref(e)} 
+                        isInvalid={!!errors.image}
+                        onChange={handleFileChange}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.image?.message}
+                      </Form.Control.Feedback>
+                    </Form.Group>
 
           <Button className='mt-3' variant="success" type="submit" disabled={isAdding || isUpdating}>
             {isAdding || isUpdating ? 'Saving...' : 'Save'}

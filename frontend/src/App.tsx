@@ -33,7 +33,7 @@ function App(): JSX.Element {
           <Route path='/user-profile' element={<UserProfile />} />
 
           {/* Admin Routes */}
-          <Route path="/admin" element={<PrivateRoute role={Roles.SUPER_ADMIN}><AdminLayout /></PrivateRoute>}>
+          <Route path="/admin" element={<AdminLayout />}>
               <Route path="page" element={<AdminPage />} /> {/* Admin Home (Dashboard) */}
               <Route path="users" element={<UsersDashboard />} />
               <Route path="rentals" element={<RentalsDashboard />} />
