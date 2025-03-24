@@ -58,12 +58,11 @@ public class ModelServiceImpl implements ModelService {
     }
 
     public void loadBrandsAndModels() {
-        List<String> makes = List.of("bmw", "mercedes-benz", "audi", "porsche", "volkswagen", "ferrari", "lamborghini", "mclaren", "rolls");
-
-
+        List<String> makes = List.of("bmw", "mercedes-benz", "audi", "porsche", "volkswagen", "ferrari", "lamborghini", "mclaren", "rolls-royce");
+        
         try {
             for(String make : makes) {
-                String apiUrl = "https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformake/" + make + "?format=json";
+                String apiUrl = "https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformakeyear/make/" + make + "/vehicleType/car?format=json";
 
                 CarApiResponseWrapperDto response = restTemplate.getForObject(apiUrl, CarApiResponseWrapperDto.class);
 
