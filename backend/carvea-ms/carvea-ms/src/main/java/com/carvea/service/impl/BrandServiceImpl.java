@@ -2,9 +2,11 @@ package com.carvea.service.impl;
 
 import com.carvea.model.Brand;
 import com.carvea.repository.BrandRepository;
+import com.carvea.repository.ModelRepository;
 import com.carvea.service.BrandService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +16,13 @@ import java.util.List;
 public class BrandServiceImpl implements BrandService {
     private final BrandRepository brandRepository;
 
-    public BrandServiceImpl(BrandRepository brandRepository) {
+    public BrandServiceImpl(BrandRepository brandRepository, ModelRepository modelRepository, RestTemplate restTemplate) {
         this.brandRepository = brandRepository;
     }
 
     public List<Brand> getAllBrands() {
         List<Brand> brands = new ArrayList<>();
-        brandRepository.findAll().forEach(brands::add);
+        brands = brandRepository.findAll();
         if(brands.isEmpty()){
             log.info("No brands found");
         }
@@ -34,4 +36,5 @@ public class BrandServiceImpl implements BrandService {
         log.info("Successfully added brand: {}.", createdBrand);
         return createdBrand;
     }
+
 }

@@ -9,4 +9,5 @@ public interface ModelService {
     public Model addModel(Model model);
     public List<Model> getAllModels();
     public List<ModelDto> getModelsByBrandId(Long brandId);
+    public void loadBrandsAndModels();
 }

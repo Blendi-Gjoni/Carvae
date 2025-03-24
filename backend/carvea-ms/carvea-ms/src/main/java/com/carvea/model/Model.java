@@ -1,5 +1,6 @@
 package com.carvea.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,14 +13,15 @@ import lombok.Setter;
 public class Model {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name", nullable = false)
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "brandId", nullable = false)
+    @JoinColumn(name = "brand_id", nullable = false)
+    @JsonBackReference
     private Brand brand;
 
     public Model(String name, Brand brand) {
