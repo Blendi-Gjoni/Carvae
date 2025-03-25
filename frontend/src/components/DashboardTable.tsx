@@ -11,6 +11,7 @@ import {
   getPaginationRowModel,
   SortingState
 } from '@tanstack/react-table';
+import { Button } from 'react-bootstrap';
 import { HiOutlineSwitchVertical } from "react-icons/hi";
 
 export interface Column<T> {
@@ -108,23 +109,23 @@ const DashboardTable = <T extends object> ({ tableData, allColumns, enableSort, 
         </table>
       </div>
       <div className="d-flex justify-content-between mt-3">
-        <button
-          className="btn btn-info"
+        <Button
+          variant="outline-dark"
           disabled={currentPage === 0}
           onClick={() => fetchData(currentPage - 1)}
         >
           Previous
-        </button>
+        </Button>
         
         <span>Page {currentPage + 1} of {totalPages}</span>
 
-        <button
-          className="btn btn-info"
+        <Button
+          variant="outline-dark"
           disabled={currentPage + 1 >= totalPages}
           onClick={() => fetchData(currentPage + 1)}
         >
           Next
-        </button>
+        </Button>
       </div>
     </>
   );
