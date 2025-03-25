@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import DefaultModal from '../../components/modals/DefaultModal';
 import { Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
@@ -9,7 +9,7 @@ import {
     Order,
     useAddOrderMutation,
     useDeleteOrderMutation,
-    useGetOrdersQuery,
+    useGetOrdersWithPaginationQuery,
     useUpdateOrderMutation
 } from '../../api/OrdersApi';
 import { HiFilter, HiOutlinePlus } from 'react-icons/hi';
@@ -28,11 +28,21 @@ const OrdersDashboard = () => {
         dealershipId: 0,
     });
     const [globalFilter, setGlobalFilter] = useState<string>("");
+    const [page, setPage] = useState(0);
+    const [orderData, setOrderData] = useState<Order[]>([]);
+    const [totalPages, setTotalPages] = useState(1);
     
-    const { data: orders = [], error, isLoading, refetch } = useGetOrdersQuery();
+    const { data: ordersResponse, error, isLoading, refetch } = useGetOrdersWithPaginationQuery({ offset: page, pageSize: 10 });
     const { data: users = [] } = useGetUsersQuery();
     const { data: dealerships = [] } = useGetDealershipsQuery();
     const { data: cars = [] } = useGetCarsQuery();
+
+    useEffect(() => {
+        if(ordersResponse) {
+            setOrderData(ordersResponse.content);
+            setTotalPages(ordersResponse.totalPages);
+        }
+    }, [ordersResponse]);
 
     const [addOrder, { isLoading: isAdding }] = useAddOrderMutation();
     const [updateOrder, { isLoading: isUpdating }] = useUpdateOrderMutation();
@@ -189,13 +199,13 @@ const OrdersDashboard = () => {
     ];
 
     const filteredOrders = useMemo(() => {
-        return orders.filter((order) =>
+        return orderData.filter((order) =>
           Object.values(order)
             .join("")
             .toLowerCase()
             .includes(globalFilter.toLowerCase())
         );
-      }, [orders, globalFilter]);
+      }, [orderData, globalFilter]);
 
     return (
         <div>
@@ -234,6 +244,9 @@ const OrdersDashboard = () => {
                     tableData={filteredOrders}
                     allColumns={columns}
                     enableSort
+                    currentPage={page}
+                    totalPages={totalPages}
+                    fetchData={setPage}
                 />
                 </>
             )}

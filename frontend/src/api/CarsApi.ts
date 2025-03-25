@@ -67,6 +67,38 @@ export interface CarDTO {
     imagePaths: string[];
 };
 
+interface PaginatedCarResponse {
+    content: CarDTO[];
+    pageable: {
+      pageNumber: number;
+      pageSize: number;
+      sort: {
+        empty: boolean;
+        sorted: boolean;
+        unsorted: boolean;
+      };
+    };
+    totalElements: number;
+    totalPages: number;
+    last: boolean;
+    size: number;
+    number: number;
+    sort: {
+      empty: boolean;
+      sorted: boolean;
+      unsorted: boolean;
+    };
+    first: boolean;
+    numberOfElements: number;
+    empty: boolean;
+};
+
+interface PaginationParams {
+    offset?: number;
+    pageSize?: number;
+    sortBy?: string;
+};
+
 export const carsApi = createApi ({
     reducerPath: 'carsApi',
     baseQuery,
@@ -81,7 +113,17 @@ export const carsApi = createApi ({
             query: (brandId) => `/brands/${brandId}`,
         }),
         getCars: builder.query<CarDTO[], void> ({
-            query: () => `/car/allCars`,
+            query: () => `/car`,
+        }),
+        getCarsWithPagination: builder.query<PaginatedCarResponse, PaginationParams>({
+            query: (params) => ({
+                url: '/car/with-pagination',
+                params: {
+                    offset: params?.offset || 0,
+                    pageSize: params?.pageSize || 10,
+                    sortBy: params?.sortBy || 'id'
+                }
+            })
         }),
         addCar: builder.mutation<Car, Partial<CarDTO>> ({
             query: (car) => ({
@@ -126,6 +168,7 @@ export const {
     useGetCarsByTypeQuery,
     useGetBrandByIdQuery,
     useGetCarsQuery,
+    useGetCarsWithPaginationQuery,
     useAddCarMutation,
     useGetCarByIdQuery,
     useGetCategoriesQuery,

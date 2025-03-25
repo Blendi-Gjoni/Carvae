@@ -10,6 +10,9 @@ import com.carvea.repository.RentalRepository;
 import com.carvea.service.RentalService;
 import com.carvea.specification.RentalSpecification;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -81,13 +84,23 @@ public class RentalServiceImpl implements RentalService {
 
     public List<RentalDto> getAllRentals() {
         List<Rental> rentals = rentalRepository.findAll();
+        log.info("Fetched {} rentals from the database.", rentals.size());
+        return rentals.stream().map(RentalMapper::toRentalDto).collect(Collectors.toList());
+    }
+
+    public Page<RentalDto> getAllRentalsWithPagination(PageRequest pageRequest) {
+        Page<Rental> rentals = rentalRepository.findAll(pageRequest);
         if(rentals.isEmpty()) {
             log.warn("No rental found.");
         }
-        log.info("Fetched {} rentals from the database.", rentals.size());
-        return rentals.stream()
+        List<RentalDto> rentalsDto = rentals.stream()
                 .map(RentalMapper::toRentalDto)
                 .collect(Collectors.toList());
+        log.info("Fetched {} rentals from the database( page {} of {}).",
+                rentalsDto.size(),
+                pageRequest.getPageNumber(),
+                rentals.getTotalPages());
+        return new PageImpl<>(rentalsDto, pageRequest, rentals.getTotalElements());
     }
 
     public void deleteRental(Long id) {

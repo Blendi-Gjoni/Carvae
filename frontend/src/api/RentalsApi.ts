@@ -31,12 +31,54 @@ export interface RentalRequestDTO {
     image?: File | null;
 };
 
+interface PaginatedRentalResponse {
+    content: Rental[];
+    pageable: {
+      pageNumber: number;
+      pageSize: number;
+      sort: {
+        empty: boolean;
+        sorted: boolean;
+        unsorted: boolean;
+      };
+    };
+    totalElements: number;
+    totalPages: number;
+    last: boolean;
+    size: number;
+    number: number;
+    sort: {
+      empty: boolean;
+      sorted: boolean;
+      unsorted: boolean;
+    };
+    first: boolean;
+    numberOfElements: number;
+    empty: boolean;
+}
+
+interface PaginationParams {
+    offset?: number;
+    pageSize?: number;
+    sortBy?: string;
+}
+
 export const rentalsApi = createApi ({
     reducerPath: "rentalsApi",
     baseQuery,
     endpoints: (builder) => ({
         getRentals: builder.query<Rental[], void> ({
             query: () => `/rentals`,
+        }),
+        getRentalsWithPaginaiton: builder.query<PaginatedRentalResponse, PaginationParams>({
+            query: (params) => ({
+              url: '/rentals/with-pagination',
+              params: {
+                offset: params?.offset || 0,
+                pageSize: params?.pageSize || 10,
+                sortBy: params?.sortBy || 'id'
+              }
+            })
         }),
         getRentalById: builder.query<Rental, number> ({
             query: (id) => `/rentals/${id}`,
@@ -89,6 +131,7 @@ export const rentalsApi = createApi ({
 
 export const {
     useGetRentalsQuery,
+    useGetRentalsWithPaginaitonQuery,
     useGetRentalByIdQuery,
     useGetRentalsByNameQuery,
     useGetRentalCitiesQuery,

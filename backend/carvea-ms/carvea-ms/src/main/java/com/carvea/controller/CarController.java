@@ -5,6 +5,10 @@ import com.carvea.dto.CarDto;
 import com.carvea.dto.CarRequestDto;
 import com.carvea.model.Car;
 import com.carvea.service.CarService;
+import io.micrometer.common.util.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,10 +34,22 @@ public class CarController {
         return ResponseEntity.ok(car);
     }
 
-    @GetMapping("/allCars")
+    @GetMapping
     public ResponseEntity<List<CarDto>> getAllCars() {
-        List<CarDto> cars = carService.getAllCars();
-        return ResponseEntity.ok(cars);
+        List<CarDto> carDtos = carService.getAllCars();
+        return ResponseEntity.ok(carDtos);
+    }
+
+    @GetMapping("/with-pagination")
+    public ResponseEntity<Page<CarDto>> getAllCarsWithPagination(
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", required = false) String sortBy
+    ) {
+        if(null == offset) offset = 0;
+        if(null == pageSize) pageSize = 10;
+        if(StringUtils.isEmpty(sortBy)) sortBy = "id";
+        return ResponseEntity.ok(carService.getAllCarsWithPagination(PageRequest.of(offset, pageSize, Sort.by(sortBy))));
     }
 
     @GetMapping("/{carId}")

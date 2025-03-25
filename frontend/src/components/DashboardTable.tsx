@@ -24,9 +24,12 @@ interface DashboardTableProps<T> {
   tableData: T[];
   allColumns: Column<T>[];
   enableSort: boolean;
+  totalPages: number;
+  currentPage: number;
+  fetchData: (page: number) => void;
 }
 
-const DashboardTable = <T extends object> ({ tableData, allColumns, enableSort }: DashboardTableProps<T>) => {
+const DashboardTable = <T extends object> ({ tableData, allColumns, enableSort, totalPages, currentPage, fetchData }: DashboardTableProps<T>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
 
@@ -103,6 +106,25 @@ const DashboardTable = <T extends object> ({ tableData, allColumns, enableSort }
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="d-flex justify-content-between mt-3">
+        <button
+          className="btn btn-info"
+          disabled={currentPage === 0}
+          onClick={() => fetchData(currentPage - 1)}
+        >
+          Previous
+        </button>
+        
+        <span>Page {currentPage + 1} of {totalPages}</span>
+
+        <button
+          className="btn btn-info"
+          disabled={currentPage + 1 >= totalPages}
+          onClick={() => fetchData(currentPage + 1)}
+        >
+          Next
+        </button>
       </div>
     </>
   );

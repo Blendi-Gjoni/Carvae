@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import DefaultModal from '../../components/modals/DefaultModal';
 import { Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  useGetRentalsQuery,
+  useGetRentalsWithPaginaitonQuery,
   useGetRentalCitiesQuery,
   useGetRentalsByCityQuery,
   useAddRentalMutation,
@@ -35,13 +35,23 @@ const RentalsDashboard: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<string>("No file chosen");
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [page, setPage] = useState(0);
+  const [rentalData, setRentalData] = useState<Rental[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const { data: rentals = [], error, isLoading, refetch } = useGetRentalsQuery();
+  const { data: rentalsRepsonse, error, isLoading, refetch } = useGetRentalsWithPaginaitonQuery({ offset: page, pageSize: 10});
   const { data: rentalCities = [], refetch: refetchRentalCities } = useGetRentalCitiesQuery();
   const { data: rentalsByCity = [], isLoading: isLoadingRentalsByCity, error: cityError } =
     useGetRentalsByCityQuery(selectedCity, {
       skip: selectedCity === "",
     });
+
+  useEffect(() => {
+    if(rentalsRepsonse) {
+      setRentalData(rentalsRepsonse.content);
+      setTotalPages(rentalsRepsonse.totalPages);
+    }
+  }, [rentalsRepsonse]);
 
   const [addRental, { isLoading: isAdding }] = useAddRentalMutation();
   const [updateRental, { isLoading: isUpdating }] = useUpdateRentalMutation();
@@ -274,13 +284,13 @@ const RentalsDashboard: React.FC = () => {
   ];
 
   const filteredRentals = useMemo(() => {
-    return rentals.filter((rental) =>
+    return rentalData.filter((rental) =>
       Object.values(rental)
         .join("")
         .toLowerCase()
         .includes(globalFilter.toLowerCase())
     );
-  }, [rentals, globalFilter]);
+  }, [rentalData, globalFilter]);
   
 
   return (
@@ -343,6 +353,9 @@ const RentalsDashboard: React.FC = () => {
             tableData={selectedCity && rentalsByCity.length ? rentalsByCity : filteredRentals}
             allColumns={columns}
             enableSort
+            totalPages={totalPages}
+            currentPage={page}
+            fetchData={setPage}
           />
         </>
       )}

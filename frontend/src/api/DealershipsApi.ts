@@ -29,14 +29,55 @@ export interface DealershipRequestDTO {
     website: string;
     openingHours: string;
     image?: File | null;
+};
+
+interface PaginatedDealershipResponse {
+    content: Dealership[];
+    pageable: {
+      pageNumber: number;
+      pageSize: number;
+      sort: {
+        empty: boolean;
+        sorted: boolean;
+        unsorted: boolean;
+      };
+    };
+    totalElements: number;
+    totalPages: number;
+    last: boolean;
+    size: number;
+    number: number;
+    sort: {
+      empty: boolean;
+      sorted: boolean;
+      unsorted: boolean;
+    };
+    first: boolean;
+    numberOfElements: number;
+    empty: boolean;
 }
 
+interface PaginationParams {
+    offset?: number;
+    pageSize?: number;
+    sortBy?: string;
+}
 export const dealershipsApi = createApi ({
     reducerPath: "dealershipsApi",
     baseQuery,
     endpoints: (builder) => ({
         getDealerships: builder.query<Dealership[], void> ({
             query: () => `/dealerships`,
+        }),
+        getDealershipsWithPagination: builder.query<PaginatedDealershipResponse, PaginationParams>({
+            query: (params) => ({
+                url: '/dealerships/with-pagination',
+                params: {
+                    offset: params?.offset || 0,
+                    pageSize: params?.pageSize || 10,
+                    sortBy: params?.sortBy || 'id'
+                }
+            })
         }),
         getDealershipById: builder.query<Dealership, number> ({
             query: (id) => `/dealerships/${id}`,
@@ -74,6 +115,7 @@ export const dealershipsApi = createApi ({
 
 export const {
     useGetDealershipsQuery,
+    useGetDealershipsWithPaginationQuery,
     useGetDealershipByIdQuery,
     useGetNumberOfDealershipsByStateQuery,
     useAddDealershipMutation,

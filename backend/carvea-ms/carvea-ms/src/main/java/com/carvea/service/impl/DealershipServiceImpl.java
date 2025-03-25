@@ -9,6 +9,9 @@ import com.carvea.model.Dealership;
 import com.carvea.repository.DealershipRepository;
 import com.carvea.service.DealershipService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -65,13 +68,23 @@ public class DealershipServiceImpl implements DealershipService {
 
     public List<DealershipDto> getAllDealerships() {
         List<Dealership> dealerships = dealershipRepository.findAll();
+        log.info("Fetched {} dealerships from the database.", dealerships.size());
+        return dealerships.stream().map(DealershipMapper::toDealershipDto).collect(Collectors.toList());
+    }
+
+    public Page<DealershipDto> getAllDealershipsWithPagination(PageRequest pageRequest) {
+        Page<Dealership> dealerships = dealershipRepository.findAll(pageRequest);
         if(dealerships.isEmpty()) {
             log.warn("No dealerships found!");
         }
-        log.info("Fetched {} dealerships from the database.", dealerships.size());
-        return dealerships.stream()
+        List<DealershipDto> dealershipDtos = dealerships.stream()
                 .map(DealershipMapper::toDealershipDto)
                 .collect(Collectors.toList());
+        log.info("Fetched {} dealerships from the database( page {} of {}).",
+                dealershipDtos.size(),
+                pageRequest.getPageNumber(),
+                dealerships.getTotalPages());
+        return new PageImpl<>(dealershipDtos, pageRequest, dealerships.getTotalElements());
     }
 
     public DealershipDto updateDealership(Long id, DealershipDto dealershipDto) {

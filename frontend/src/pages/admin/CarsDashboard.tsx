@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import {CarDTO,Car, useGetCarsQuery, useDeleteCarMutation, useUpdateCarMutation, useAddCarMutation} from '../../api/CarsApi';
+import { useEffect, useState } from 'react';
+import {CarDTO, useGetCarsWithPaginationQuery, useDeleteCarMutation, useUpdateCarMutation, useAddCarMutation} from '../../api/CarsApi';
 import DefaultModal from '../../components/modals/DefaultModal';
 import { Button, Form, FormControlProps } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +7,10 @@ import { FormSubmitHandler } from 'react-hook-form';
 
 
 const CarsDashboard = () => {
-    const { data: cars = [], error, refetch} = useGetCarsQuery();
+    const [page, setPage] = useState(0);
+    const [carData, setCarData] = useState<CarDTO[]>([]);
+    const [totalPages, setTotalPages] = useState(1);
+    const { data: carsResponse, error, refetch} = useGetCarsWithPaginationQuery({ offset: page, pageSize: 10});
     const [modalShow, setModalShow] = useState<boolean>(false);
     const navigate = useNavigate();
     const [formData, setFormData] = useState<CarDTO>({
@@ -30,6 +33,13 @@ const CarsDashboard = () => {
         price: 0,
         imagePaths: [],
     });
+
+    useEffect(() => {
+        if(carsResponse){
+            setCarData(carsResponse.content);
+            setTotalPages(carsResponse.totalPages);
+        }
+    }, [carsResponse]);
 
     const [addCar] = useAddCarMutation();
     const [deleteCar] = useDeleteCarMutation();
@@ -120,7 +130,7 @@ const CarsDashboard = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {cars.map((car) => (
+                {carData.map((car) => (
                     <tr key={car.id}>
                         <th scope="row">{car.id}</th>
                         <td>{car.modelName}</td>

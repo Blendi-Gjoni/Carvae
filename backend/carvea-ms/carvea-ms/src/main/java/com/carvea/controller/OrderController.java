@@ -3,6 +3,10 @@ package com.carvea.controller;
 import com.carvea.dto.OrderDto;
 import com.carvea.model.Order;
 import com.carvea.service.OrderService;
+import io.micrometer.common.util.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +25,21 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Order>> getOrders() {
+    public ResponseEntity<List<Order>> getAllOrders() {
         List<Order> orders = orderService.getAllOrders();
         return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/with-pagination")
+    public ResponseEntity<Page<Order>> getAllOrdersWithPagination(
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", required = false) String sortBy
+    ) {
+        if(null == offset) offset = 0;
+        if(null == pageSize) pageSize = 10;
+        if(StringUtils.isEmpty(sortBy)) sortBy = "id";
+        return ResponseEntity.ok(orderService.getAllOrdersWithPagination(PageRequest.of(offset, pageSize, Sort.by(sortBy))));
     }
 
     @GetMapping("/car/{carId}")

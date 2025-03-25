@@ -3,7 +3,11 @@ package com.carvea.controller;
 import com.carvea.dto.DealershipDto;
 import com.carvea.dto.DealershipRequestDto;
 import com.carvea.service.DealershipService;
+import io.micrometer.common.util.StringUtils;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +37,20 @@ public class DealershipController {
 
     @GetMapping
     public ResponseEntity<List<DealershipDto>> getAllDealerships() {
-        List<DealershipDto> dealerships = dealershipService.getAllDealerships();
-        return ResponseEntity.ok(dealerships);
+        List<DealershipDto> dealershipDtos = dealershipService.getAllDealerships();
+        return ResponseEntity.ok(dealershipDtos);
+    }
+
+    @GetMapping("/with-pagination")
+    public ResponseEntity<Page<DealershipDto>> getAllDealershipsWithPagination(
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", required = false) String sortBy
+    ) {
+        if(null == offset) offset = 0;
+        if(null == pageSize) pageSize = 10;
+        if(StringUtils.isEmpty(sortBy)) sortBy = "id";
+        return ResponseEntity.ok(dealershipService.getAllDealershipsWithPagination(PageRequest.of(offset, pageSize, Sort.by(sortBy))));
     }
 
     @PutMapping("/{id}")

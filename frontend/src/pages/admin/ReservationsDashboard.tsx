@@ -1,11 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useGetUsersQuery } from '../../api/UsersApi';
 import { useGetRentalsQuery } from '../../api/RentalsApi';
 import { useGetCarsQuery } from '../../api/CarsApi';
 import {
   Reservation,
   ReservationDTO,
-  useGetReservationsQuery,
+  useGetReservationsWithPaginationQuery,
   useAddReservationMutation,
   useDeleteReservationMutation,
   useUpdateReservationMutation,
@@ -30,11 +30,21 @@ const ReservationsDashboard = () => {
     endDate: '',
   });
   const [globalFilter, setGlobalFilter] = useState("");
+  const [page, setPage] = useState(0);
+  const [reservationData, setReservationData] = useState<Reservation[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const { data: reservations = [], error, isLoading, refetch } = useGetReservationsQuery();
+  const { data: reservationsResponse, error, isLoading, refetch } = useGetReservationsWithPaginationQuery({ offset: page, pageSize: 10});
   const { data: users = [] } = useGetUsersQuery();
   const { data: rentals = [] } = useGetRentalsQuery();
   const { data: cars = [] } = useGetCarsQuery();
+
+  useEffect(() => {
+    if(reservationsResponse){
+      setReservationData(reservationsResponse.content);
+      setTotalPages(reservationsResponse.totalPages);
+    }
+  })
 
   const [addReservation, { isLoading: isAdding }] = useAddReservationMutation();
   const [updateReservation, { isLoading: isUpdating }] = useUpdateReservationMutation();
@@ -196,13 +206,13 @@ const ReservationsDashboard = () => {
   ];
 
   const filteredReservations = useMemo(() => {
-    return reservations.filter((reservation) =>
+    return reservationData.filter((reservation) =>
       Object.values(reservation)
         .join("")
         .toLowerCase()
         .includes(globalFilter.toLowerCase())
     );
-  }, [reservations, globalFilter]);
+  }, [reservationData, globalFilter]);
 
   return (
     <div>
@@ -241,6 +251,9 @@ const ReservationsDashboard = () => {
             tableData={filteredReservations}
             allColumns={columns}
             enableSort
+            currentPage={page}
+            totalPages={totalPages}
+            fetchData={setPage}
           />
         </>
       )}

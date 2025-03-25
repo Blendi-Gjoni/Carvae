@@ -17,6 +17,9 @@ import com.carvea.repository.UserRepository;
 import com.carvea.repository.DealershipRepository;
 import com.carvea.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -121,6 +124,16 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> getAllOrders() {
         List<Order> orders = orderRepository.findAll();
         log.info("Fetched {} orders from the database.", orders.size());
+        return orders;
+    }
+
+    public Page<Order> getAllOrdersWithPagination(PageRequest pageRequest) {
+        Page<Order> orders = orderRepository.findAll(pageRequest);
+        log.info("Fetched {} orders from the database( page {} of {}).",
+                orders.getTotalElements(),
+                pageRequest.getPageNumber(),
+                orders.getTotalPages()
+                );
         return orders;
     }
 

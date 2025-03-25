@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DefaultModal from '../../components/modals/DefaultModal';
 import { Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  useGetDealershipsQuery,
+  useGetDealershipsWithPaginationQuery,
   useAddDealershipMutation,
   useUpdateDealershipMutation,
   useDeleteDealershipMutation,
@@ -32,8 +32,18 @@ const DealershipsDashboard = () => {
   });
   const [selectedFile, setSelectedFile] = useState<string>("No file chosen");
   const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [page, setPage] = useState(0);
+  const [dealershipData, setDealershipData] = useState<Dealership[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const { data: dealerships = [], error, isLoading, refetch } = useGetDealershipsQuery();
+  const { data: dealershipsResponse, error, isLoading, refetch } = useGetDealershipsWithPaginationQuery({ offset: page, pageSize: 10 });
+
+  useEffect(() => {
+    if(dealershipsResponse) {
+      setDealershipData(dealershipsResponse.content);
+      setTotalPages(dealershipsResponse.totalPages);
+    }
+  }, [dealershipsResponse]);
 
   const [addDealership, { isLoading: isAdding }] = useAddDealershipMutation();
   const [updateDealership, { isLoading: isUpdating }] = useUpdateDealershipMutation();
@@ -243,7 +253,7 @@ const DealershipsDashboard = () => {
     },
   ];
 
-  const filteredDealerships = dealerships.filter((dealership) =>
+  const filteredDealerships = dealershipData.filter((dealership) =>
     Object.values(dealership)
       .join("")
       .toLowerCase()
@@ -287,6 +297,9 @@ const DealershipsDashboard = () => {
             tableData={filteredDealerships}
             allColumns={columns}
             enableSort
+            totalPages={totalPages}
+            currentPage={page}
+            fetchData={setPage}
           />
         </>
       )}

@@ -18,6 +18,8 @@ import com.carvea.repository.UserRepository;
 import com.carvea.service.ReservationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -131,10 +133,20 @@ public class ReservationServiceImpl implements ReservationService {
 
     public List<Reservation> getAllReservations() {
         List<Reservation> reservations = reservationRepository.findAll();
+        log.info("Fetched {} reservations from the database.", reservations.size());
+        return reservations;
+    }
+
+    public Page<Reservation> getAllReservationsWithPagination(PageRequest pageRequest) {
+        Page<Reservation> reservations = reservationRepository.findAll(pageRequest);
         if(reservations.isEmpty()) {
             log.warn("No reservations found!");
         }
-        log.info("Fetched {} reservations from the database.", reservations.size());
+        log.info("Fetched {} reservations from the database( page {} of {}).",
+                reservations.getTotalElements(),
+                pageRequest.getPageNumber(),
+                reservations.getTotalPages()
+                );
         return reservations;
     }
 

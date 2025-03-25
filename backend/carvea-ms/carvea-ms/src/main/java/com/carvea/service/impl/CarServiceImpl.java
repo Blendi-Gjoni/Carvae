@@ -14,6 +14,9 @@ import com.carvea.repository.FeaturesRepository;
 import com.carvea.repository.ModelRepository;
 import com.carvea.service.CarService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -167,13 +170,27 @@ public class CarServiceImpl implements CarService {
 
     public List<CarDto> getAllCars(){
         List<Car> cars = carRepository.findAll();
+        if(cars.isEmpty()) {
+            log.warn("No cars found.");
+        }
+        log.info("Fetched {} cars from the database.", cars.size());
+        return cars.stream().map(CarMapper::toCarDto).toList();
+    }
+
+    public Page<CarDto> getAllCarsWithPagination(PageRequest pageRequest) {
+        Page<Car> cars = carRepository.findAll(pageRequest);
         if(cars.isEmpty()){
             log.warn("No cars found!");
         }
-        log.info("Fetched {} cars from the database.", cars.size());
-        return cars.stream()
+        List<CarDto> carDtos = cars.stream()
                 .map(CarMapper::toCarDto)
                 .collect(Collectors.toList());
+        log.info("Fetched {} cars from the database( page {} of {}).",
+                carDtos.size(),
+                pageRequest.getPageNumber(),
+                cars.getTotalPages()
+        );
+        return new PageImpl<>(carDtos, pageRequest, cars.getTotalElements());
     }
 
     public void deleteCar(Long id){
