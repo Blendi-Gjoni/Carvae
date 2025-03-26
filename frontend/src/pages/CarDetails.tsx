@@ -29,11 +29,21 @@ const CarDetails = () => {
     const [addReservation] = useAddReservationMutation();
 
     const [totalPrice, setTotalPrice] = useState<number | null>(null);
+    const [startDate, setStartDate] = useState<string>('');
+    const [endDate, setEndDate] = useState<string>('');
 
     const handleCalculatePrice = () => {
         if (carImportDuty) {
             setTotalPrice(carImportDuty[3]);
         }
+    };
+
+    const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setStartDate(e.target.value);
+    };
+    
+    const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEndDate(e.target.value);
     };
 
     const handleOrder = async () => {
@@ -60,8 +70,8 @@ const CarDetails = () => {
                 carId: car.id,
                 userId: currentUser?.id,
                 rentalId: selectedRental,
-                startDate: today.toISOString().split("T")[0],
-                endDate: nextMonth.toISOString().split("T")[0]
+                startDate: startDate,
+                endDate: endDate
             };
             await addReservation(reservation);
             alert('Reservation successfully placed!');
@@ -117,28 +127,48 @@ const CarDetails = () => {
                                 </>
                             ) : (
                                 <>
-                                <Form.Group controlId="dealershipSelect" className="mb-3">
+                                    <Form.Group controlId="dealershipSelect" className="mb-3">
                                         <Form.Label>Select Rental</Form.Label>
-                                        <Form.Select
-                                            value={selectedRental}
-                                            onChange={handleRentalSelect}
-                                        >
-                                            <option value="">Choose...</option>
-                                            {rentals.map((rental) => (
-                                                <option key={rental.id} value={rental.id}>
-                                                    {rental.name}
-                                                </option>
-                                            ))}
-                                        </Form.Select>
+                                            <Form.Select
+                                                value={selectedRental}
+                                                onChange={handleRentalSelect}
+                                            >
+                                                <option value="">Choose...</option>
+                                                {rentals.map((rental) => (
+                                                    <option key={rental.id} value={rental.id}>
+                                                        {rental.name}
+                                                    </option>
+                                                ))}
+                                            </Form.Select>
                                     </Form.Group>
-                                <Button 
-                                    variant="warning" 
-                                    className="me-2"
-                                    onClick={handleReserve}
-                                    disabled={!selectedRental}
-                                >
-                                    Rent the Car
-                                </Button>
+                                    <Form.Group className='mb-3'>
+                                        <Form.Label>Start Date</Form.Label>
+                                        <Form.Control 
+                                            type='date'
+                                            value={startDate}
+                                            onChange={handleStartDateChange}
+                                            min={new Date().toISOString().split('T')[0]} // Prevent selecting past dates
+                                            required
+                                        />
+                                    </Form.Group>
+                                    <Form.Group className='mb-3'>
+                                        <Form.Label>End Date</Form.Label>
+                                        <Form.Control 
+                                            type='date'
+                                            value={endDate}
+                                            onChange={handleEndDateChange}
+                                            min={startDate || new Date().toISOString().split('T')[0]} // Can't be before start date
+                                            required
+                                        />
+                                    </Form.Group>
+                                    <Button 
+                                        variant="warning" 
+                                        className="me-2"
+                                        onClick={handleReserve}
+                                        disabled={!selectedRental}
+                                    >
+                                        Rent the Car
+                                    </Button>
                                 </>
                             )}
                         </Col>
@@ -208,22 +238,25 @@ const CarDetails = () => {
                     <hr className="border-primary"/>
                     <Col>
                         <h4>Car price: <strong>{car.price}$</strong></h4>
-                        <Button 
-                            className="btn mb-2"
-                            style={{backgroundColor: '#a4250b', borderColor: '#fff'}} 
-                            onClick={handleCalculatePrice} 
-                            disabled={isImportDutyLoading}
-                        >
-                            {isImportDutyLoading ? "Calculating..." : "Calculate Total Price"}
-                        </Button>
-                        {totalPrice !== null && (
-                            <>
-                                <h4>Customs Tax: <strong>{carImportDuty[0]}$</strong></h4>
-                                <h4>Excise Duty: <strong>{carImportDuty[1]}$</strong></h4>
-                                <h4>VAT: <strong>{carImportDuty[2]}$</strong></h4>
-                                <h4>Car total price (with import duty): <strong>{totalPrice}$</strong></h4>
-                            </>
-                        )}
+                        {car.carType == "DEALERSHIP" &&
+                        (<>
+                            <Button 
+                                className="btn mb-2"
+                                style={{backgroundColor: '#a4250b', borderColor: '#fff'}} 
+                                onClick={handleCalculatePrice} 
+                                disabled={isImportDutyLoading}
+                            >
+                                {isImportDutyLoading ? "Calculating..." : "Calculate Total Price"}
+                            </Button>
+                            {totalPrice !== null && (
+                                <>
+                                    <h4>Customs Tax: <strong>{carImportDuty[0]}$</strong></h4>
+                                    <h4>Excise Duty: <strong>{carImportDuty[1]}$</strong></h4>
+                                    <h4>VAT: <strong>{carImportDuty[2]}$</strong></h4>
+                                    <h4>Car total price (with import duty): <strong>{totalPrice}$</strong></h4>
+                                </>
+                            )}
+                        </>)}
                     </Col>
                 </Row>
             </Container>

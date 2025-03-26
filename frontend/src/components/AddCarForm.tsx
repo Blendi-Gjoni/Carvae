@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     useGetModelsByBrandIdQuery,
     useAddCarMutation,
     useGetCategoriesQuery,
     useGetBrandsQuery,
     useGetFeaturesQuery,
-    CarDTO
+    CarRequestDTO
 } from '../api/CarsApi';
 
 const AddCarForm = () => {
@@ -16,11 +16,9 @@ const AddCarForm = () => {
     const [selectedBrandId, setSelectedBrandId] = useState<number>(0);
     const { data: models = [] } = useGetModelsByBrandIdQuery(selectedBrandId);
     const [selectedFeatures, setSelectedFeatures] = useState<number[]>([]);
-    const [carData, setCarData] = useState<CarDTO>({
-        id: 0,
+    const [selectedImages, setSelectedImages] = useState<File[]>([]);
+    const [carData, setCarData] = useState<CarRequestDTO>({
         modelId: 0,
-        brandName: '',
-        modelName: '',
         year: 0,
         price: 0,
         horsepower: 0,
@@ -31,17 +29,16 @@ const AddCarForm = () => {
         fuelType: '',
         transmission: '',
         categoryId: 0,
-        categoryName: '',
         features: [],
         carType: '',
-        imagePaths: [],
+        images: null,
     });
 
     const [addCar, { isLoading: isAdding }] = useAddCarMutation();
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setCarData({ ...carData, [name]: value });
+        setCarData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleFeatureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,31 +50,30 @@ const AddCarForm = () => {
         );
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        const updatedCarData = {
-            ...carData,
-            features: selectedFeatures,
-        };
-
-        try {
-            await addCar(updatedCarData).unwrap();
-            alert("Car successfully added!");
-        } catch (error: any) {
-            console.error("Error submitting form:", error);
-            alert(`An error occurred while adding the car: ${error.response?.data?.message || error.message}`);
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setSelectedImages(Array.from(e.target.files));
         }
     };
 
-    useEffect(() => {
-        setCarData((prevData) => ({
-            ...prevData,
-            categoryId: selectedCategoryId,
-        }));
-    }, [selectedCategoryId]);
-
-
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        try {
+            await addCar({
+                carData: {
+                  ...carData,
+                  categoryId: selectedCategoryId,
+                  features: selectedFeatures
+                },
+                images: selectedImages
+            }).unwrap();
+            alert("Car successfully added!");
+        } catch (error: any) {
+            console.error("Error submitting form:", error);
+            alert(`An error occurred: ${error.data?.message || error.message}`);
+        }
+    };
+    
 
     return (
         <form onSubmit={handleSubmit} className="container py-4">
@@ -340,9 +336,9 @@ const AddCarForm = () => {
                                     ))}
                                 </div>
                             </div>
-                        </div>
-                        {/* Car Type */}
-                        <div className="form-floating mb-3">
+
+{/* Car Type */}
+<div className="form-floating mb-3">
                             <select
                                 className="form-select"
                                 id="carType"
@@ -357,6 +353,21 @@ const AddCarForm = () => {
 
                             </select>
                             <label htmlFor="interiorColor">Car Type</label>
+                        </div>
+                        {/*Car imgaes */}
+                        <div className="mb-3">
+                            <label htmlFor="images" className="form-label">Car Images</label>
+                            <input
+                                type="file"
+                                className="form-control"
+                                id="images"
+                                multiple
+                                onChange={handleImageChange}
+                                accept="image/*"
+                                required
+                            />
+                            <div className="form-text">Select at least one image of the car</div>
+                        </div>
                         </div>
                     </div>
                 </div>

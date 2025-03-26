@@ -67,6 +67,23 @@ export interface CarDTO {
     imagePaths: string[];
 };
 
+export interface CarRequestDTO {
+    modelId: number;
+    year: number;
+    horsepower: number;
+    kilometers: number;
+    description: string;
+    exterior: string;
+    interior: string;
+    fuelType: string;
+    transmission: string;
+    categoryId: number;
+    features: number[];
+    carType: string;
+    price: number;
+    images?: File[] | null;
+};
+
 interface PaginatedCarResponse {
     content: CarDTO[];
     pageable: {
@@ -125,12 +142,35 @@ export const carsApi = createApi ({
                 }
             })
         }),
-        addCar: builder.mutation<Car, Partial<CarDTO>> ({
-            query: (car) => ({
-                url: `/car/add`,
+        addCar: builder.mutation<Car, { carData: CarRequestDTO; images: File[] }>({
+            query: ({ carData, images }) => {
+              const formData = new FormData();
+              
+              formData.append('car', new Blob([JSON.stringify({
+                ...carData,
+                modelId: Number(carData.modelId),
+                year: Number(carData.year),
+                price: Number(carData.price),
+                horsepower: Number(carData.horsepower),
+                kilometers: Number(carData.kilometers),
+                categoryId: Number(carData.categoryId),
+                features: carData.features.map(Number)
+              })], {
+                type: 'application/json'
+              }));
+              
+              images.forEach((image) => {
+                formData.append('images', image);
+              });
+          
+              return {
+                url: '/car/add',
                 method: 'POST',
-                body: car,
-            })
+                body: formData,
+                headers: {
+                }
+              };
+            }
         }),
         getCarById: builder.query<Car, number> ({
             query: (id) => `/car/${id}`,

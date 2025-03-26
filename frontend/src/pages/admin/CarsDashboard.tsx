@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import {CarDTO, useGetCarsWithPaginationQuery, useDeleteCarMutation, useUpdateCarMutation, useAddCarMutation} from '../../api/CarsApi';
 import DefaultModal from '../../components/modals/DefaultModal';
-import { Button, Form, FormControlProps } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { FormSubmitHandler } from 'react-hook-form';
 
 
 const CarsDashboard = () => {
@@ -70,20 +69,20 @@ const CarsDashboard = () => {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        try {
-            if (formData.id) {
-                await updateCar({id: formData.id, car: formData});
-            } else {
-                await addCar(formData);
-            }
-            setModalShow(false);
-            refetch();
-        } catch (err) {
-            console.error('Error saving car:', err);
-        }
-    };
+    // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    //     e.preventDefault();
+    //     try {
+    //         if (formData.id) {
+    //             await updateCar({id: formData.id, car: formData});
+    //         } else {
+    //             await addCar(formData);
+    //         }
+    //         setModalShow(false);
+    //         refetch();
+    //     } catch (err) {
+    //         console.error('Error saving car:', err);
+    //     }
+    // };
 
 
     const handleAddNew = () => {
@@ -179,7 +178,7 @@ const CarsDashboard = () => {
                 onHide={() => setModalShow(false)}
                 title={formData.id ? 'Edit Car' : 'Add New Car'}
             >
-                <Form onSubmit={handleSubmit}>
+                <Form >
                     <Form.Group className="mb-3">
                         <Form.Label>Model ID</Form.Label>
                         <Form.Control
