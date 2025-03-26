@@ -142,7 +142,7 @@ const CarDetails = () => {
                                             </Form.Select>
                                     </Form.Group>
                                     <Form.Group className='mb-3'>
-                                        <Form.Label>Start Date</Form.Label>
+                                        <Form.Label>Select start Date</Form.Label>
                                         <Form.Control 
                                             type='date'
                                             value={startDate}
@@ -152,7 +152,7 @@ const CarDetails = () => {
                                         />
                                     </Form.Group>
                                     <Form.Group className='mb-3'>
-                                        <Form.Label>End Date</Form.Label>
+                                        <Form.Label>Select end Date</Form.Label>
                                         <Form.Control 
                                             type='date'
                                             value={endDate}
@@ -165,7 +165,7 @@ const CarDetails = () => {
                                         variant="warning" 
                                         className="me-2"
                                         onClick={handleReserve}
-                                        disabled={!selectedRental}
+                                        disabled={!selectedRental || !startDate || !endDate}
                                     >
                                         Rent the Car
                                     </Button>
