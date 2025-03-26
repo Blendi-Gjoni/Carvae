@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.12.xsd">
+
+    <include file="db/migration/V1__init_schema.sql"/>
+    <include file="db/migration/V2__create_users_table.sql"/>
+    <include file="db/migration/V3__create_rentals_table.sql"/>
+    <include file="db/migration/V4__create_dealerships_table.sql"/>
+    <include file="db/migration/V5__create_brands_table.sql"/>
+    <include file="db/migration/V6__create_models_table.sql"/>
+    <include file="db/migration/V7__create_categories_table.sql"/>
+    <include file="db/migration/V8__create_features_table.sql"/>
+    <include file="db/migration/V9__create_cars_table.sql"/>
+    <include file="db/migration/V10__create_orders_table.sql"/>
+    <include file="db/migration/V11__create_reservations_table.sql"/>
+
+</databaseChangeLog>

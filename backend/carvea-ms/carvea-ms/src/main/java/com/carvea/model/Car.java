@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "cars")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "car_type")
+@DiscriminatorColumn(name = "car_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
 @AllArgsConstructor
@@ -17,11 +18,12 @@ import java.util.List;
 public abstract class Car {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "modelId", nullable = false)
+    @JoinColumn(name = "model_id", nullable = false)
     private Model model;
 
     @Column(name = "year", nullable = false)
@@ -36,20 +38,20 @@ public abstract class Car {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "exterior", nullable = false)
+    @Column(name = "exterior", nullable = false, length = 50)
     private String exterior;
 
-    @Column(name = "interior", nullable = false)
+    @Column(name = "interior", nullable = false, length = 50)
     private String interior;
 
-    @Column(name = "fuelType", nullable = false)
+    @Column(name = "fuel_type", nullable = false, length = 50)
     private String fuelType;
 
-    @Column(name = "transmission", nullable = false)
+    @Column(name = "transmission", nullable = false, length = 50)
     private String transmission;
 
     @ManyToOne
-    @JoinColumn(name = "categoryId", nullable = false)
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -58,10 +60,10 @@ public abstract class Car {
             joinColumns = @JoinColumn(name = "car_id"),
             inverseJoinColumns = @JoinColumn(name = "feature_id")
     )
-    private List<Features> features;
+    private List<Features> features = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name="car_images", joinColumns = @JoinColumn(name = "car_id"))
+    @CollectionTable(name = "car_images", joinColumns = @JoinColumn(name = "car_id"))
     @Column(name = "image_path")
     private List<String> imagePaths = new ArrayList<>();
 
@@ -98,9 +100,9 @@ public abstract class Car {
                 ", interior='" + interior + '\'' +
                 ", fuelType='" + fuelType + '\'' +
                 ", transmission='" + transmission + '\'' +
-                ", category={" + category +
-                "}, features={" + features +
-                "}, car type='" + getCarType() + '\'' +
+                ", category=" + category +
+                ", features=" + features +
+                ", car type='" + getCarType() + '\'' +
                 "}";
     }
 }

@@ -8,15 +8,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
+@Table(name = "features")
 @Getter
 @Setter
 @NoArgsConstructor
 public class Features {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "name", nullable = false)
@@ -27,7 +30,7 @@ public class Features {
 
     @ManyToMany(mappedBy = "features", fetch = FetchType.EAGER)
     @JsonIgnore
-    private List<Car> cars;
+    private Set<Car> cars;
 
 
     public Features(String name, String description) {

@@ -23,6 +23,7 @@ public class Order implements Subject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne
@@ -33,17 +34,20 @@ public class Order implements Subject {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
+    @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
 
     @ManyToOne
     @JoinColumn(name = "dealership_id", nullable = false)
     private Dealership dealership;
 
+    @Column(name = "delivery_date")
     private LocalDateTime deliveryDate;
 
+    @Column(name = "status", nullable = false)
     private String status;
 
+    @Column(name = "price", nullable = false)
     private BigDecimal price;
 
     @Transient

@@ -17,21 +17,23 @@ import java.util.List;
 @Setter
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "username", nullable = false)
     private String username;
 
-    @Column(nullable = true)
+    @Column(name = "usernameF", nullable = true)
     private String usernameF;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "enabled")
     private boolean enabled;
 
     @Column(name = "verification_code")

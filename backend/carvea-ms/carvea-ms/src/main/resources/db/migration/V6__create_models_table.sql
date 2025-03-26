@@ -1,0 +1,6 @@
+CREATE TABLE models (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    brand_id BIGINT NOT NULL,
+    FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE CASCADE
+)
