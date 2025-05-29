@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import { Roles } from './utils/Roles';
 import PrivateRoute from './components/PrivateRoute';
 import CarDetails from './pages/CarDetails';
@@ -28,7 +29,8 @@ function App(): JSX.Element {
       <Scrollbars style={{height: '100vh', width: '100vw'}}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<div className="login-page"><Login /></div>} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/car-details" element={<CarDetails />} />
           <Route path='/user-profile' element={<UserProfile />} />
 

@@ -1,4 +1,5 @@
 import { useGetNumberOfUsersByRoleQuery } from "../api/UsersApi";
+import { mockUsersByRole } from "./chartMockData";
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -20,7 +21,10 @@ ChartJS.register(
 );
 
 const RadarChart = () => {
-  const { data: numberOfUsersByRole = [] } = useGetNumberOfUsersByRoleQuery();
+  const { data: numberOfUsersByRole = [], isLoading, error } = useGetNumberOfUsersByRoleQuery();
+  
+  // Use mock data if API fails or in development
+  const chartData = error || numberOfUsersByRole.length === 0 ? mockUsersByRole : numberOfUsersByRole;
 
   const options = {
     maintainAspectRatio: false,
@@ -28,17 +32,19 @@ const RadarChart = () => {
   };
 
   const radarChartData = {
-    labels: numberOfUsersByRole.map(item => item[0]),
+    labels: chartData.map(item => item[0]),
     datasets: [
       {
         label: "Number of Users by Role",
-        data: numberOfUsersByRole.map(item => item[1]),
+        data: chartData.map(item => item[1]),
         backgroundColor: 'rgba(143, 252, 179, 0.29)',
         borderColor: 'rgb(79, 211, 252)',
         borderWidth: 1,
       }
     ]
   };
+
+  if (isLoading) return <div>Loading...</div>;
 
   return <Radar data={radarChartData} options={options} />;
 };

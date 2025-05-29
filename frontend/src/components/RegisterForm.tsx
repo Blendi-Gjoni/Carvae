@@ -50,7 +50,9 @@ const RegisterForm = () => {
 
   const onSubmit = (data: SignupData) => {
     const { username, email, password } = data;
+
     dispatch(signup({ username, email, password }))
+      .unwrap()
       .then(() => {
         setShowModal(true);
         setVerificationMessage('');
@@ -59,6 +61,13 @@ const RegisterForm = () => {
       .catch((error) => {
         console.error('Registration failed:', error);
       });
+  };
+
+  const showModalForTesting = () => {
+    if (process.env.NODE_ENV === 'development' || (window as any).testMode) {
+      setShowModal(true);
+      setVerificationMessage('');
+    }
   };
 
   const handleVerify = (data: VerifyUserData) => {
@@ -110,7 +119,7 @@ const RegisterForm = () => {
               className="form-control"
               {...register("username")}
             />
-            <span className='mx-3 fs-8' style={{color: 'red'}}>{errors.username?.message}</span>
+            <span id='username-error' className='mx-3 fs-8' style={{color: 'red'}}>{errors.username?.message}</span>
           </div>
 
           <div className="form-outline mb-3">
@@ -121,7 +130,7 @@ const RegisterForm = () => {
               className="form-control"
               {...register("email")}
             />
-            <span className='mx-3 fs-8' style={{color: 'red'}}>{errors.email?.message}</span>
+            <span id='email-error' className='mx-3 fs-8' style={{color: 'red'}}>{errors.email?.message}</span>
           </div>
 
           <div className="form-outline mb-3">
@@ -132,7 +141,7 @@ const RegisterForm = () => {
               className="form-control"
               {...register("password")}
             />
-            <span className='mx-3 fs-8' style={{color: 'red'}}>{errors.password?.message}</span>
+            <span id='password-error' className='mx-3 fs-8' style={{color: 'red'}}>{errors.password?.message}</span>
           </div>
 
           <div className="form-outline mb-3">
@@ -143,7 +152,7 @@ const RegisterForm = () => {
               className="form-control"
               {...register("repeatPassword")}
             />
-            <span className='mx-3 fs-8' style={{color: 'red'}}>{errors.repeatPassword?.message}</span>
+            <span id='repeatPassword-error' className='mx-3 fs-8' style={{color: 'red'}}>{errors.repeatPassword?.message}</span>
           </div>
 
           <div className="form-check d-flex justify-content-center mb-3">
@@ -151,16 +160,17 @@ const RegisterForm = () => {
               className="form-check-input me-2"
               type="checkbox"
               value=""
-              id="registerCheck"
+              id="termsAccepted"
               {...register("termsAccepted", { required: true })}
               style={{backgroundColor: '#a4250b', color: '#fff', border: '#ff0000'}}
             />
             <label className="form-check-label" htmlFor="registerCheck">
               I have read and agree to the terms
             </label>
+            <span id='termsAccepted-error' className='mx-3 fs-8' style={{color: 'red'}}>{errors.termsAccepted?.message}</span>
           </div>
 
-          <button type="submit" className="btn btn-block mb-3" style={{width: '100%', backgroundColor: '#ff0000', color: '#fff'}} disabled={isLoading}>
+          <button id="submit-button" type="submit" className="btn btn-block mb-3" style={{width: '100%', backgroundColor: '#ff0000', color: '#fff'}} disabled={isLoading}>
             {isLoading ? 'Signing up...' : 'Sign up'}
           </button>
         </motion.form>
@@ -181,8 +191,9 @@ const RegisterForm = () => {
               placeholder="Enter Verification Code"
             />
             <label className="form-label" htmlFor="verificationCode">Verification Code</label>
+            <span id='verificationCode-error' className='mx-3 fs-8' style={{color: 'red'}}>{errors.verificationCode?.message}</span>
           </div>
-          <button type="submit" className="btn btn-primary btn-block" disabled={isLoading}>
+          <button id="submit-vc-button" type="submit" className="btn btn-primary btn-block" disabled={isLoading}>
             Submit
           </button>
         </form>
@@ -192,6 +203,16 @@ const RegisterForm = () => {
           </div>
         )}
       </DefaultModal>
+      {(process.env.NODE_ENV === 'development' || (window as any).testMode) && (
+        <button 
+          id="test-show-modal" 
+          type="button" 
+          onClick={showModalForTesting}
+          style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 9999 }}
+        >
+          Test Modal
+        </button>
+      )}
     </section>
   );
 };
